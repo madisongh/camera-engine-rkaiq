@@ -32,6 +32,16 @@ rk_aiq_uapi2_sysctl_preInit(const char* sns_ent_name,
     return rk_aiq_uapi_sysctl_preInit(sns_ent_name, mode, force_iq_file);
 }
 
+XCamReturn
+rk_aiq_uapi2_sysctl_regHwEvtCb(const char* sns_ent_name,
+                               rk_aiq_hwevt_cb hwevt_cb,
+                               void* cb_ctx)
+{
+    g_rk_aiq_sys_preinit_cfg_map[sns_ent_name].hwevt_cb = hwevt_cb;
+    g_rk_aiq_sys_preinit_cfg_map[sns_ent_name].hwevt_cb_ctx = cb_ctx;
+
+    return XCAM_RETURN_NO_ERROR;
+}
 
 XCamReturn
 rk_aiq_uapi2_sysctl_preInit_scene(const char* sns_ent_name, const char *main_scene,
@@ -273,4 +283,20 @@ rk_aiq_uapi2_sysctl_release3AStatsRef(const rk_aiq_sys_ctx_t* ctx,
                                      rk_aiq_isp_stats_t *stats)
 {
     return rk_aiq_uapi_sysctl_release3AStatsRef(ctx, stats);
+}
+
+XCamReturn
+rk_aiq_uapi2_sysctl_getWorkingMode(const rk_aiq_sys_ctx_t* ctx, rk_aiq_working_mode_t *mode)
+{
+    ENTER_XCORE_FUNCTION();
+    if (!mode || !ctx)
+        return XCAM_RETURN_ERROR_PARAM;
+
+    RKAIQ_API_SMART_LOCK(ctx);
+    *mode = ctx->_rkAiqManager->getWorkingMode();
+    if (*mode < 0)
+        return XCAM_RETURN_ERROR_OUTOFRANGE;
+    EXIT_XCORE_FUNCTION();
+
+    return XCAM_RETURN_NO_ERROR;
 }

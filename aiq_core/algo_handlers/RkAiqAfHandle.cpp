@@ -68,15 +68,21 @@ XCamReturn RkAiqAfHandleInt::setAttrib(rk_aiq_af_attrib_t* att) {
 
     if (sharedCom->snsDes.lens_des.focus_support) {
         mCfgMutex.lock();
-        // TODO
-        // check if there is different between att & mCurAtt
+
+        // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
         // if something changed, set att to mNewAtt, and
         // the new params will be effective later when updateConfig
         // called by RkAiqCore
+        bool isChanged = false;
+        if (att->sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+            memcmp(&mNewAtt, att, sizeof(*att)))
+            isChanged = true;
+        else if (att->sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+                 memcmp(&mCurAtt, att, sizeof(*att)))
+            isChanged = true;
 
         // if something changed
-        if ((0 != memcmp(&mCurAtt, att, sizeof(rk_aiq_af_attrib_t))) ||
-            (mCurAtt.AfMode == RKAIQ_AF_MODE_AUTO)) {
+        if (isChanged || (mCurAtt.AfMode == RKAIQ_AF_MODE_AUTO)) {
             mNewAtt         = *att;
             updateAtt       = true;
             isUpdateAttDone = false;

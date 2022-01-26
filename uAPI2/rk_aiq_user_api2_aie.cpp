@@ -25,14 +25,41 @@ RKAIQ_BEGIN_DECLARE
 
 XCamReturn  rk_aiq_user_api2_aie_SetAttrib(const rk_aiq_sys_ctx_t* sys_ctx, aie_attrib_t attr)
 {
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
 
-    return rk_aiq_user_api_aie_SetAttrib(sys_ctx, attr);
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)sys_ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+            rk_aiq_user_api_aie_SetAttrib(camCtx, attr);
+        }
+        return XCAM_RETURN_NO_ERROR;
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        return rk_aiq_user_api_aie_SetAttrib(sys_ctx, attr);
+    }
 }
 
 XCamReturn  rk_aiq_user_api2_aie_GetAttrib(const rk_aiq_sys_ctx_t* sys_ctx, aie_attrib_t *attr)
 {
-    return rk_aiq_user_api_aie_GetAttrib(sys_ctx, attr);
-
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)sys_ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+            rk_aiq_user_api_aie_GetAttrib(camCtx, attr);
+        }
+        return XCAM_RETURN_NO_ERROR;
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        return rk_aiq_user_api_aie_GetAttrib(sys_ctx, attr);
+    }
 }
 
 RKAIQ_END_DECLARE

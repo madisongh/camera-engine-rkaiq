@@ -171,6 +171,8 @@ protected:
                 unsigned int   nNumRegs;
                 unsigned int   RegAddr[MAX_I2CDATA_LEN];
                 unsigned int   RegValue[MAX_I2CDATA_LEN];
+                unsigned int   AddrByteNum[MAX_I2CDATA_LEN];
+                unsigned int   ValueByteNum[MAX_I2CDATA_LEN];
             } i2c_exp_res;
         };
     } pending_split_exps_t;

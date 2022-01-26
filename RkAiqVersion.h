@@ -357,10 +357,20 @@
  * v3.0x8.3
  * - complete rk3588 module camgroup API
  * - add API sample code for lsc/dpcc/ldch...
+ * v3.0x8.5
+ * - fix potential race condition in setSingleCamStatusReady
+ * - fix some bugs in Group-Hdr mode
+ * - compare with mNewAtt when setting attrib asynchronously
+ * - always listen streaming on/off event in rkaiq
+ * - Add configuration file rules for build
+ * - add more log info for awb analysis tool
+ * - add hw event callback
+ * - add group module API of CP/IE/CSM
+ * - notify all vicaps ready to app
  */
 
-#define RK_AIQ_VERSION_REAL_V "v3.0x8.3"
-#define RK_AIQ_RELEASE_DATE "2022-01-14"
+#define RK_AIQ_VERSION_REAL_V "v3.0x8.5"
+#define RK_AIQ_RELEASE_DATE "2022-01-26"
 
 /******* DO NOT EDIT THE FOLLOWINGS ***********/
 

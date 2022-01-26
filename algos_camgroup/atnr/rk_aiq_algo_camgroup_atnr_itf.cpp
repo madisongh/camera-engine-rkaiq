@@ -202,9 +202,11 @@ static XCamReturn groupAbayertnrProcessing(const RkAiqAlgoCom* inparams, RkAiqAl
             stExpInfoV2.arIso[0] = stExpInfoV2.arAGain[0] * stExpInfoV2.arDGain[0] * 50;
 
         } else {
-            if((rk_aiq_working_mode_t)procParaGroup->working_mode == RK_AIQ_WORKING_MODE_ISP_HDR2)
+            if(procParaGroup->working_mode == RK_AIQ_ISP_HDR_MODE_2_FRAME_HDR
+                    || procParaGroup->working_mode == RK_AIQ_ISP_HDR_MODE_2_LINE_HDR)
                 stExpInfoV2.hdr_mode = 1;
-            else if ((rk_aiq_working_mode_t)procParaGroup->working_mode == RK_AIQ_WORKING_MODE_ISP_HDR3)
+            else if (procParaGroup->working_mode == RK_AIQ_ISP_HDR_MODE_3_FRAME_HDR
+                     || procParaGroup->working_mode == RK_AIQ_ISP_HDR_MODE_3_LINE_HDR)
                 stExpInfoV2.hdr_mode = 2;
             else {
                 stExpInfoV2.hdr_mode = 0;

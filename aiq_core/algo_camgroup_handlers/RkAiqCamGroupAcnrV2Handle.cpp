@@ -55,18 +55,24 @@ XCamReturn RkAiqCamGroupAcnrV2HandleInt::setAttrib(rk_aiq_cnr_attrib_v2_t* att) 
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (att->sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewAtt, att, sizeof(*att)))
+        isChanged = true;
+    else if (att->sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurAtt, att, sizeof(*att)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurAtt, att, sizeof(rk_aiq_cnr_attrib_v2_t))) {
+    if (isChanged) {
         mNewAtt   = *att;
         updateAtt = true;
         waitSignal(att->sync.sync_mode);
-
     }
 
     mCfgMutex.unlock();
@@ -108,10 +114,17 @@ XCamReturn RkAiqCamGroupAcnrV2HandleInt::setStrength(rk_aiq_cnr_strength_v2_t *p
     LOGD_ANR("%s:%d\n", __FUNCTION__, __LINE__);
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
-
     mCfgMutex.lock();
 
-    if (0 != memcmp(&mCurStrength, pStrength, sizeof(mCurStrength))) {
+    bool isChanged = false;
+    if (pStrength->sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewStrength, pStrength, sizeof(*pStrength)))
+        isChanged = true;
+    else if (pStrength->sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurStrength, pStrength, sizeof(*pStrength)))
+        isChanged = true;
+
+    if (isChanged) {
         mNewStrength   = *pStrength;
         updateStrength = true;
         waitSignal(pStrength->sync.sync_mode);

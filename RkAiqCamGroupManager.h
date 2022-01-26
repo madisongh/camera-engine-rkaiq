@@ -26,6 +26,7 @@
 #include "common/rk_aiq_pool.h"
 #include "aiq_core/MessageBus.h"
 #include "aiq_core/RkAiqCamgroupHandle.h"
+#include "rk_aiq.h"
 
 using namespace XCam;
 namespace RkCam {
@@ -191,6 +192,9 @@ public:
     RkAiqAlgoContext* getEnabledAxlibCtx(const int algo_type);
     RkAiqAlgoContext* getAxlibCtx(const int algo_type, const int lib_id);
     RkAiqCamgroupHandle* getAiqCamgroupHandle(const int algo_type, const int lib_id);
+
+    void setVicapReady(rk_aiq_hwevt_t* hwevt);
+    bool isAllVicapReady();
 protected:
     const struct RkAiqAlgoDesCommExt* mGroupAlgosDesArray;
     /* key: camId*/
@@ -206,6 +210,7 @@ protected:
     uint64_t mRequiredMsgsMask;
     uint64_t mRequiredAlgoResMask;
     uint8_t mRequiredCamsResMask;
+    uint8_t mVicapReadyMask;
     AlgoCtxInstanceCfgCamGroup mGroupAlgoCtxCfg;
     // mDefAlgoHandleList and mDefAlgoHandleMap only contain default handlers(id == 0),
     // default handlers will be treated as root handler, and custom handlers as children.
@@ -248,8 +253,8 @@ protected:
     CamCalibDbCamgroup_t* mCamgroupCalib;
 protected:
     XCamReturn reProcess(rk_aiq_groupcam_result_t* gc_res);
-    rk_aiq_groupcam_result_t* getGroupCamResult(uint32_t frameId, bool alloc = true);
-    rk_aiq_groupcam_sofsync_t* getGroupCamSofsync(uint32_t frameId, bool alloc = true);
+    rk_aiq_groupcam_result_t* getGroupCamResult(uint32_t frameId, bool query_ready = true);
+    rk_aiq_groupcam_sofsync_t* getGroupCamSofsync(uint32_t frameId, bool query_ready = true);
     void setSingleCamStatusReady(rk_aiq_singlecam_result_status_t* status, rk_aiq_groupcam_result_t* gc_result);
     void relayToHwi(rk_aiq_groupcam_result_t* gc_res);
     void clearGroupCamResult(uint32_t frameId);

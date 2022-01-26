@@ -41,6 +41,7 @@
 
 #include "rk_aiq_user_api2_adpcc.h"
 #include "rk_aiq_user_api2_acp.h"
+#include "rk_aiq_user_api2_aie.h"
 #include "rk_aiq_user_api2_adebayer.h"
 #include "rk_aiq_user_api2_a3dlut.h"
 #include "rk_aiq_user_api2_aldch.h"

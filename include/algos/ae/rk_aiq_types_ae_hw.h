@@ -295,8 +295,14 @@ typedef struct RKAiqExpI2cParam_s {
     // M4_ARRAY_DESC("RegAddr", "u32", M4_SIZE(1,64), M4_RANGE(0,65535), "0", M4_DIGIT(0), M4_DYNAMIC(0),M4_HIDE(1))
     unsigned int   RegAddr[MAX_I2CDATA_LEN];
 
+    // M4_ARRAY_DESC("AddrByteNum", "u32", M4_SIZE(1,64), M4_RANGE(0,65535), "0", M4_DIGIT(0), M4_DYNAMIC(0),M4_HIDE(1))
+    unsigned int   AddrByteNum[MAX_I2CDATA_LEN];
+
     // M4_ARRAY_DESC("RegValue", "u32", M4_SIZE(1,64), M4_RANGE(0,65535), "0", M4_DIGIT(0), M4_DYNAMIC(0),M4_HIDE(1))
     unsigned int   RegValue[MAX_I2CDATA_LEN];
+
+    // M4_ARRAY_DESC("ValueByteNum", "u32", M4_SIZE(1,64), M4_RANGE(0,65535), "0", M4_DIGIT(0), M4_DYNAMIC(0),M4_HIDE(1))
+    unsigned int   ValueByteNum[MAX_I2CDATA_LEN];
 
     // M4_ARRAY_DESC("DelayFrames", "u32", M4_SIZE(1,64), M4_RANGE(0,65535), "0", M4_DIGIT(0), M4_DYNAMIC(0),M4_HIDE(1))
     unsigned int   DelayFrames[MAX_I2CDATA_LEN];

@@ -5267,6 +5267,7 @@
 							"Version":	"V4",
 							"TuningPara":	{
 								"enable":	1,
+								"kernel_sigma_enable": 0,
 								"Setting":	[{
 										"SNR_Mode":	"LSNR",
 										"Sensor_Mode":	"lcg",
@@ -5290,6 +5291,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	100,
@@ -5311,6 +5318,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	200,
@@ -5332,6 +5345,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	400,
@@ -5353,6 +5372,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	800,
@@ -5374,6 +5399,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	1600,
@@ -5395,6 +5426,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	3200,
@@ -5416,6 +5453,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	6400,
@@ -5437,6 +5480,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	12800,
@@ -5458,6 +5507,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	25600,
@@ -5479,6 +5534,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	51200,
@@ -5500,6 +5561,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	102400,
@@ -5521,6 +5588,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	204800,
@@ -5542,6 +5615,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}],
 										"Tuning_ISO_len":	13
@@ -5568,6 +5647,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	100,
@@ -5589,6 +5674,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	200,
@@ -5610,6 +5701,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	400,
@@ -5631,6 +5728,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	800,
@@ -5652,6 +5755,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	1600,
@@ -5673,6 +5782,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	3200,
@@ -5694,6 +5809,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	6400,
@@ -5715,6 +5836,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	12800,
@@ -5736,6 +5863,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	25600,
@@ -5757,6 +5890,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	51200,
@@ -5778,6 +5917,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	102400,
@@ -5799,6 +5944,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}, {
 												"iso":	204800,
@@ -5820,6 +5971,12 @@
 													"prefilter_coeff":	[0.2042, 0.1238, 0.0751],
 													"GaussianFilter_coeff":	[0.0632, 0.0558, 0.0492, 0.0383, 0.0338, 0.0232],
 													"hfBilateralFilter_coeff":	[0.2042, 0.1238, 0.0751]
+												},
+												"kernel_sigma":	{
+													"prefilter_sigma":	1.0,
+													"GaussianFilter_sigma":	2.0,
+													"GaussianFilter_radius":	2.0,
+													"hfBilateralFilter_sigma":	1.0
 												}
 											}],
 										"Tuning_ISO_len":	13

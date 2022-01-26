@@ -49,7 +49,20 @@ XCamReturn RkAiqCamGroupAgicHandleInt::setAttribV1(const rkaiq_gic_v1_api_attr_t
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
 
-    if (0 != memcmp(&mCurAttV1, att, sizeof(rkaiq_gic_v1_api_attr_t))) {
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
+    // if something changed, set att to mNewAtt, and
+    // the new params will be effective later when updateConfig
+    // called by RkAiqCore
+    bool isChanged = false;
+    if (att->sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewAttV1, att, sizeof(*att)))
+        isChanged = true;
+    else if (att->sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurAttV1, att, sizeof(*att)))
+        isChanged = true;
+
+    // if something changed
+    if (isChanged) {
         mNewAttV1   = *att;
         updateAttV1 = true;
         waitSignal(att->sync.sync_mode);
@@ -92,7 +105,20 @@ XCamReturn RkAiqCamGroupAgicHandleInt::setAttribV2(const rkaiq_gic_v2_api_attr_t
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
 
-    if (0 != memcmp(&mCurAttV2, att, sizeof(rkaiq_gic_v2_api_attr_t))) {
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
+    // if something changed, set att to mNewAtt, and
+    // the new params will be effective later when updateConfig
+    // called by RkAiqCore
+    bool isChanged = false;
+    if (att->sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewAttV2, att, sizeof(*att)))
+        isChanged = true;
+    else if (att->sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurAttV2, att, sizeof(*att)))
+        isChanged = true;
+
+    // if something changed
+    if (isChanged) {
         mNewAttV2   = *att;
         updateAttV2 = true;
         waitSignal(att->sync.sync_mode);

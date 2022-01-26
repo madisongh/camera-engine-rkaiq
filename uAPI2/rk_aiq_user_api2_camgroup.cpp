@@ -124,8 +124,8 @@ rk_aiq_uapi2_camgroup_create(rk_aiq_camgroup_instance_cfg_t* cfg)
 
     if (cfg->config_file_dir) {
         if (cfg->single_iq_file) {
-            single_iq_file += cfg->config_file_dir;
-            single_iq_file += "/";
+            //single_iq_file += cfg->config_file_dir;
+            //single_iq_file += "/";
             single_iq_file += cfg->single_iq_file;
         }
         if (cfg->group_iq_file) {
@@ -155,6 +155,11 @@ rk_aiq_uapi2_camgroup_create(rk_aiq_camgroup_instance_cfg_t* cfg)
             rk_aiq_uapi_sysctl_preInit(cfg->sns_ent_nm_array[i],
                                        RK_AIQ_WORKING_MODE_NORMAL, /* nonsense */
                                        single_iq_file.c_str());
+
+        if (cfg->pHwEvt_cb)
+            rk_aiq_uapi2_sysctl_regHwEvtCb(cfg->sns_ent_nm_array[i],
+                                           cfg->pHwEvt_cb,
+                                           cfg->pHwEvtCbCtx);
 
         aiq_ctx = rk_aiq_uapi_sysctl_init(cfg->sns_ent_nm_array[i],
                                           cfg->config_file_dir, NULL, NULL);

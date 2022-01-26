@@ -2344,7 +2344,7 @@ CamHwIsp20::prepare(uint32_t width, uint32_t height, int mode, int t_delay, int 
     }
 
     _isp_stream_status = ISP_STREAM_STATUS_INVALID;
-    if (mIsGroupMode) {
+    if (/*mIsGroupMode*/true) {
         mIspStremEvtTh = new RkStreamEventPollThread("StreamEvt",
                 new V4l2Device (s_info->isp_info->input_params_path),
                 this);
@@ -5615,6 +5615,20 @@ void CamHwIsp20::notify_isp_stream_status(bool on)
             LOGE_CAMHW_SUBM(ISP20HW_SUBM, "hdr mipi start err: %d\n", ret);
         }
         _isp_stream_status = ISP_STREAM_STATUS_STREAM_ON;
+
+        if (mHwResLintener) {
+            SmartPtr<Isp20Evt> ispEvt =
+                new Isp20Evt(this, mSensorDev.dynamic_cast_ptr<SensorHw>());
+
+            SmartPtr<V4l2Device> dev(NULL);
+            SmartPtr<Isp20EvtBuffer> ispEvtbuf =
+                new Isp20EvtBuffer(ispEvt, dev);
+
+            ispEvtbuf->_buf_type = VICAP_STREAM_ON_EVT;
+            SmartPtr<VideoBuffer> vbuf = ispEvtbuf.dynamic_cast_ptr<VideoBuffer>();
+
+            mHwResLintener->hwResCb(vbuf);
+        }
     } else {
         LOGI_CAMHW_SUBM(ISP20HW_SUBM, "camId:%d, %s off", mCamPhyId, __func__);
         _isp_stream_status = ISP_STREAM_STATUS_STREAM_OFF;

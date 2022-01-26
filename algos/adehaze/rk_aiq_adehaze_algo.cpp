@@ -1973,19 +1973,36 @@ void AdehazeGetEnvLvISO
         return;
     }
 
-    pAdehazeCtx->CurrData.V21.EnvLv = pAePreRes->ae_pre_res_rk.GlobalEnvLv[pAePreRes->ae_pre_res_rk.NormalIndex];
+    if(CHECK_ISP_HW_V21()) {
+        pAdehazeCtx->CurrData.V21.EnvLv = pAePreRes->ae_pre_res_rk.GlobalEnvLv[pAePreRes->ae_pre_res_rk.NormalIndex];
 
-    //Normalize the current envLv for AEC
-    pAdehazeCtx->CurrData.V21.EnvLv = (pAdehazeCtx->CurrData.V21.EnvLv  - MIN_ENV_LV) / (MAX_ENV_LV - MIN_ENV_LV);
-    pAdehazeCtx->CurrData.V21.EnvLv = LIMIT_VALUE(pAdehazeCtx->CurrData.V21.EnvLv, ENVLVMAX, ENVLVMIN);
+        //Normalize the current envLv for AEC
+        pAdehazeCtx->CurrData.V21.EnvLv = (pAdehazeCtx->CurrData.V21.EnvLv  - MIN_ENV_LV) / (MAX_ENV_LV - MIN_ENV_LV);
+        pAdehazeCtx->CurrData.V21.EnvLv = LIMIT_VALUE(pAdehazeCtx->CurrData.V21.EnvLv, ENVLVMAX, ENVLVMIN);
 
-    //get iso
-    if(pAdehazeCtx->FrameNumber == LINEAR_NUM)
-        pAdehazeCtx->CurrData.V30.ISO = pAePreRes->ae_pre_res_rk.LinearExp.exp_real_params.analog_gain *
-                                        pAePreRes->ae_pre_res_rk.LinearExp.exp_real_params.digital_gain * 50.0;
-    else if(pAdehazeCtx->FrameNumber == HDR_2X_NUM || pAdehazeCtx->FrameNumber == HDR_3X_NUM)
-        pAdehazeCtx->CurrData.V30.ISO = pAePreRes->ae_pre_res_rk.HdrExp[1].exp_real_params.analog_gain *
-                                        pAePreRes->ae_pre_res_rk.HdrExp[1].exp_real_params.digital_gain * 50.0;
+        //get iso
+        if(pAdehazeCtx->FrameNumber == LINEAR_NUM)
+            pAdehazeCtx->CurrData.V21.ISO = pAePreRes->ae_pre_res_rk.LinearExp.exp_real_params.analog_gain *
+                                            pAePreRes->ae_pre_res_rk.LinearExp.exp_real_params.digital_gain * 50.0;
+        else if(pAdehazeCtx->FrameNumber == HDR_2X_NUM || pAdehazeCtx->FrameNumber == HDR_3X_NUM)
+            pAdehazeCtx->CurrData.V21.ISO = pAePreRes->ae_pre_res_rk.HdrExp[1].exp_real_params.analog_gain *
+                                            pAePreRes->ae_pre_res_rk.HdrExp[1].exp_real_params.digital_gain * 50.0;
+    }
+    else if(CHECK_ISP_HW_V30()) {
+        pAdehazeCtx->CurrData.V30.EnvLv = pAePreRes->ae_pre_res_rk.GlobalEnvLv[pAePreRes->ae_pre_res_rk.NormalIndex];
+
+        //Normalize the current envLv for AEC
+        pAdehazeCtx->CurrData.V30.EnvLv = (pAdehazeCtx->CurrData.V30.EnvLv  - MIN_ENV_LV) / (MAX_ENV_LV - MIN_ENV_LV);
+        pAdehazeCtx->CurrData.V30.EnvLv = LIMIT_VALUE(pAdehazeCtx->CurrData.V30.EnvLv, ENVLVMAX, ENVLVMIN);
+
+        //get iso
+        if(pAdehazeCtx->FrameNumber == LINEAR_NUM)
+            pAdehazeCtx->CurrData.V30.ISO = pAePreRes->ae_pre_res_rk.LinearExp.exp_real_params.analog_gain *
+                                            pAePreRes->ae_pre_res_rk.LinearExp.exp_real_params.digital_gain * 50.0;
+        else if(pAdehazeCtx->FrameNumber == HDR_2X_NUM || pAdehazeCtx->FrameNumber == HDR_3X_NUM)
+            pAdehazeCtx->CurrData.V30.ISO = pAePreRes->ae_pre_res_rk.HdrExp[1].exp_real_params.analog_gain *
+                                            pAePreRes->ae_pre_res_rk.HdrExp[1].exp_real_params.digital_gain * 50.0;
+    }
 
     LOG1_ADEHAZE( "%s:exit!\n", __FUNCTION__);
 }

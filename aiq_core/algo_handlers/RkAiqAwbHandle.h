@@ -84,6 +84,8 @@ class RkAiqAwbHandleInt : public RkAiqHandle {
     XCamReturn getWbAwbWbGainOffsetAttrib(rk_aiq_uapiV2_wb_awb_wbGainOffset_t* att);
     XCamReturn setWbAwbMultiWindowAttrib(rk_aiq_uapiV2_wb_awb_mulWindow_t att);
     XCamReturn getWbAwbMultiWindowAttrib(rk_aiq_uapiV2_wb_awb_mulWindow_t* att);
+    XCamReturn getAlgoStat(rk_tool_awb_stat_res_full_t *awb_stat_algo);
+    XCamReturn getStrategyResult(rk_tool_awb_strategy_result_t *awb_strategy_result);
 
  protected:
     virtual void init();

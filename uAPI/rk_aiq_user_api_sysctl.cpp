@@ -47,12 +47,25 @@ int g_rkaiq_isp_hw_ver = 0;
 
 rk_aiq_sys_ctx_t* get_next_ctx(const rk_aiq_sys_ctx_t* ctx)
 {
-    return ctx->next_ctx;
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP)
+        return nullptr;
+    else
+        return ctx->next_ctx;
 }
 
 void rk_aiq_ctx_set_tool_mode(const rk_aiq_sys_ctx_t* ctx, bool status)
 {
-    if(ctx && ctx->_socket) {
+    if (!ctx)
+        return;
+
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array)
+            if(camCtx && camCtx->_socket)
+                camCtx->_socket->tool_mode_set(status);
+#endif
+    } else if(ctx->_socket) {
         ctx->_socket->tool_mode_set(status);
     }
 }
@@ -92,6 +105,12 @@ typedef struct rk_aiq_sys_preinit_cfg_s {
     std::string force_iq_file;
     std::string main_scene;
     std::string sub_scene;
+    rk_aiq_hwevt_cb hwevt_cb;
+    void* hwevt_cb_ctx;
+    rk_aiq_sys_preinit_cfg_s() {
+        hwevt_cb = NULL;
+        hwevt_cb_ctx = NULL;
+    };
 } rk_aiq_sys_preinit_cfg_t;
 
 static std::map<std::string, rk_aiq_sys_preinit_cfg_t> g_rk_aiq_sys_preinit_cfg_map;
@@ -237,6 +256,11 @@ rk_aiq_uapi_sysctl_init(const char* sns_ent_name,
     ctx->_rkAiqManager = new RkAiqManager(ctx->_sensor_entity_name,
                                           err_cb,
                                           metas_cb);
+    std::map<std::string, rk_aiq_sys_preinit_cfg_t>::iterator it =
+        g_rk_aiq_sys_preinit_cfg_map.find(std::string(ctx->_sensor_entity_name));
+    if (it != g_rk_aiq_sys_preinit_cfg_map.end())
+        ctx->_rkAiqManager->setHwEvtCb(it->second.hwevt_cb, it->second.hwevt_cb_ctx);
+
     rk_aiq_static_info_t* s_info = CamHwIsp20::getStaticCamHwInfo(sns_ent_name);
     ctx->_rkAiqManager->setCamPhyId(s_info->sensor_info.phyId);
 
@@ -364,9 +388,10 @@ rk_aiq_uapi_sysctl_init(const char* sns_ent_name,
     //    goto error;
     //ctx->_rkAiqManager->setAiqCalibDb(ctx->_calibDb);
 
-    //TODO: should not assume that the suffix of "config_file" has ".xml",
-    //      if the suffix is ".json", there will be error.
-    strcpy(config_file + strlen(config_file) - strlen(".xml"), ".json");
+    if (strstr(config_file, ".xml")) {
+        LOGE("Should use json instead of xml");
+        strcpy(config_file + strlen(config_file) - strlen(".xml"), ".json");
+    }
 
     CamCalibDbV2Context_t calibdbv2_ctx;
     xcam_mem_clear (calibdbv2_ctx);

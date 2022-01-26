@@ -823,11 +823,11 @@ XCamReturn AccmAutoConfig
 
     //4) calc scale for y_alpha_curve
     float fScale = 1.0;
-#if 0
+#if 1
     //real use
-    interpolation(hAccm->calibCcm->luma_ccm.alpha_gain,
-                  hAccm->calibCcm->luma_ccm.alpha_scale,
-                  hAccm->calibCcm->luma_ccm.gain_scale_cure_size,
+    interpolation(pCcm->lumaCCM.gain_alphaScale_curve.gain,
+                  pCcm->lumaCCM.gain_alphaScale_curve.scale,
+                  9,
                   sensorGain, &fScale);
 #else
     //for test, to be same with demo

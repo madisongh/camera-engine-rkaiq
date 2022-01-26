@@ -184,14 +184,21 @@ XCamReturn RkAiqAeHandleInt::setExpSwAttr(Uapi_ExpSwAttrV2_t ExpSwAttrV2) {
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (ExpSwAttrV2.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewExpSwAttrV2, &ExpSwAttrV2, sizeof(ExpSwAttrV2)))
+        isChanged = true;
+    else if (ExpSwAttrV2.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurExpSwAttrV2, &ExpSwAttrV2, sizeof(ExpSwAttrV2)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurExpSwAttrV2, &ExpSwAttrV2, sizeof(Uapi_ExpSwAttrV2_t))) {
+    if (isChanged) {
         mNewExpSwAttrV2   = ExpSwAttrV2;
         updateExpSwAttrV2 = true;
         waitSignal(ExpSwAttrV2.sync.sync_mode);
@@ -239,7 +246,7 @@ XCamReturn RkAiqAeHandleInt::setLinExpAttr(Uapi_LinExpAttr_t LinExpAttr) {
     // called by RkAiqCore
 
     // if something changed
-    if (0 != memcmp(&mCurLinExpAttr, &LinExpAttr, sizeof(Uapi_LinExpAttr_t))) {
+    if (0 != memcmp(& mCurLinExpAttr, &LinExpAttr, sizeof(Uapi_LinExpAttr_t))) {
         mNewLinExpAttr   = LinExpAttr;
         updateLinExpAttr = true;
         waitSignal();
@@ -267,14 +274,20 @@ XCamReturn RkAiqAeHandleInt::setLinExpAttr(Uapi_LinExpAttrV2_t LinExpAttrV2) {
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (LinExpAttrV2.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewLinExpAttrV2, &LinExpAttrV2, sizeof(LinExpAttrV2)))
+        isChanged = true;
+    else if (LinExpAttrV2.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurLinExpAttrV2, &LinExpAttrV2, sizeof(LinExpAttrV2)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurLinExpAttrV2, &LinExpAttrV2, sizeof(Uapi_LinExpAttrV2_t))) {
+    if (isChanged) {
         mNewLinExpAttrV2   = LinExpAttrV2;
         updateLinExpAttrV2 = true;
         waitSignal(LinExpAttrV2.sync.sync_mode);
@@ -351,14 +364,17 @@ XCamReturn RkAiqAeHandleInt::setHdrExpAttr(Uapi_HdrExpAttrV2_t HdrExpAttrV2) {
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
-    // if something changed, set att to mNewAtt, and
-    // the new params will be effective later when updateConfig
-    // called by RkAiqCore
+
+    bool isChanged = false;
+    if (HdrExpAttrV2.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewHdrExpAttrV2, &HdrExpAttrV2, sizeof(HdrExpAttrV2)))
+        isChanged = true;
+    else if (HdrExpAttrV2.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurHdrExpAttrV2, &HdrExpAttrV2, sizeof(HdrExpAttrV2)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurHdrExpAttrV2, &HdrExpAttrV2, sizeof(Uapi_HdrExpAttrV2_t))) {
+    if (isChanged) {
         mNewHdrExpAttrV2   = HdrExpAttrV2;
         updateHdrExpAttrV2 = true;
         waitSignal(HdrExpAttrV2.sync.sync_mode);
@@ -399,15 +415,17 @@ XCamReturn RkAiqAeHandleInt::setLinAeRouteAttr(Uapi_LinAeRouteAttr_t LinAeRouteA
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
-    // if something changed, set att to mNewAtt, and
-    // the new params will be effective later when updateConfig
-    // called by RkAiqCore
+
+    bool isChanged = false;
+    if (LinAeRouteAttr.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewLinAeRouteAttr, &LinAeRouteAttr, sizeof(LinAeRouteAttr)))
+        isChanged = true;
+    else if (LinAeRouteAttr.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurLinAeRouteAttr, &LinAeRouteAttr, sizeof(LinAeRouteAttr)))
+        isChanged = true;
 
     // if something changed
-
-    if (0 != memcmp(&mCurLinAeRouteAttr, &LinAeRouteAttr, sizeof(Uapi_LinAeRouteAttr_t))) {
+    if (isChanged) {
         mNewLinAeRouteAttr   = LinAeRouteAttr;
         updateLinAeRouteAttr = true;
         waitSignal(LinAeRouteAttr.sync.sync_mode);
@@ -448,14 +466,17 @@ XCamReturn RkAiqAeHandleInt::setHdrAeRouteAttr(Uapi_HdrAeRouteAttr_t HdrAeRouteA
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
-    // if something changed, set att to mNewAtt, and
-    // the new params will be effective later when updateConfig
-    // called by RkAiqCore
+
+    bool isChanged = false;
+    if (HdrAeRouteAttr.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewHdrAeRouteAttr, &HdrAeRouteAttr, sizeof(HdrAeRouteAttr)))
+        isChanged = true;
+    else if (HdrAeRouteAttr.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurHdrAeRouteAttr, &HdrAeRouteAttr, sizeof(HdrAeRouteAttr)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurHdrAeRouteAttr, &HdrAeRouteAttr, sizeof(Uapi_HdrAeRouteAttr_t))) {
+    if (isChanged) {
         mNewHdrAeRouteAttr   = HdrAeRouteAttr;
         updateHdrAeRouteAttr = true;
         waitSignal(HdrAeRouteAttr.sync.sync_mode);
@@ -496,15 +517,17 @@ XCamReturn RkAiqAeHandleInt::setIrisAttr(Uapi_IrisAttrV2_t IrisAttr) {
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
-    // if something changed, set att to mNewAtt, and
-    // the new params will be effective later when updateConfig
-    // called by RkAiqCore
+
+    bool isChanged = false;
+    if (IrisAttr.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewIrisAttr, &IrisAttr, sizeof(IrisAttr)))
+        isChanged = true;
+    else if (IrisAttr.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurIrisAttr, &IrisAttr, sizeof(IrisAttr)))
+        isChanged = true;
 
     // if something changed
-
-    if (0 != memcmp(&mCurIrisAttr, &IrisAttr, sizeof(Uapi_IrisAttrV2_t))) {
+    if (isChanged) {
         mNewIrisAttr   = IrisAttr;
         updateIrisAttr = true;
         waitSignal(IrisAttr.sync.sync_mode);
@@ -546,15 +569,17 @@ XCamReturn RkAiqAeHandleInt::setSyncTestAttr(Uapi_AecSyncTest_t SyncTestAttr) {
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
-    // if something changed, set att to mNewAtt, and
-    // the new params will be effective later when updateConfig
-    // called by RkAiqCore
+
+    bool isChanged = false;
+    if (SyncTestAttr.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewAecSyncTestAttr, &SyncTestAttr, sizeof(SyncTestAttr)))
+        isChanged = true;
+    else if (SyncTestAttr.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurAecSyncTestAttr, &SyncTestAttr, sizeof(SyncTestAttr)))
+        isChanged = true;
 
     // if something changed
-
-    if (0 != memcmp(&mCurAecSyncTestAttr, &SyncTestAttr, sizeof(Uapi_AecSyncTest_t))) {
+    if (isChanged) {
         mNewAecSyncTestAttr = SyncTestAttr;
         updateSyncTestAttr  = true;
         waitSignal(SyncTestAttr.sync.sync_mode);
@@ -596,15 +621,17 @@ XCamReturn RkAiqAeHandleInt::setExpWinAttr(Uapi_ExpWin_t ExpWinAttr) {
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
-    // if something changed, set att to mNewAtt, and
-    // the new params will be effective later when updateConfig
-    // called by RkAiqCore
+
+    bool isChanged = false;
+    if (ExpWinAttr.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewExpWinAttr, &ExpWinAttr, sizeof(ExpWinAttr)))
+        isChanged = true;
+    else if (ExpWinAttr.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurExpWinAttr, &ExpWinAttr, sizeof(ExpWinAttr)))
+        isChanged = true;
 
     // if something changed
-
-    if (0 != memcmp(&mCurExpWinAttr, &ExpWinAttr, sizeof(Uapi_ExpWin_t))) {
+    if (isChanged) {
         mNewExpWinAttr   = ExpWinAttr;
         updateExpWinAttr = true;
         waitSignal(ExpWinAttr.sync.sync_mode);

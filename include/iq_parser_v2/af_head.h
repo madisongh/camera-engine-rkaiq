@@ -91,6 +91,13 @@ typedef struct CalibDbV2_Af_ContrastZoom_s {
     float                   SkipHighPassGain;
     // M4_NUMBER_DESC("SwitchDirZoomIdx", "u16", M4_RANGE(0, 65535), "0", M4_DIGIT(0))
     unsigned short          SwitchDirZoomIdx;
+
+    // M4_NUMBER_DESC("Spotlight HighlightRatio", "f32", M4_RANGE(0, 1), "0.014", M4_DIGIT(3))
+    float                   SpotlightHighlightRatio;
+    // M4_ARRAY_DESC("Spotlight LumaRatio", "f32", M4_SIZE(1,3), M4_RANGE(0,1), "[0.3, 0.5, 0.8]", M4_DIGIT(3), M4_DYNAMIC(0))
+    float                   SpotlightLumaRatio[3];
+    // M4_ARRAY_DESC("Spotlight BlkCnt", "f32", M4_SIZE(1,3), M4_RANGE(0,1), "[0.2, 0.5, 0.25]", M4_DIGIT(3), M4_DYNAMIC(0))
+    float                   SpotlightBlkCnt[3];
 } CalibDbV2_Af_ContrastZoom_t;
 
 typedef struct CalibDbV2_Af_Contrast_s {
@@ -413,20 +420,32 @@ typedef struct CalibDbV2_AfV30_MeasCfg_s {
     unsigned short afmThres;
     // M4_ARRAY_MARK_DESC("Gamma Curve", "u16", M4_SIZE(1,17),  M4_RANGE(0, 1023), "[0,45,108,179,245,344,409,459,500,567,622,676,759,833,896,962,1023]", M4_DIGIT(0), M4_DYNAMIC(0), "curve_table")
     unsigned short gammaY[17];
+    // M4_NUMBER_DESC("v1fv reliable", "f32", M4_RANGE(0, 1), "0", M4_DIGIT(3))
+    float v1fv_reliable;
+    // M4_NUMBER_DESC("v2fv reliable", "f32", M4_RANGE(0, 1), "0", M4_DIGIT(3))
+    float v2fv_reliable;
     // M4_NUMBER_DESC("v1 fir sel", "u8", M4_RANGE(0, 1), "0", M4_DIGIT(0))
     unsigned char v1_fir_sel;
+    // M4_ARRAY_DESC("v1 band", "f32", M4_SIZE(1,2), M4_RANGE(0, 1), "0", M4_DIGIT(3), M4_DYNAMIC(0))
+    float v1_band[2];
     // M4_ARRAY_DESC("vertical first iir filter", "s16", M4_SIZE(1,9), M4_RANGE(-255,255), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short v1_iir_coe[9];
     // M4_ARRAY_DESC("vertical first fir filter", "s16", M4_SIZE(1,3), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short v1_fir_coe[3];
+    // M4_ARRAY_DESC("v2 band", "f32", M4_SIZE(1,2), M4_RANGE(0, 1), "0", M4_DIGIT(3), M4_DYNAMIC(0))
+    float v2_band[2];
     // M4_ARRAY_DESC("vertical second iir filter", "s16", M4_SIZE(1,3), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short v2_iir_coe[3];
     // M4_ARRAY_DESC("vertical second fir filter", "s16", M4_SIZE(1,3), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short v2_fir_coe[3];
+    // M4_ARRAY_DESC("h1 band", "f32", M4_SIZE(1,2), M4_RANGE(0, 1), "0", M4_DIGIT(3), M4_DYNAMIC(0))
+    float h1_band[2];
     // M4_ARRAY_DESC("horizontal first iir1 filter", "s16", M4_SIZE(1,6), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short h1_iir1_coe[6];
     // M4_ARRAY_DESC("horizontal first iir2 filter", "s16", M4_SIZE(1,6), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short h1_iir2_coe[6];
+    // M4_ARRAY_DESC("h2 band", "f32", M4_SIZE(1,2), M4_RANGE(0, 1), "0", M4_DIGIT(3), M4_DYNAMIC(0))
+    float h2_band[2];
     // M4_ARRAY_DESC("horizontal second iir1 filter", "s16", M4_SIZE(1,6), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short h2_iir1_coe[6];
     // M4_ARRAY_DESC("horizontal second iir2 filter", "s16", M4_SIZE(1,6), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))

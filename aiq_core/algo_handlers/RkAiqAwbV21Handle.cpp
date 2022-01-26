@@ -86,14 +86,21 @@ XCamReturn RkAiqAwbV21HandleInt::setWbV21Attrib(rk_aiq_uapiV2_wbV21_attrib_t att
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (att.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewWbV21Attr, &att, sizeof(att)))
+        isChanged = true;
+    else if (att.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurWbV21Attr, &att, sizeof(att)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurWbV21Attr, &att, sizeof(rk_aiq_uapiV2_wbV21_attrib_t))) {
+    if (isChanged) {
         mNewWbV21Attr = att;
         updateWbV21Attr = true;
         waitSignal(att.sync.sync_mode);

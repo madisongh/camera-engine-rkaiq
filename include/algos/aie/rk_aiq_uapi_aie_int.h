@@ -6,6 +6,8 @@
 #include "rk_aiq_types_aie_algo.h"
 
 typedef struct aie_attrib_s {
+    rk_aiq_uapi_sync_t sync;
+
     rk_aiq_ie_effect_t mode;
 } aie_attrib_t;
 

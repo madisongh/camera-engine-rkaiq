@@ -78,6 +78,13 @@ typedef struct __aiq_sysctl_desc {
     work_mode_t work_mode;
 } RkaiqSysCtl_t;
 
+typedef struct __aiq_measure_info {
+    // M4_STRUCT_DESC("ae_hwstats", "normal_ui_style")
+    uapi_ae_hwstats_t ae_hwstats;
+    // M4_STRUCT_DESC("wb_log", "normal_ui_style")
+    uapi_wb_log_t wb_log;
+} aiq_measure_info_t;
+
 typedef struct __aiq_uapi_t {
     // M4_STRUCT_DESC("ae_uapi", "normal_ui_style")
     ae_uapi_t ae_uapi;
@@ -94,6 +101,8 @@ typedef struct __aiq_uapi_t {
 #endif
     // M4_STRUCT_DESC("SystemCtl", "normal_ui_style")
     RkaiqSysCtl_t system;
+    // M4_STRUCT_DESC("measure_info", "normal_ui_style")
+    aiq_measure_info_t measure_info;
 } RkaiqUapi_t;
 
 #ifdef __cplusplus

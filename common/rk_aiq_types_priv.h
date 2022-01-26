@@ -217,6 +217,7 @@ enum cam_thread_type_e {
     ISPP_GAIN_KG,
     ISPP_GAIN_WR,
     ISP_POLL_ISPSTREAMSYNC,
+    VICAP_STREAM_ON_EVT,
     ISP_POLL_POST_MAX,
 };
 

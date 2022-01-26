@@ -1022,7 +1022,8 @@ XCamReturn RkAiqResourceTranslatorV3x::translateMultiAwbStats(const SmartPtr<Vid
         LOGE("fail to get ispParams ,ignore\n");
         return XCAM_RETURN_BYPASS;
     }
-
+    rk_aiq_isp_blc_t *bls_cfg = &ispParams.blc_cfg.v0;
+    statsInt->blc_cfg_effect = ispParams.blc_cfg.v0;
     //awb30
     statsInt->awb_stats_v3x.awb_cfg_effect_v201 = ispParams.awb_cfg_v3x;
     statsInt->awb_cfg_effect_valid = true;
@@ -1092,11 +1093,24 @@ XCamReturn RkAiqResourceTranslatorV3x::translateMultiAwbStats(const SmartPtr<Vid
     MergeAwbExcWpStats( statsInt->awb_stats_v3x.excWpRangeResult, &left_stats->params.rawawb, &right_stats->params.rawawb, AwbWinSplitMode);
 
 #endif
+
+    LOG1_AWB("bls_cfg %p", bls_cfg);
+    if(bls_cfg) {
+        LOG1_AWB("bls1_enalbe: %d, b r gb gr:[ %d %d %d %d]", bls_cfg->blc1_enable, bls_cfg->blc1_b,
+                 bls_cfg->blc1_r, bls_cfg->blc1_gb, bls_cfg->blc1_gr);
+    }
+    if(bls_cfg && bls_cfg->blc1_enable && (bls_cfg->blc1_b > 0 || bls_cfg->blc1_r > 0 || bls_cfg->blc1_gb > 0 || bls_cfg->blc1_gr > 0)) {
+
+        for(int i = 0; i < RK_AIQ_AWB_GRID_NUM_TOTAL; i++) {
+            statsInt->awb_stats_v3x.blockResult[i].Rvalue -=  (statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_r + 8) >> 4 ;
+            statsInt->awb_stats_v3x.blockResult[i].Gvalue -=  (statsInt->awb_stats_v3x.blockResult[i].WpNo * (bls_cfg->blc1_gr + bls_cfg->blc1_gb) + 16) >> 5 ;
+            statsInt->awb_stats_v3x.blockResult[i].Bvalue -= (statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_b + 8) >> 4 ; ;
+        }
+    }
+
     //statsInt->awb_stats_valid = ISP2X_STAT_RAWAWB(left_stats->meas_type)? true:false;
     statsInt->awb_stats_valid = left_stats->meas_type >> 5 & 1;
     to->set_sequence(left_stats->frame_id);
-
-
     return ret;
 
 }

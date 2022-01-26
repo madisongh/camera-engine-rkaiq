@@ -100,6 +100,41 @@ static XCamReturn AwbDemoDestroyCtx(RkAiqAlgoContext *context)
     LOGD_AWB_SUBM(0xff, "%s EXIT", __func__);
     return XCAM_RETURN_NO_ERROR;
 }
+
+static XCamReturn initCustomAwbHwConfigGw(rk_aiq_customAwb_hw_cfg_t  *awbHwConfig)
+{
+    LOG1_AWB_SUBM(0xff, "%s ENTER", __func__);
+    XCamReturn ret = XCAM_RETURN_NO_ERROR;
+    memset(awbHwConfig,0,sizeof(rk_aiq_customAwb_hw_cfg_t));
+    awbHwConfig->awbEnable             =    1;
+    awbHwConfig->xyDetectionEnable          =    0;
+    awbHwConfig->uvDetectionEnable          =    0;
+    awbHwConfig->threeDyuvEnable          =    0;
+    awbHwConfig->blkWeightEnable    =    0;
+    awbHwConfig->lscBypEnable    =    0;
+    awbHwConfig->blkMeasureMode     =    RK_AIQ_AWB_BLK_STAT_MODE_REALWP_V201;
+    awbHwConfig->xyRangeTypeForBlkStatistics     =    (rk_aiq_awb_xy_type_v201_t)0;
+    awbHwConfig->illIdxForBlkStatistics     =    (rk_aiq_awb_blk_stat_realwp_ill_e)7;
+    awbHwConfig->wpDiffWeiEnable   =    0;
+    awbHwConfig->xyRangeTypeForWpHist    =    (rk_aiq_awb_xy_type_v201_t)0;
+    awbHwConfig->lightNum      =    7;
+    awbHwConfig->windowSet[0]         =    0;
+    awbHwConfig->windowSet[1]          =    0;
+    awbHwConfig->windowSet[2]         =    3840;
+    awbHwConfig->windowSet[3]         =    2160;
+    awbHwConfig->maxR          =    230;
+    awbHwConfig->maxG          =    230;
+    awbHwConfig->maxB          =    230;
+    awbHwConfig->maxY          =    230;
+    awbHwConfig->minR          =    3;
+    awbHwConfig->minG          =    3;
+    awbHwConfig->minB          =    3;
+    awbHwConfig->minY          =    3;
+    awbHwConfig->multiwindow_en  =    0;
+    LOG1_AWB_SUBM(0xff, "%s EXIT", __func__);
+    return ret;
+}
+
 static XCamReturn initCustomAwbHwConfigWp(rk_aiq_customAwb_hw_cfg_t  *awbHwConfig)
 {
     LOG1_AWB_SUBM(0xff, "%s ENTER", __func__);
@@ -111,7 +146,7 @@ static XCamReturn initCustomAwbHwConfigWp(rk_aiq_customAwb_hw_cfg_t  *awbHwConfi
     awbHwConfig->threeDyuvEnable          =    1;//uv detect  enable for all  light
     awbHwConfig->blkWeightEnable    =    0;
     awbHwConfig->lscBypEnable    =    0;
-    awbHwConfig->blkMeasureMode     =    (rk_aiq_awb_blk_stat_mode_v201_t)0;
+    awbHwConfig->blkMeasureMode     =    RK_AIQ_AWB_BLK_STAT_MODE_REALWP_V201;
     awbHwConfig->xyRangeTypeForBlkStatistics     =    (rk_aiq_awb_xy_type_v201_t)0;
     awbHwConfig->illIdxForBlkStatistics     =    (rk_aiq_awb_blk_stat_realwp_ill_e)7;
     awbHwConfig->wpDiffWeiEnable   =    0;

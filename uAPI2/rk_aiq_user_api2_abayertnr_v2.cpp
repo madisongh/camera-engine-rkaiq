@@ -46,7 +46,7 @@ rk_aiq_user_api2_abayertnrV2_SetAttrib(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq_b
 
                 LOGD_ANR("%s:%d !!!!!!!!!!!!!multi single!!!!!!!!\n", __FUNCTION__, __LINE__);
                 RkAiqAbayertnrV2HandleInt* singleCam_algo_handle =
-                    algoHandle<RkAiqAbayertnrV2HandleInt>(camCtx, RK_AIQ_ALGO_TYPE_ASHARP);
+                    algoHandle<RkAiqAbayertnrV2HandleInt>(camCtx, RK_AIQ_ALGO_TYPE_AMFNR);
                 if (singleCam_algo_handle)
                     ret = singleCam_algo_handle->setAttrib(attr);
             }
@@ -56,7 +56,7 @@ rk_aiq_user_api2_abayertnrV2_SetAttrib(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq_b
 #endif
     } else {
         RkAiqAbayertnrV2HandleInt* algo_handle =
-            algoHandle<RkAiqAbayertnrV2HandleInt>(sys_ctx, RK_AIQ_ALGO_TYPE_ASHARP);
+            algoHandle<RkAiqAbayertnrV2HandleInt>(sys_ctx, RK_AIQ_ALGO_TYPE_AMFNR);
         LOGD_ANR("%s:%d !!!!!!!!!!!!! single!!!!!!!!\n", __FUNCTION__, __LINE__);
         if (algo_handle) {
             return algo_handle->setAttrib(attr);
@@ -86,7 +86,7 @@ rk_aiq_user_api2_abayertnrV2_GetAttrib(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq_b
 
                 LOGD_ANR("%s:%d !!!!!!!!!!!!!multi single!!!!!!!!\n", __FUNCTION__, __LINE__);
                 RkAiqAbayertnrV2HandleInt* singleCam_algo_handle =
-                    algoHandle<RkAiqAbayertnrV2HandleInt>(camCtx, RK_AIQ_ALGO_TYPE_ASHARP);
+                    algoHandle<RkAiqAbayertnrV2HandleInt>(camCtx, RK_AIQ_ALGO_TYPE_AMFNR);
                 if (singleCam_algo_handle)
                     ret = singleCam_algo_handle->getAttrib(attr);
             }
@@ -96,7 +96,7 @@ rk_aiq_user_api2_abayertnrV2_GetAttrib(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq_b
 #endif
     } else {
         RkAiqAbayertnrV2HandleInt* algo_handle =
-            algoHandle<RkAiqAbayertnrV2HandleInt>(sys_ctx, RK_AIQ_ALGO_TYPE_ASHARP);
+            algoHandle<RkAiqAbayertnrV2HandleInt>(sys_ctx, RK_AIQ_ALGO_TYPE_AMFNR);
         LOGD_ANR("%s:%d !!!!!!!!!!!!! single!!!!!!!!\n", __FUNCTION__, __LINE__);
         if (algo_handle) {
             return algo_handle->getAttrib(attr);
@@ -129,7 +129,7 @@ rk_aiq_user_api2_abayertnrV2_SetStrength(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq
 
                 LOGD_ANR("%s:%d !!!!!!!!!!!!!multi single!!!!!!!!\n", __FUNCTION__, __LINE__);
                 RkAiqAbayertnrV2HandleInt* singleCam_algo_handle =
-                    algoHandle<RkAiqAbayertnrV2HandleInt>(camCtx, RK_AIQ_ALGO_TYPE_ASHARP);
+                    algoHandle<RkAiqAbayertnrV2HandleInt>(camCtx, RK_AIQ_ALGO_TYPE_AMFNR);
                 if (singleCam_algo_handle)
                     ret = singleCam_algo_handle->setStrength(pStrength);
             }
@@ -139,7 +139,7 @@ rk_aiq_user_api2_abayertnrV2_SetStrength(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq
 #endif
     } else {
         RkAiqAbayertnrV2HandleInt* algo_handle =
-            algoHandle<RkAiqAbayertnrV2HandleInt>(sys_ctx, RK_AIQ_ALGO_TYPE_ASHARP);
+            algoHandle<RkAiqAbayertnrV2HandleInt>(sys_ctx, RK_AIQ_ALGO_TYPE_AMFNR);
         LOGD_ANR("%s:%d !!!!!!!!!!!!! single!!!!!!!!\n", __FUNCTION__, __LINE__);
         if (algo_handle) {
             return algo_handle->setStrength(pStrength);
@@ -173,7 +173,7 @@ rk_aiq_user_api2_abayertnrV2_GetStrength(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq
 
                 LOGD_ANR("%s:%d !!!!!!!!!!!!!multi single!!!!!!!!\n", __FUNCTION__, __LINE__);
                 RkAiqAbayertnrV2HandleInt* singleCam_algo_handle =
-                    algoHandle<RkAiqAbayertnrV2HandleInt>(camCtx, RK_AIQ_ALGO_TYPE_ASHARP);
+                    algoHandle<RkAiqAbayertnrV2HandleInt>(camCtx, RK_AIQ_ALGO_TYPE_AMFNR);
                 if (singleCam_algo_handle)
                     ret = singleCam_algo_handle->getStrength(pStrength);
             }
@@ -183,7 +183,7 @@ rk_aiq_user_api2_abayertnrV2_GetStrength(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq
 #endif
     } else {
         RkAiqAbayertnrV2HandleInt* algo_handle =
-            algoHandle<RkAiqAbayertnrV2HandleInt>(sys_ctx, RK_AIQ_ALGO_TYPE_ASHARP);
+            algoHandle<RkAiqAbayertnrV2HandleInt>(sys_ctx, RK_AIQ_ALGO_TYPE_AMFNR);
         LOGD_ANR("%s:%d !!!!!!!!!!!!! single!!!!!!!!\n", __FUNCTION__, __LINE__);
         if (algo_handle) {
             return algo_handle->getStrength(pStrength);

@@ -35,7 +35,16 @@ RKAIQ_BEGIN_DECLARE
 static bool isHDRmode(const rk_aiq_sys_ctx_t* ctx)
 {
     RKAIQ_API_SMART_LOCK(ctx);
-    int mode = ctx->_analyzer->mAlogsComSharedParams.working_mode;
+    int mode = RK_AIQ_WORKING_MODE_NORMAL;
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        mode = camgroup_ctx->cam_ctxs_array[0]->_analyzer->mAlogsComSharedParams.working_mode;
+#endif
+    } else {
+        mode = ctx->_analyzer->mAlogsComSharedParams.working_mode;
+    }
+
     if (RK_AIQ_WORKING_MODE_NORMAL == mode)
         return false;
     else
@@ -45,8 +54,18 @@ static bool isHDRmode(const rk_aiq_sys_ctx_t* ctx)
 static int getHDRFrameNum(const rk_aiq_sys_ctx_t* ctx)
 {
     RKAIQ_API_SMART_LOCK(ctx);
-    int FrameNum = 1;
-    switch (ctx->_analyzer->mAlogsComSharedParams.working_mode)
+    int FrameNum = 1, working_mode = RK_AIQ_WORKING_MODE_NORMAL;
+
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        working_mode = camgroup_ctx->cam_ctxs_array[0]->_analyzer->mAlogsComSharedParams.working_mode;
+#endif
+    } else {
+        working_mode = ctx->_analyzer->mAlogsComSharedParams.working_mode;
+    }
+
+    switch (working_mode)
     {
     case RK_AIQ_WORKING_MODE_NORMAL:
         FrameNum = 1;

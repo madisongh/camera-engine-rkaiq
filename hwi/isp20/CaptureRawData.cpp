@@ -662,10 +662,13 @@ CaptureRawData::creat_raw_dir(const char* path)
 {
     time_t now;
     struct tm* timenow;
+    struct timeval tv;
+    struct timezone tz;
 
     if (!path)
         return XCAM_RETURN_ERROR_FAILED;
 
+    gettimeofday(&tv, &tz);
     time(&now);
     timenow = localtime(&now);
 
@@ -676,14 +679,15 @@ CaptureRawData::creat_raw_dir(const char* path)
         return XCAM_RETURN_ERROR_PARAM;
     }
 
-    snprintf(raw_dir_path, sizeof(raw_dir_path), "%s/raw_%04d-%02d-%02d_%02d-%02d-%02d",
+    snprintf(raw_dir_path, sizeof(raw_dir_path), "%s/raw_%04d-%02d-%02d_%02d-%02d-%02d-%03ld",
              path,
              timenow->tm_year + 1900,
              timenow->tm_mon + 1,
              timenow->tm_mday,
              timenow->tm_hour,
              timenow->tm_min,
-             timenow->tm_sec);
+             timenow->tm_sec,
+             tv.tv_usec/1000);
 
     LOGV_CAMHW_SUBM(CAPTURERAW_SUBM, "mkdir %s for capturing %d frames raw!\n",
                     raw_dir_path, _capture_raw_num);

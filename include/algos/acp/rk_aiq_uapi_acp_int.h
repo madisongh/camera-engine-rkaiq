@@ -5,6 +5,8 @@
 #include "rk_aiq_algo_des.h"
 
 typedef struct acp_attrib_s {
+    rk_aiq_uapi_sync_t sync;
+
     uint8_t brightness; /* 0 ~ 255 */
     uint8_t contrast; /* 0 ~ 255 */
     uint8_t saturation; /* 0 ~ 255 */

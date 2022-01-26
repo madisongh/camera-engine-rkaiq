@@ -1128,7 +1128,7 @@ XCamReturn rk_aiq_uapi2_getDrcGain(const rk_aiq_sys_ctx_t* ctx, float * Gain, fl
 /*
 *****************************
 *
-* Desc: set dark area boost strength
+* Desc: set/get dark area boost strength
 *    this function is active for normal mode
 * Argument:
 *   level: [1, 10]
@@ -1162,20 +1162,13 @@ XCamReturn rk_aiq_uapi2_getDarkAreaBoostStrth(const rk_aiq_sys_ctx_t* ctx, unsig
         ret = XCAM_RETURN_ERROR_PARAM;
         RKAIQ_IMGPROC_CHECK_RET(ret, "ISP2.1 do not support tmo api!");
     }
+    else if(CHECK_ISP_HW_V30()) {
+        ret = XCAM_RETURN_ERROR_PARAM;
+        RKAIQ_IMGPROC_CHECK_RET(ret, "ISP3.0 do not support tmo api!");
+    }
 
     return ret;
 }
-
-/*
-*****************************
-*
-* Desc: get dark area boost strength
-*    this function is active for normal mode
-* Argument:
-*   level: [1, 10]
-*
-*****************************
-*/
 XCamReturn rk_aiq_uapi2_setDarkAreaBoostStrth(const rk_aiq_sys_ctx_t* ctx, unsigned int level)
 {
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
@@ -1214,6 +1207,10 @@ XCamReturn rk_aiq_uapi2_setDarkAreaBoostStrth(const rk_aiq_sys_ctx_t* ctx, unsig
         ret = XCAM_RETURN_ERROR_PARAM;
         RKAIQ_IMGPROC_CHECK_RET(ret, "ISP2.1 do not support tmo api!");
     }
+    else if(CHECK_ISP_HW_V30()) {
+        ret = XCAM_RETURN_ERROR_PARAM;
+        RKAIQ_IMGPROC_CHECK_RET(ret, "ISP3.0 do not support tmo api!");
+    }
 
     return ret;
 }
@@ -1221,7 +1218,7 @@ XCamReturn rk_aiq_uapi2_setDarkAreaBoostStrth(const rk_aiq_sys_ctx_t* ctx, unsig
 /*
 *****************************
 *
-* Desc: set manual hdr strength
+* Desc: set/get manual hdr strength
 *    this function is active for HDR is manual mode
 * Argument:
 *   level: [1, 100]
@@ -1260,11 +1257,13 @@ XCamReturn rk_aiq_uapi2_setMHDRStrth(const rk_aiq_sys_ctx_t* ctx, bool on, unsig
         ret = XCAM_RETURN_ERROR_PARAM;
         RKAIQ_IMGPROC_CHECK_RET(ret, "ISP2.1 do not support tmo api, ctx is NULL!");
     }
+    else if(CHECK_ISP_HW_V30()) {
+        ret = XCAM_RETURN_ERROR_PARAM;
+        RKAIQ_IMGPROC_CHECK_RET(ret, "ISP3.0 do not support tmo api!");
+    }
 
     return ret;
 }
-
-
 XCamReturn rk_aiq_uapi2_getMHDRStrth(const rk_aiq_sys_ctx_t* ctx, bool * on, unsigned int *level)
 {
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
@@ -1291,6 +1290,10 @@ XCamReturn rk_aiq_uapi2_getMHDRStrth(const rk_aiq_sys_ctx_t* ctx, bool * on, uns
     else if(CHECK_ISP_HW_V21()) {
         ret = XCAM_RETURN_ERROR_PARAM;
         RKAIQ_IMGPROC_CHECK_RET(ret, "ISP2.1 do not support tmo api, ctx is NULL!");
+    }
+    else if(CHECK_ISP_HW_V30()) {
+        ret = XCAM_RETURN_ERROR_PARAM;
+        RKAIQ_IMGPROC_CHECK_RET(ret, "ISP3.0 do not support tmo api!");
     }
 
     return ret;

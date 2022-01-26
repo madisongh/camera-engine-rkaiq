@@ -46,7 +46,9 @@ typedef struct rk_aiq_i2c_data_s {
     bool            bValid;
     unsigned int    nNumRegs;
     unsigned int*   pRegAddr;
+    unsigned int*   pAddrByteNum;
     unsigned int*   pRegValue;
+    unsigned int*   pValueByteNum;
     unsigned int*   pDelayFrames;
 } rk_aiq_i2c_data_t;
 

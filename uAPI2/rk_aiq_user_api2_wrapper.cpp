@@ -23,9 +23,11 @@
 #include "stdlib.h"
 #include "string.h"
 #include "uAPI2/rk_aiq_user_api2_wrapper.h"
+#include "uAPI2/rk_aiq_user_api2_sysctl.h"
 #include "rk_aiq_user_api_sysctl.h"
 #include "uAPI2/rk_aiq_user_api2_ae.h"
 #include "uAPI2/rk_aiq_user_api2_imgproc.h"
+#include "uAPI/include/rk_aiq_user_api_sysctl.h"
 
 int rk_aiq_uapi_sysctl_swWorkingModeDyn2(const rk_aiq_sys_ctx_t *ctx,
         work_mode_t *mode) {
@@ -34,9 +36,7 @@ int rk_aiq_uapi_sysctl_swWorkingModeDyn2(const rk_aiq_sys_ctx_t *ctx,
 
 int rk_aiq_uapi_sysctl_getWorkingModeDyn(const rk_aiq_sys_ctx_t *ctx,
         work_mode_t *mode) {
-    (void)ctx;
-    mode->mode = RK_AIQ_WORKING_MODE_NORMAL;
-    return 0;
+    return rk_aiq_uapi2_sysctl_getWorkingMode(ctx, &mode->mode);
 }
 
 int rk_aiq_uapi2_setWBMode2(rk_aiq_sys_ctx_t *ctx, uapi_wb_mode_t *mode) {
@@ -93,3 +93,22 @@ int rk_aiq_user_api2_get_scene(const rk_aiq_sys_ctx_t* sys_ctx, aiq_scene_t* sce
     return 0;
 }
 
+int rk_aiq_uapi_get_ae_hwstats(const rk_aiq_sys_ctx_t* sys_ctx, uapi_ae_hwstats_t* ae_hwstats)
+{
+  rk_aiq_isp_stats_t isp_stats;
+  rk_aiq_uapi_sysctl_get3AStats(sys_ctx, &isp_stats);
+
+  memcpy(ae_hwstats, &isp_stats.aec_stats.ae_data, sizeof(uapi_ae_hwstats_t));
+
+  return 0;
+}
+
+int rk_aiq_uapi_get_awb_stat(const rk_aiq_sys_ctx_t* sys_ctx, rk_tool_awb_stat_res2_v30_t* awb_stat)
+{
+  rk_aiq_isp_stats_t isp_stats;
+  rk_aiq_uapi_sysctl_get3AStats(sys_ctx, &isp_stats);
+
+  memcpy(awb_stat, &isp_stats.awb_stats_v3x, sizeof(rk_tool_awb_stat_res2_v30_t));
+
+  return 0;
+}

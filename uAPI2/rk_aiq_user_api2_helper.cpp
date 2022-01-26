@@ -63,6 +63,10 @@ __RKAIQUAPI_CALLER(uapi_wb_gain_t);
 __RKAIQUAPI_CALLER(uapi_wb_mode_t);
 __RKAIQUAPI_CALLER(uapiMergeCurrCtlData_t);
 __RKAIQUAPI_CALLER(drcAttr_t);
+__RKAIQUAPI_CALLER(uapi_ae_hwstats_t);
+__RKAIQUAPI_CALLER(rk_tool_awb_stat_res2_v30_t);
+__RKAIQUAPI_CALLER(rk_tool_awb_stat_res_full_t);
+__RKAIQUAPI_CALLER(rk_tool_awb_strategy_result_t);
 
 RkAiqUapiDesc_t rkaiq_uapidesc_list[] = {
     __RKAIQUAPI_DESC_DEF(
@@ -87,6 +91,21 @@ RkAiqUapiDesc_t rkaiq_uapidesc_list[] = {
     __RKAIQUAPI_DESC_DEF("/uapi/0/system/scene", aiq_scene_t,
                          rk_aiq_tool_api_set_scene,
                          rk_aiq_user_api2_get_scene),
+    __RKAIQUAPI_DESC_DEF("/uapi/0/measure_info/ae_hwstats", uapi_ae_hwstats_t,
+                         NULL,
+                         rk_aiq_uapi_get_ae_hwstats),
+    __RKAIQUAPI_DESC_DEF("/uapi/0/measure_info/wb_log/info/awb_stat",
+                         rk_tool_awb_stat_res2_v30_t,
+                         NULL,
+                         rk_aiq_uapi_get_awb_stat),
+    __RKAIQUAPI_DESC_DEF("/uapi/0/measure_info/wb_log/info/awb_stat_algo",
+                         rk_tool_awb_stat_res_full_t,
+                         NULL,
+                         rk_aiq_user_api2_awbV30_getAlgoSta),
+    __RKAIQUAPI_DESC_DEF("/uapi/0/measure_info/wb_log/info/awb_strategy_result",
+                         rk_tool_awb_strategy_result_t,
+                         NULL,
+                         rk_aiq_user_api2_awbV30_getStrategyResult),
 };
 /***********************END OF CUSTOM AREA**************************/
 
@@ -128,17 +147,45 @@ char *rkaiq_uapi_rpc_response(const char *cmd_path, cJSON *root_js,
   return ret_str;
 }
 
+int rkaiq_uapi_best_match(const char* cmd_path_str)
+{
+  int i = 0;
+  int list_len = -1;
+  int beset_match = -1;
+  int max_length = -1;
+
+  list_len = sizeof(rkaiq_uapidesc_list) / sizeof(RkAiqUapiDesc_t);
+  if (list_len <= 0) {
+    return -1;
+  }
+
+  // Find most match uapi
+  for (i = 0; i < list_len; i++) {
+    RkAiqUapiDesc_t *temp_uapi_desc = &rkaiq_uapidesc_list[i];
+    if (strstr(cmd_path_str, temp_uapi_desc->arg_path)) {
+      int path_length = std::string(temp_uapi_desc->arg_path).length();
+      if (path_length < max_length) {
+        continue;
+      }
+      max_length = path_length;
+      beset_match = i;
+    }
+  }
+
+  return beset_match;
+}
+
 int rkaiq_uapi_unified_ctl(rk_aiq_sys_ctx_t *sys_ctx, const char *js_str,
                            char **ret_str, int op_mode) {
   RkAiqUapiDesc_t *uapi_desc = NULL;
   std::string cmd_path_str;
   std::string final_path = "/";
-  char *cmd_path = NULL;
   cJSON *cmd_js = NULL;
   cJSON *ret_js = NULL;
   cJSON *arr_item = NULL;
   int list_len = -1;
   int change_sum = -1;
+  int max_length = -1;
   int i = 0;
   *ret_str = NULL;
 
@@ -159,52 +206,30 @@ int rkaiq_uapi_unified_ctl(rk_aiq_sys_ctx_t *sys_ctx, const char *js_str,
 
   for (int i = 0; i <= (change_sum - 1); ++i) {
     if (arr_item) {
-      if (strdup(cJSON_GetObjectItem(arr_item, JSON_PATCH_PATH)->valuestring)) {
+      if (cJSON_GetObjectItem(arr_item, JSON_PATCH_PATH)->valuestring) {
         cmd_path_str = std::string(
             cJSON_GetObjectItem(arr_item, JSON_PATCH_PATH)->valuestring);
-        auto pos = cmd_path_str.find_first_not_of("/");
-        pos = cmd_path_str.find_first_of("/", pos);
-        pos = cmd_path_str.find_first_not_of("/", pos);
-        pos = cmd_path_str.find_first_of("/", pos);
-        pos = cmd_path_str.find_first_not_of("/", pos);
-        pos = cmd_path_str.find_first_of("/", pos);
-        pos = cmd_path_str.find_first_not_of("/", pos);
-        pos = cmd_path_str.find_first_of("/", pos);
-        auto final_cmd_path_str = cmd_path_str.substr(0, pos);
-
-        printf("[UAPI RPC]final cmd path str:\n%s\n",
-               final_cmd_path_str.c_str());
-
-        cmd_path = strdup(final_cmd_path_str.c_str());
-
-        auto path_str = std::string(
-            cJSON_GetObjectItem(arr_item, JSON_PATCH_PATH)->valuestring);
-        final_path = "/";
-        // remove /uapi/xxx/
-        if (pos < cmd_path_str.size()) {
-          final_path = cmd_path_str.substr(pos);
+        int desc_i = rkaiq_uapi_best_match(cmd_path_str.c_str());
+        if (desc_i >= 0) {
+          uapi_desc = &rkaiq_uapidesc_list[desc_i];
+          if (0 == std::string(uapi_desc->arg_path).compare(cmd_path_str)) {
+            final_path = "/";
+          } else {
+            final_path = cmd_path_str.substr(
+                std::string(uapi_desc->arg_path).length());
+          }
+          cJSON_ReplaceItemInObject(arr_item, JSON_PATCH_PATH,
+                                    cJSON_CreateString(final_path.c_str()));
         }
-        cJSON_ReplaceItemInObject(arr_item, JSON_PATCH_PATH,
-                                  cJSON_CreateString(final_path.c_str()));
       }
     }
     arr_item = arr_item->next;
   }
 
-  for (i = 0; i < list_len; i++) {
-    RkAiqUapiDesc_t *temp_uapi_desc = &rkaiq_uapidesc_list[i];
-    if (strstr(temp_uapi_desc->arg_path, cmd_path)) {
-      uapi_desc = temp_uapi_desc;
-      break;
-    }
-  }
-
   if (!uapi_desc) {
-    XCAM_LOG_ERROR("can't find uapi for %s\n", cmd_path);
+    XCAM_LOG_ERROR("can't find uapi for %s\n", cmd_path_str.c_str());
     return -1;
   }
-
-  printf("[UAPI RPC] final json cmd:\n%s\n", cJSON_Print(cmd_js));
 
   uapi_desc->uapi_caller(uapi_desc, sys_ctx, cmd_js, (void **)&ret_js, op_mode);
 

@@ -111,6 +111,8 @@ RkAiqManager::RkAiqManager(const char* sns_ent_name,
     , mAiqMngCmdTh(new RkAiqMngCmdThread(this))
     , mErrCb(err_cb)
     , mMetasCb(metas_cb)
+    , mHwEvtCb(NULL)
+    , mHwEvtCbCtx(NULL)
     , mSnsEntName(sns_ent_name)
     , mWorkingMode(RK_AIQ_WORKING_MODE_NORMAL)
     , mOldWkModeForGray(RK_AIQ_WORKING_MODE_NORMAL)
@@ -624,6 +626,24 @@ RkAiqManager::hwResCb(SmartPtr<VideoBuffer>& hwres)
     } else if (hwres->_buf_type == ISP_POLL_PDAF_STATS) {
         LOGD_ANALYZER("ISP_POLL_PDAF_STATS");
         ret = mRkAiqAnalyzer->pushStats(hwres);
+    } else if (hwres->_buf_type == VICAP_STREAM_ON_EVT) {
+        LOGD_ANALYZER("VICAP_STREAM_ON_EVT ... ");
+        if (mHwEvtCb) {
+            rk_aiq_hwevt_t hwevt;
+            memset(&hwevt, 0, sizeof(hwevt));
+            hwevt.cam_id = mCamHw->getCamPhyId();
+#ifdef RKAIQ_ENABLE_CAMGROUP
+            mCamGroupCoreManager->setVicapReady(&hwevt);
+            if (mCamGroupCoreManager->isAllVicapReady())
+                hwevt.aiq_status = RK_AIQ_STATUS_VICAP_READY;
+            else
+                hwevt.aiq_status = 0;
+#else
+            hwevt.aiq_status = RK_AIQ_STATUS_VICAP_READY;
+#endif
+            hwevt.ctx = mHwEvtCbCtx;
+            (*mHwEvtCb)(&hwevt);
+        }
     }
 
     EXIT_XCORE_FUNCTION();

@@ -143,6 +143,9 @@
 #define RKMODULE_SYNC_I2CDEV       \
         _IOW('V', BASE_VIDIOC_PRIVATE + 28, __u8)
 
+#define RKMODULE_SYNC_I2CDEV_COMPLETE       \
+        _IOW('V', BASE_VIDIOC_PRIVATE + 29, __u8)
+
 //csi0/csi1 phy支持full/split mode
 enum rkmodule_phy_mode {
 	PHY_FULL_MODE,
@@ -167,6 +170,8 @@ struct rkmodule_reg {
 	__u32 nNumRegs;
 	__u32 *pRegAddr;
 	__u32 *pRegValue;
+    __u32 *pRegAddrBytes;
+	__u32 *pRegValueBytes;
 } __attribute__ ((packed));
 
 /**

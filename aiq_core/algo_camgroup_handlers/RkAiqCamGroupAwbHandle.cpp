@@ -165,14 +165,21 @@ XCamReturn RkAiqCamGroupAwbHandleInt::setWbOpModeAttrib(rk_aiq_uapiV2_wb_opMode_
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (att.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewWbOpModeAttr, &att, sizeof(att)))
+        isChanged = true;
+    else if (att.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurWbOpModeAttr, &att, sizeof(att)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurWbOpModeAttr, &att, sizeof(rk_aiq_uapiV2_wb_opMode_t))) {
+    if (isChanged) {
         mNewWbOpModeAttr   = att;
         updateWbOpModeAttr = true;
         waitSignal(att.sync.sync_mode);
@@ -214,14 +221,21 @@ XCamReturn RkAiqCamGroupAwbHandleInt::setMwbAttrib(rk_aiq_wb_mwb_attrib_t att) {
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (att.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewWbMwbAttr, &att, sizeof(att)))
+        isChanged = true;
+    else if (att.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurWbMwbAttr, &att, sizeof(att)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurWbMwbAttr, &att, sizeof(rk_aiq_wb_mwb_attrib_t))) {
+    if (isChanged) {
         mNewWbMwbAttr   = att;
         updateWbMwbAttr = true;
         waitSignal(att.sync.sync_mode);
@@ -263,15 +277,21 @@ XCamReturn RkAiqCamGroupAwbHandleInt::setWbAwbWbGainAdjustAttrib(rk_aiq_uapiV2_w
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (att.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewWbAwbWbGainAdjustAttr, &att, sizeof(att)))
+        isChanged = true;
+    else if (att.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurWbAwbWbGainAdjustAttr, &att, sizeof(att)))
+        isChanged = true;
 
     // if something changed
-    if (0 !=
-        memcmp(&mCurWbAwbWbGainAdjustAttr, &att, sizeof(rk_aiq_uapiV2_wb_awb_wbGainAdjust_t))) {
+    if (isChanged) {
         mNewWbAwbWbGainAdjustAttr   = att;
         updateWbAwbWbGainAdjustAttr = true;
         waitSignal(att.sync.sync_mode);
@@ -313,14 +333,21 @@ XCamReturn RkAiqCamGroupAwbHandleInt::setWbAwbWbGainOffsetAttrib(rk_aiq_uapiV2_w
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (att.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewWbAwbWbGainOffsetAttr, &att, sizeof(att)))
+        isChanged = true;
+    else if (att.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurWbAwbWbGainOffsetAttr, &att, sizeof(att)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurWbAwbWbGainOffsetAttr, &att, sizeof(rk_aiq_uapiV2_wb_awb_wbGainOffset_t))) {
+    if (isChanged) {
         mNewWbAwbWbGainOffsetAttr   = att;
         updateWbAwbWbGainOffsetAttr = true;
         waitSignal(att.sync.sync_mode);
@@ -362,14 +389,21 @@ XCamReturn RkAiqCamGroupAwbHandleInt::setWbAwbMultiWindowAttrib(rk_aiq_uapiV2_wb
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     mCfgMutex.lock();
-    // TODO
-    // check if there is different between att & mCurAtt
+
+    // check if there is different between att & mCurAtt(sync)/mNewAtt(async)
     // if something changed, set att to mNewAtt, and
     // the new params will be effective later when updateConfig
     // called by RkAiqCore
+    bool isChanged = false;
+    if (att.sync.sync_mode == RK_AIQ_UAPI_MODE_ASYNC && \
+        memcmp(&mNewWbAwbMultiWindowAttr, &att, sizeof(att)))
+        isChanged = true;
+    else if (att.sync.sync_mode != RK_AIQ_UAPI_MODE_ASYNC && \
+             memcmp(&mCurWbAwbMultiWindowAttr, &att, sizeof(att)))
+        isChanged = true;
 
     // if something changed
-    if (0 != memcmp(&mCurWbAwbMultiWindowAttr, &att, sizeof(rk_aiq_uapiV2_wb_awb_mulWindow_t))) {
+    if (isChanged) {
         mNewWbAwbMultiWindowAttr   = att;
         updateWbAwbMultiWindowAttr = true;
         waitSignal(att.sync.sync_mode);
@@ -405,5 +439,28 @@ XCamReturn RkAiqCamGroupAwbHandleInt::getWbAwbMultiWindowAttrib(rk_aiq_uapiV2_wb
     EXIT_ANALYZER_FUNCTION();
     return ret;
 }
+
+XCamReturn RkAiqCamGroupAwbHandleInt::getAlgoStat(rk_tool_awb_stat_res_full_t *awb_stat_algo) {
+    ENTER_ANALYZER_FUNCTION();
+
+    XCamReturn ret = XCAM_RETURN_NO_ERROR;
+
+    rk_aiq_uapiV2_camgroup_awb_GetAlgoStat(mAlgoCtx, awb_stat_algo);
+
+    EXIT_ANALYZER_FUNCTION();
+    return ret;
+}
+
+XCamReturn RkAiqCamGroupAwbHandleInt::getStrategyResult(rk_tool_awb_strategy_result_t *awb_strategy_result) {
+    ENTER_ANALYZER_FUNCTION();
+
+    XCamReturn ret = XCAM_RETURN_NO_ERROR;
+
+    rk_aiq_uapiV2_camgroup_awb_GetStrategyResult(mAlgoCtx, awb_strategy_result);
+
+    EXIT_ANALYZER_FUNCTION();
+    return ret;
+}
+
 
 };  // namespace RkCam

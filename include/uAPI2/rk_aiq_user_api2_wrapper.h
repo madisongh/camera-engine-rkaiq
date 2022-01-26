@@ -42,4 +42,10 @@ int rk_aiq_user_api2_set_scene(const rk_aiq_sys_ctx_t *sys_ctx,
 int rk_aiq_user_api2_get_scene(const rk_aiq_sys_ctx_t *sys_ctx,
                                aiq_scene_t *scene);
 
+int rk_aiq_uapi_get_awb_stat(const rk_aiq_sys_ctx_t* sys_ctx,
+                          rk_tool_awb_stat_res2_v30_t* awb_stat);
+
+int rk_aiq_uapi_get_ae_hwstats(const rk_aiq_sys_ctx_t* sys_ctx,
+                               uapi_ae_hwstats_t* ae_hwstats);
+
 #endif /*__RK_AIQ_USER_API2_WRAPPER_H__*/

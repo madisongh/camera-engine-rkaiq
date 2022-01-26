@@ -584,10 +584,17 @@ SensorHw::setI2cDAta(pending_split_exps_t* exps) {
     regs.nNumRegs = exps->i2c_exp_res.nNumRegs;
     regs.pRegAddr = exps->i2c_exp_res.RegAddr;
     regs.pRegValue = exps->i2c_exp_res.RegValue;
+    regs.pRegAddrBytes = exps->i2c_exp_res.AddrByteNum;
+    regs.pRegValueBytes = exps->i2c_exp_res.ValueByteNum;
 
-    LOG1_CAMHW_SUBM(SENSOR_SUBM,"set sensor reg array ------");
+    LOG1_CAMHW_SUBM(SENSOR_SUBM,"set sensor reg array num %d ------", regs.nNumRegs);
+    if (exps->i2c_exp_res.nNumRegs <= 0)
+        return XCAM_RETURN_NO_ERROR;
+
     for (uint32_t i = 0; i < regs.nNumRegs; i++) {
-        LOG1_CAMHW_SUBM(SENSOR_SUBM,"reg:(0x%04x, 0x%04x)", regs.pRegAddr[i], regs.pRegValue[i]);
+        LOG1_CAMHW_SUBM(SENSOR_SUBM,"reg:(0x%04x,%d,0x%04x,%d)",
+                        regs.pRegAddr[i],regs.pRegAddrBytes[i],
+                        regs.pRegValue[i],regs.pRegValueBytes[i]);
     }
 
     if (io_control(RKMODULE_SET_REGISTER, &regs) < 0) {
@@ -609,12 +616,13 @@ SensorHw::setExposureParams(SmartPtr<RkAiqExpParamsProxy>& expPar)
         if (exp->algo_id == 0) {
             if (exp->exp_tbl_size > 0) {
                 int lastIdx = exp->exp_tbl_size - 1;
-                exp->aecExpInfo.LinearExp = exp->exp_tbl[lastIdx].LinearExp;
+				exp->aecExpInfo = exp->exp_tbl[lastIdx];
+                /*exp->aecExpInfo.LinearExp = exp->exp_tbl[lastIdx].LinearExp;
                 exp->aecExpInfo.HdrExp[0] = exp->exp_tbl[lastIdx].HdrExp[0];
                 exp->aecExpInfo.HdrExp[1] = exp->exp_tbl[lastIdx].HdrExp[1];
                 exp->aecExpInfo.HdrExp[2] = exp->exp_tbl[lastIdx].HdrExp[2];
                 exp->aecExpInfo.frame_length_lines = exp->exp_tbl[lastIdx].frame_length_lines;
-                exp->aecExpInfo.CISFeature.SNR = exp->exp_tbl[lastIdx].CISFeature.SNR;
+                exp->aecExpInfo.CISFeature.SNR = exp->exp_tbl[lastIdx].CISFeature.SNR;*/
             }
         }
         if (!exp->aecExpInfo.exp_i2c_params.bValid) {
@@ -631,7 +639,9 @@ SensorHw::setExposureParams(SmartPtr<RkAiqExpParamsProxy>& expPar)
             new_exps.i2c_exp_res.nNumRegs = exp->aecExpInfo.exp_i2c_params.nNumRegs;
             for (uint32_t i = 0; i < exp->aecExpInfo.exp_i2c_params.nNumRegs; i++) {
                 new_exps.i2c_exp_res.RegAddr[i] = exp->aecExpInfo.exp_i2c_params.RegAddr[i];
-                new_exps.i2c_exp_res.RegValue[i] = exp->aecExpInfo.exp_i2c_params.RegValue[i];
+                new_exps.i2c_exp_res.RegValue[i] = exp->aecExpInfo.exp_i2c_params.RegValue[i];				
+                new_exps.i2c_exp_res.AddrByteNum[i] = exp->aecExpInfo.exp_i2c_params.AddrByteNum[i];
+                new_exps.i2c_exp_res.ValueByteNum[i] = exp->aecExpInfo.exp_i2c_params.ValueByteNum[i];
             }
             setI2cDAta(&new_exps);
         }
@@ -674,7 +684,7 @@ SensorHw::setExposureParams(SmartPtr<RkAiqExpParamsProxy>& expPar)
                     tmp->aecExpInfo.HdrExp[2] = tmp->exp_tbl[i].HdrExp[2];
                     tmp->aecExpInfo.frame_length_lines = tmp->exp_tbl[i].frame_length_lines;
                     tmp->aecExpInfo.CISFeature.SNR = tmp->exp_tbl[i].CISFeature.SNR;
-
+                    tmp->aecExpInfo.exp_i2c_params = tmp->exp_tbl[i].exp_i2c_params;
 
                     /* set a flag when it's fisrt elem of exp-table*/
                     _exp_list.push_back(std::make_pair(expParamsProxy, (i == 0 ? true : false)));
@@ -810,6 +820,7 @@ SensorHw::getSensorModeData(const char* sns_ent_name,
                             rk_aiq_exposure_sensor_descriptor& sns_des)
 {
     rk_aiq_exposure_sensor_descriptor sensor_desc;
+
     get_sensor_descriptor (&sensor_desc);
 
     _sns_entity_name = sns_ent_name;
@@ -869,6 +880,8 @@ SensorHw::split_locked(SmartPtr<RkAiqExpParamsProxy>& exp_param, uint32_t sof_id
                 new_exps.is_rk_exp_res = false;
                 new_exps.i2c_exp_res.RegAddr[0] = i2c_param->RegAddr[i];
                 new_exps.i2c_exp_res.RegValue[0] = i2c_param->RegValue[i];
+				new_exps.i2c_exp_res.AddrByteNum[0] = i2c_param->AddrByteNum[i];
+                new_exps.i2c_exp_res.ValueByteNum[0] = i2c_param->ValueByteNum[i];
                 new_exps.i2c_exp_res.nNumRegs = 1;
                 _pending_spilt_map[dst_id] = new_exps;
             } else {
@@ -880,6 +893,8 @@ SensorHw::split_locked(SmartPtr<RkAiqExpParamsProxy>& exp_param, uint32_t sof_id
                 }
                 tmp->i2c_exp_res.RegAddr[num_regs] = i2c_param->RegAddr[i];
                 tmp->i2c_exp_res.RegValue[num_regs] = i2c_param->RegValue[i];
+				tmp->i2c_exp_res.AddrByteNum[num_regs] = i2c_param->AddrByteNum[i];
+                tmp->i2c_exp_res.ValueByteNum[num_regs] = i2c_param->ValueByteNum[i];
                 tmp->i2c_exp_res.nNumRegs++;
             }
         }
