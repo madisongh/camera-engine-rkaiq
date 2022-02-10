@@ -688,12 +688,15 @@ RkAiqCore::stop()
         mThumbnailsService->Stop();
     }
 
-    mAiqStatsCachedList.clear();
-    mAiqStatsOutMap.clear();
-    mAlogsComSharedParams.conf_type = RK_AIQ_ALGO_CONFTYPE_INIT;
-    mState = RK_AIQ_CORE_STATE_STOPED;
-    firstStatsReceived = false;
-    mLastAnalyzedId = 0;
+    {
+        SmartLock locker (ispStatsListMutex);
+        mAiqStatsCachedList.clear();
+        mAiqStatsOutMap.clear();
+        mAlogsComSharedParams.conf_type = RK_AIQ_ALGO_CONFTYPE_INIT;
+        mState = RK_AIQ_CORE_STATE_STOPED;
+        firstStatsReceived = false;
+        mLastAnalyzedId = 0;
+    }
     mIspStatsCond.broadcast ();
     mSafeEnableAlgo = true;
     EXIT_ANALYZER_FUNCTION();
@@ -1633,16 +1636,20 @@ RkAiqCore::copyIspStats(SmartPtr<RkAiqAecStatsProxy>& aecStat,
         if (awbStat.ptr()) {
             memcpy(to->awb_stats_v3x.light, awbStat->data()->awb_stats_v3x.light,
                    sizeof(to->awb_stats_v3x.light));
+#ifdef ISP_HW_V30
             memcpy(to->awb_stats_v3x.WpNo2, awbStat->data()->awb_stats_v3x.WpNo2,
                    sizeof(to->awb_stats_v3x.WpNo2));
+#endif
             memcpy(to->awb_stats_v3x.blockResult, awbStat->data()->awb_stats_v3x.blockResult,
                    sizeof(to->awb_stats_v3x.blockResult));
+#ifdef ISP_HW_V30
             memcpy(to->awb_stats_v3x.multiwindowLightResult,
                    awbStat->data()->awb_stats_v3x.multiwindowLightResult,
                    sizeof(to->awb_stats_v3x.multiwindowLightResult));
             memcpy(to->awb_stats_v3x.excWpRangeResult,
                    awbStat->data()->awb_stats_v3x.excWpRangeResult,
                    sizeof(to->awb_stats_v3x.excWpRangeResult));
+#endif
             memcpy(to->awb_stats_v3x.WpNoHist, awbStat->data()->awb_stats_v3x.WpNoHist,
                    sizeof(to->awb_stats_v3x.WpNoHist));
         }

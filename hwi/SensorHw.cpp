@@ -581,20 +581,20 @@ XCamReturn
 SensorHw::setI2cDAta(pending_split_exps_t* exps) {
     struct rkmodule_reg regs;
 
-    regs.nNumRegs = exps->i2c_exp_res.nNumRegs;
-    regs.pRegAddr = exps->i2c_exp_res.RegAddr;
-    regs.pRegValue = exps->i2c_exp_res.RegValue;
-    regs.pRegAddrBytes = exps->i2c_exp_res.AddrByteNum;
-    regs.pRegValueBytes = exps->i2c_exp_res.ValueByteNum;
+    regs.num_regs = (__u64)(exps->i2c_exp_res.nNumRegs);
+    regs.preg_addr = (__u64)(exps->i2c_exp_res.RegAddr);
+    regs.preg_value = (__u64)(exps->i2c_exp_res.RegValue);
+    regs.preg_addr_bytes = (__u64)(exps->i2c_exp_res.AddrByteNum);
+    regs.preg_value_bytes = (__u64)(exps->i2c_exp_res.ValueByteNum);
 
-    LOG1_CAMHW_SUBM(SENSOR_SUBM,"set sensor reg array num %d ------", regs.nNumRegs);
+    LOG1_CAMHW_SUBM(SENSOR_SUBM,"set sensor reg array num %d ------", exps->i2c_exp_res.nNumRegs);
     if (exps->i2c_exp_res.nNumRegs <= 0)
         return XCAM_RETURN_NO_ERROR;
 
-    for (uint32_t i = 0; i < regs.nNumRegs; i++) {
+    for (uint32_t i = 0; i < regs.num_regs; i++) {
         LOG1_CAMHW_SUBM(SENSOR_SUBM,"reg:(0x%04x,%d,0x%04x,%d)",
-                        regs.pRegAddr[i],regs.pRegAddrBytes[i],
-                        regs.pRegValue[i],regs.pRegValueBytes[i]);
+                        exps->i2c_exp_res.RegAddr[i], exps->i2c_exp_res.AddrByteNum[i],
+                        exps->i2c_exp_res.RegValue[i], exps->i2c_exp_res.ValueByteNum[i]);
     }
 
     if (io_control(RKMODULE_SET_REGISTER, &regs) < 0) {

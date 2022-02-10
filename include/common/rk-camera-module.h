@@ -156,7 +156,7 @@ enum rkmodule_phy_mode {
 struct rkmodule_mipi_lvds_bus {
 	__u32 bus_type;
 	__u32 lanes;
-	enum rkmodule_phy_mode phy_mode;
+	__u32 phy_mode;
 };
 
 struct rkmodule_bus_config {
@@ -167,11 +167,11 @@ struct rkmodule_bus_config {
 } __attribute__ ((packed));
 
 struct rkmodule_reg {
-	__u32 nNumRegs;
-	__u32 *pRegAddr;
-	__u32 *pRegValue;
-    __u32 *pRegAddrBytes;
-	__u32 *pRegValueBytes;
+    __u64 num_regs;
+    __u64 preg_addr;
+    __u64 preg_value;
+    __u64 preg_addr_bytes;
+    __u64 preg_value_bytes;
 } __attribute__ ((packed));
 
 /**

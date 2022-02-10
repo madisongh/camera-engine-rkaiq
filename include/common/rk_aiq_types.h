@@ -809,6 +809,6 @@ typedef enum rk_isp_stream_mode_e {
     RK_ISP_STREAM_MODE_OFFLNIE,
 } rk_isp_stream_mode_t;
 
-#define RK_AIQ_CAM_GROUP_MAX_CAMS (6)
+#define RK_AIQ_CAM_GROUP_MAX_CAMS (8)
 
 #endif
