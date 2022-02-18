@@ -1268,7 +1268,7 @@ typedef struct CalibDb_RKDM_s {
 #define CCM_PROFILE_NAME            ( 25U )
 typedef char                        CalibDb_Ccm_ProfileName_t[CCM_PROFILE_NAME];
 #define CCM_ILLUMINATION_NAME       ( 20U )
-typedef char                        CalibDb_IlluminationName_t[CCM_ILLUMINATION_NAME];
+// typedef char                        CalibDb_IlluminationName_t[CCM_ILLUMINATION_NAME];
 #define CCM_PROFILES_NUM_MAX         ( 5 )
 #define CCM_RESOLUTIONS_NUM_MAX      ( 4 )
 #define CALIBDB_ISO_NUM              ( 9 )

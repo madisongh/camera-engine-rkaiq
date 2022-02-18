@@ -341,7 +341,6 @@ typedef struct {
 } RkAiqIrisParamComb_t;
 
 typedef struct RKAiqAecExpInfo_s {
-
     // M4_STRUCT_DESC("LinearExp", "normal_ui_style")
     RkAiqExpParamComb_t LinearExp;
 
@@ -366,6 +365,14 @@ typedef struct RKAiqAecExpInfo_s {
     // M4_STRUCT_DESC("I2cPara", "normal_ui_style",M4_HIDE(1))
     RKAiqExpI2cParam_t exp_i2c_params;
 } RKAiqAecExpInfo_t;
+
+/**
+ * gcc-4.4.7 disallow typedef redefinition
+ * error: redefinition of typedef 'RKAiqAecExpInfo_t' with include/algos/rk_aiq_algo_des.h
+ */
+#ifndef RKAIQAECEXPINFO_T
+#define RKAIQAECEXPINFO_T
+#endif
 
 /*****************************************************************************/
 /**

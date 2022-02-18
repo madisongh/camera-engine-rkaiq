@@ -59,6 +59,163 @@ typedef enum AdpccOPMode_e {
     ADPCC_OP_MODE_MAX                                      /**< max */
 } AdpccOPMode_t;
 
+typedef enum Adpcc_onfly_mode_e {
+    ADPCC_ONFLY_MODE_FAST        = 0,                   /**< dpcc manual fast mode */
+    ADPCC_ONFLY_MODE_EXPERT      = 1,                   /**< dpcc manual expert mode */
+    ADPCC_ONFLY_MODE_MAX                                /**< max */
+} Adpcc_onfly_mode_t;
+
+typedef struct Adpcc_basic_cfg_params_s {
+    //mode 0x0000
+    unsigned char stage1_enable;
+    unsigned char grayscale_mode;
+    unsigned char enable;
+
+    //output_mode 0x0004
+    unsigned char sw_rk_out_sel;
+    unsigned char sw_dpcc_output_sel;
+    unsigned char stage1_rb_3x3;
+    unsigned char stage1_g_3x3;
+    unsigned char stage1_incl_rb_center;
+    unsigned char stage1_incl_green_center;
+
+    //set_use 0x0008
+    unsigned char stage1_use_fix_set;
+    unsigned char stage1_use_set_3;
+    unsigned char stage1_use_set_2;
+    unsigned char stage1_use_set_1;
+
+    //methods_set_1 0x000c
+    unsigned char sw_rk_red_blue1_en;
+    unsigned char rg_red_blue1_enable;
+    unsigned char rnd_red_blue1_enable;
+    unsigned char ro_red_blue1_enable;
+    unsigned char lc_red_blue1_enable;
+    unsigned char pg_red_blue1_enable;
+    unsigned char sw_rk_green1_en;
+    unsigned char rg_green1_enable;
+    unsigned char rnd_green1_enable;
+    unsigned char ro_green1_enable;
+    unsigned char lc_green1_enable;
+    unsigned char pg_green1_enable;
+
+    //methods_set_2 0x0010
+    unsigned char sw_rk_red_blue2_en;
+    unsigned char rg_red_blue2_enable;
+    unsigned char rnd_red_blue2_enable;
+    unsigned char ro_red_blue2_enable;
+    unsigned char lc_red_blue2_enable;
+    unsigned char pg_red_blue2_enable;
+    unsigned char sw_rk_green2_en;
+    unsigned char rg_green2_enable;
+    unsigned char rnd_green2_enable;
+    unsigned char ro_green2_enable;
+    unsigned char lc_green2_enable;
+    unsigned char pg_green2_enable;
+
+    //methods_set_3 0x0014
+    unsigned char sw_rk_red_blue3_en;
+    unsigned char rg_red_blue3_enable;
+    unsigned char rnd_red_blue3_enable;
+    unsigned char ro_red_blue3_enable;
+    unsigned char lc_red_blue3_enable;
+    unsigned char pg_red_blue3_enable;
+    unsigned char sw_rk_green3_en;
+    unsigned char rg_green3_enable;
+    unsigned char rnd_green3_enable;
+    unsigned char ro_green3_enable;
+    unsigned char lc_green3_enable;
+    unsigned char pg_green3_enable;
+
+    //line_thresh_1 0x0018
+    unsigned char sw_mindis1_rb;
+    unsigned char sw_mindis1_g;
+    unsigned char line_thr_1_rb;
+    unsigned char line_thr_1_g;
+
+    //line_mad_fac_1 0x001c
+    unsigned char sw_dis_scale_min1;
+    unsigned char sw_dis_scale_max1;
+    unsigned char line_mad_fac_1_rb;
+    unsigned char line_mad_fac_1_g;
+
+    //pg_fac_1 0x0020
+    unsigned char pg_fac_1_rb;
+    unsigned char pg_fac_1_g;
+
+    //rnd_thresh_1 0x0024
+    unsigned char rnd_thr_1_rb;
+    unsigned char rnd_thr_1_g;
+
+    //rg_fac_1 0x0028
+    unsigned char rg_fac_1_rb;
+    unsigned char rg_fac_1_g;
+
+    //line_thresh_2 0x002c
+    unsigned char sw_mindis2_rb;
+    unsigned char sw_mindis2_g;
+    unsigned char line_thr_2_rb;
+    unsigned char line_thr_2_g;
+
+    //line_mad_fac_2 0x0030
+    unsigned char sw_dis_scale_min2;
+    unsigned char sw_dis_scale_max2;
+    unsigned char line_mad_fac_2_rb;
+    unsigned char line_mad_fac_2_g;
+
+    //pg_fac_2 0x0034
+    unsigned char pg_fac_2_rb;
+    unsigned char pg_fac_2_g;
+
+    //rnd_thresh_2 0x0038
+    unsigned char rnd_thr_2_rb;
+    unsigned char rnd_thr_2_g;
+
+    //rg_fac_2 0x003c
+    unsigned char rg_fac_2_rb;
+    unsigned char rg_fac_2_g;
+
+    //line_thresh_3 0x0040
+    unsigned char sw_mindis3_rb;
+    unsigned char sw_mindis3_g;
+    unsigned char line_thr_3_rb;
+    unsigned char line_thr_3_g;
+
+    //line_mad_fac_3 0x0044
+    unsigned char sw_dis_scale_min3;
+    unsigned char sw_dis_scale_max3;
+    unsigned char line_mad_fac_3_rb;
+    unsigned char line_mad_fac_3_g;
+
+    //pg_fac_3 0x0048
+    unsigned char pg_fac_3_rb;
+    unsigned char pg_fac_3_g;
+
+    //rnd_thresh_3 0x004c
+    unsigned char rnd_thr_3_rb;
+    unsigned char rnd_thr_3_g;
+
+    //rg_fac_3 0x0050
+    unsigned char rg_fac_3_rb;
+    unsigned char rg_fac_3_g;
+
+    //ro_limits 0x0054
+    unsigned char ro_lim_3_rb;
+    unsigned char ro_lim_3_g;
+    unsigned char ro_lim_2_rb;
+    unsigned char ro_lim_2_g;
+    unsigned char ro_lim_1_rb;
+    unsigned char ro_lim_1_g;
+
+    //rnd_offs 0x0058
+    unsigned char rnd_offs_3_rb;
+    unsigned char rnd_offs_3_g;
+    unsigned char rnd_offs_2_rb;
+    unsigned char rnd_offs_2_g;
+    unsigned char rnd_offs_1_rb;
+    unsigned char rnd_offs_1_g;
+} Adpcc_basic_cfg_params_t;
+
 typedef struct Adpcc_basic_params_select_s {
     int iso;
     //mode 0x0000
@@ -318,12 +475,18 @@ typedef struct Adpcc_html_param_s {
     Adpcc_pdaf_params_t stPdaf;
 } Adpcc_html_param_t;
 
+typedef struct Adpcc_onfly_cfg_s {
+   Adpcc_onfly_mode_t mode;                // expert or fast mode
+   Adpcc_fast_mode_attr_t fast_mode;
+   Adpcc_basic_cfg_params_t expert_mode;
+}  Adpcc_onfly_cfg_t;
+
 typedef struct Adpcc_Manual_Attr_s
 {
-    Adpcc_basic_params_select_t stBasic;
+    unsigned char enable;
+    Adpcc_onfly_cfg_t stOnfly;
     Adpcc_bpt_params_select_t stBpt;
     Adpcc_pdaf_params_select_t stPdaf;
-    Adpcc_fast_mode_attr_t stFastMode;
     Adpcc_sensor_dpcc_attr_t stSensorDpcc;
 } Adpcc_Manual_Attr_t;
 
@@ -335,14 +498,14 @@ typedef struct Adpcc_Auto_Attr_s
     CalibDb_Dpcc_Fast_Mode_t stFastMode;
     CalibDb_Dpcc_Sensor_t stSensorDpcc;
 
-    Adpcc_basic_params_select_t stBasicSelect;
+    Adpcc_basic_cfg_params_t stBasicSelect;
     Adpcc_bpt_params_select_t stBptSelect;
     Adpcc_pdaf_params_select_t stPdafSelect;
 
 } Adpcc_Auto_Attr_t;
 
 typedef struct AdpccProcResult_s {
-    Adpcc_basic_params_select_t stBasic;
+    Adpcc_basic_cfg_params_t stBasic;
     Adpcc_bpt_params_select_t stBpt;
     Adpcc_pdaf_params_select_t stPdaf;
 } AdpccProcResult_t;

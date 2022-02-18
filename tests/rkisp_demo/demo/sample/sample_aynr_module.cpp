@@ -483,6 +483,7 @@ XCamReturn sample_aynr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_ynr_strength_v3_t ynrV3_strength;
                 ynrV3_strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                ynrV3_strength.strength_enable = true;
                 ynrV3_strength.percent = 1.0;
                 ret = rk_aiq_user_api2_aynrV3_SetStrength(ctx, &ynrV3_strength);
                 printf("Set aynr v3 set streangth ret:%d strength:%f \n\n", ret, ynrV3_strength.percent);
@@ -498,6 +499,7 @@ XCamReturn sample_aynr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_ynr_strength_v3_t ynrV3_strength;
                 ynrV3_strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                ynrV3_strength.strength_enable = true;
                 ynrV3_strength.percent = 0.0;
                 ret = rk_aiq_user_api2_aynrV3_SetStrength(ctx, &ynrV3_strength);
                 printf("Set aynr v3 set streangth ret:%d strength:%f \n\n", ret, ynrV3_strength.percent);
@@ -513,6 +515,7 @@ XCamReturn sample_aynr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_ynr_strength_v3_t ynrV3_strength;
                 ynrV3_strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                ynrV3_strength.strength_enable = true;
                 ynrV3_strength.percent = 0.5;
                 ret = rk_aiq_user_api2_aynrV3_SetStrength(ctx, &ynrV3_strength);
                 printf("Set aynr v3 set streangth ret:%d strength:%f \n\n", ret, ynrV3_strength.percent);
@@ -936,6 +939,7 @@ XCamReturn sample_aynr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_ynr_strength_v3_t ynrV3_strength;
                 ynrV3_strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                ynrV3_strength.strength_enable = true;
                 ynrV3_strength.percent = 1.0;
                 ret = rk_aiq_user_api2_aynrV3_SetStrength(ctx, &ynrV3_strength);
                 printf("Set aynr v3 set streangth ret:%d strength:%f \n\n", ret, ynrV3_strength.percent);
@@ -951,6 +955,7 @@ XCamReturn sample_aynr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_ynr_strength_v3_t ynrV3_strength;
                 ynrV3_strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                ynrV3_strength.strength_enable = true;
                 ynrV3_strength.percent = 0.0;
                 ret = rk_aiq_user_api2_aynrV3_SetStrength(ctx, &ynrV3_strength);
                 printf("Set aynr v3 set streangth ret:%d strength:%f \n\n", ret, ynrV3_strength.percent);
@@ -966,6 +971,7 @@ XCamReturn sample_aynr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_ynr_strength_v3_t ynrV3_strength;
                 ynrV3_strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                ynrV3_strength.strength_enable = true;
                 ynrV3_strength.percent = 0.5;
                 ret = rk_aiq_user_api2_aynrV3_SetStrength(ctx, &ynrV3_strength);
                 printf("Set aynr v3 set streangth ret:%d strength:%f \n\n", ret, ynrV3_strength.percent);

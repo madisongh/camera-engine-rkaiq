@@ -51,7 +51,7 @@ XCamReturn RkAiqAynrV3HandleInt::updateConfig(bool needSync) {
 
     if (updateStrength) {
         mCurStrength   = mNewStrength;
-        rk_aiq_uapi_aynrV3_SetLumaSFStrength(mAlgoCtx, mCurStrength.percent);
+        rk_aiq_uapi_aynrV3_SetLumaSFStrength(mAlgoCtx, &mCurStrength);
         sendSignal(mCurStrength.sync.sync_mode);
         updateStrength = false;
     }
@@ -151,15 +151,15 @@ XCamReturn RkAiqAynrV3HandleInt::getStrength(rk_aiq_ynr_strength_v3_t *pStrength
 
     if(pStrength->sync.sync_mode == RK_AIQ_UAPI_MODE_SYNC) {
         mCfgMutex.unlock();
-        rk_aiq_uapi_aynrV3_GetLumaSFStrength(mAlgoCtx, &pStrength->percent );
+        rk_aiq_uapi_aynrV3_GetLumaSFStrength(mAlgoCtx, pStrength);
         pStrength->sync.done = true;
         mCfgMutex.unlock();
     } else {
         if(updateStrength) {
-            pStrength->percent = mNewStrength.percent;
+            *pStrength = mNewStrength;
             pStrength->sync.done = false;
         } else {
-            rk_aiq_uapi_aynrV3_GetLumaSFStrength(mAlgoCtx, &pStrength->percent);
+            rk_aiq_uapi_aynrV3_GetLumaSFStrength(mAlgoCtx, pStrength);
             pStrength->sync.done = true;
         }
     }

@@ -44,6 +44,7 @@
 #include "sample_alsc_module.h"
 #include "sample_acp_module.h"
 #include "sample_aie_module.h"
+#include "sample_adpcc_module.h"
 
 struct module_sample_info {
     const char * const name;
@@ -109,6 +110,7 @@ static void sample_usage()
     printf("\t j) ALSC:       module test sample.\n");
     printf("\t k) ACP:        module test sample.\n");
     printf("\t l) AIE:        module test sample.\n");
+    printf("\t m) DPCC:       module test sample.\n");
     printf("\n");
     printf("\t please press the key: ");
 
@@ -268,6 +270,11 @@ XCamReturn sample_main (const void *arg)
         struct module_sample_info *info = &module_samples[RK_ISP_AIE];
         info->debug (nullptr);
         info->func (arg);
+       break;
+    }
+    case 'm': {
+       printf("enter DPCC module test\n");
+       sample_adpcc_module(arg);
        break;
     }
     default:

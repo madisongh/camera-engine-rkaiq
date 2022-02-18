@@ -148,7 +148,7 @@ unsigned short bayer2dnr_get_trans_V2(int tmpfix)
     return fx;
 }
 
-Abayer2dnr_result_V2_t bayer2dnr_fix_transfer_V2(RK_Bayer2dnr_Params_V2_Select_t* pSelect, RK_Bayer2dnr_Fix_V2_t *pFix, float fStrength, Abayer2dnr_ExpInfo_V2_t *pExpInfo)
+Abayer2dnr_result_V2_t bayer2dnr_fix_transfer_V2(RK_Bayer2dnr_Params_V2_Select_t* pSelect, RK_Bayer2dnr_Fix_V2_t *pFix, rk_aiq_bayer2dnr_strength_v2_t *pStrength,  Abayer2dnr_ExpInfo_V2_t *pExpInfo)
 {
     //--------------------------- v2 params ----------------------------//
     float frameiso[3];
@@ -161,6 +161,7 @@ Abayer2dnr_result_V2_t bayer2dnr_fix_transfer_V2(RK_Bayer2dnr_Params_V2_Select_t
     float tmp1, tmp2, edgesofts;
     int bayernr_sw_bil_gauss_weight[16];
     int tmp;
+    float fStrength = 1.0;
 
     if(pSelect == NULL) {
         LOGE_ANR("%s(%d): null pointer\n", __FUNCTION__, __LINE__);
@@ -177,9 +178,23 @@ Abayer2dnr_result_V2_t bayer2dnr_fix_transfer_V2(RK_Bayer2dnr_Params_V2_Select_t
         return ABAYER2DNR_RET_NULL_POINTER;
     }
 
+    if(pStrength == NULL) {
+        LOGE_ANR("%s(%d): null pointer\n", __FUNCTION__, __LINE__);
+        return ABAYER2DNR_RET_NULL_POINTER;
+    }
+
+    if(pStrength->strength_enable) {
+        fStrength = pStrength->percent;
+    }
+
     if(fStrength <= 0.0f) {
         fStrength = 0.000001;
     }
+
+    LOGD_ANR("api enalbe:%d api:strength:%f fStrength:%f\n",
+             pStrength->strength_enable,
+             pStrength->percent,
+             fStrength);
 
     // hdr gain
     int framenum = pExpInfo->hdr_mode + 1;

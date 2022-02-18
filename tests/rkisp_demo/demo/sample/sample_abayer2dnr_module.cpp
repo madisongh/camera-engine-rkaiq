@@ -308,6 +308,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayer2dnr_strength_v2_t bayer2dnrV2Strenght;
                 bayer2dnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                bayer2dnrV2Strenght.strength_enable = true;
                 bayer2dnrV2Strenght.percent = 1.0;
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetStrength(ctx, &bayer2dnrV2Strenght);
                 printf("Set abayer2dnr v2 set strength ret:%d strength:%f \n\n", ret, bayer2dnrV2Strenght.percent);
@@ -323,6 +324,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayer2dnr_strength_v2_t bayer2dnrV2Strenght;
                 bayer2dnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                bayer2dnrV2Strenght.strength_enable = true;
                 bayer2dnrV2Strenght.percent = 0.0;
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetStrength(ctx, &bayer2dnrV2Strenght);
                 printf("Set abayer2dnr v2 set strength ret:%d strength:%f \n\n", ret, bayer2dnrV2Strenght.percent);
@@ -338,6 +340,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayer2dnr_strength_v2_t bayer2dnrV2Strenght;
                 bayer2dnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                bayer2dnrV2Strenght.strength_enable = true;
                 bayer2dnrV2Strenght.percent = 0.5;
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetStrength(ctx, &bayer2dnrV2Strenght);
                 printf("Set abayer2dnr v2 set strength ret:%d strength:%f \n\n", ret, bayer2dnrV2Strenght.percent);
@@ -588,6 +591,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayer2dnr_strength_v2_t bayer2dnrV2Strenght;
                 bayer2dnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                bayer2dnrV2Strenght.strength_enable = true;
                 bayer2dnrV2Strenght.percent = 1.0;
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetStrength(ctx, &bayer2dnrV2Strenght);
                 printf("Set abayer2dnr v2 set strength ret:%d strength:%f \n\n", ret, bayer2dnrV2Strenght.percent);
@@ -603,6 +607,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayer2dnr_strength_v2_t bayer2dnrV2Strenght;
                 bayer2dnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                bayer2dnrV2Strenght.strength_enable = true;
                 bayer2dnrV2Strenght.percent = 0.0;
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetStrength(ctx, &bayer2dnrV2Strenght);
                 printf("Set abayer2dnr v2 set strength ret:%d strength:%f \n\n", ret, bayer2dnrV2Strenght.percent);
@@ -618,6 +623,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayer2dnr_strength_v2_t bayer2dnrV2Strenght;
                 bayer2dnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                bayer2dnrV2Strenght.strength_enable = true;
                 bayer2dnrV2Strenght.percent = 0.5;
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetStrength(ctx, &bayer2dnrV2Strenght);
                 printf("Set abayer2dnr v2 set strength ret:%d strength:%f \n\n", ret, bayer2dnrV2Strenght.percent);

@@ -52,7 +52,7 @@ XCamReturn RkAiqAsharpV4HandleInt::updateConfig(bool needSync) {
 
     if (updateStrength) {
         mCurStrength   = mNewStrength;
-        rk_aiq_uapi_asharpV4_SetStrength(mAlgoCtx, mCurStrength.percent);
+        rk_aiq_uapi_asharpV4_SetStrength(mAlgoCtx, &mCurStrength);
         sendSignal(mCurStrength.sync.sync_mode);
         updateStrength = false;
     }
@@ -151,15 +151,15 @@ XCamReturn RkAiqAsharpV4HandleInt::getStrength(rk_aiq_sharp_strength_v4_t *pStre
 
     if(pStrength->sync.sync_mode == RK_AIQ_UAPI_MODE_SYNC) {
         mCfgMutex.lock();
-        rk_aiq_uapi_asharpV4_GetStrength(mAlgoCtx, &pStrength->percent);
+        rk_aiq_uapi_asharpV4_GetStrength(mAlgoCtx, pStrength);
         pStrength->sync.done = true;
         mCfgMutex.unlock();
     } else {
         if(updateStrength) {
-            pStrength->percent = mNewStrength.percent;
+            *pStrength = mNewStrength;
             pStrength->sync.done = false;
         } else {
-            rk_aiq_uapi_asharpV4_GetStrength(mAlgoCtx, &pStrength->percent);
+            rk_aiq_uapi_asharpV4_GetStrength(mAlgoCtx, pStrength);
             pStrength->sync.done = true;
         }
     }

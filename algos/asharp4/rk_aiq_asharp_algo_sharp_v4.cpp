@@ -141,7 +141,7 @@ Asharp4_result_t sharp_select_params_by_ISO_V4(
 
 
 
-Asharp4_result_t sharp_fix_transfer_V4(RK_SHARP_Params_V4_Select_t *pSelect, RK_SHARP_Fix_V4_t* pFix, float fPercent)
+Asharp4_result_t sharp_fix_transfer_V4(RK_SHARP_Params_V4_Select_t *pSelect, RK_SHARP_Fix_V4_t* pFix, rk_aiq_sharp_strength_v4_t *pStrength)
 {
     int sum_coeff, offset;
     int pbf_sigma_shift = 0;
@@ -161,9 +161,25 @@ Asharp4_result_t sharp_fix_transfer_V4(RK_SHARP_Params_V4_Select_t *pSelect, RK_
         return ASHARP4_RET_NULL_POINTER;
     }
 
+    if(pStrength == NULL) {
+        LOGE_ASHARP("%s(%d): null pointer\n", __FUNCTION__, __LINE__);
+        return ASHARP4_RET_NULL_POINTER;
+    }
+
+
+    float fPercent = 1.0;
+
+    if(pStrength->strength_enable) {
+        fPercent = pStrength->percent;
+    }
     if(fPercent <= 0.0) {
         fPercent = 0.000001;
     }
+
+    LOGD_ASHARP("strength_enable:%d percent:%f %f\n",
+                pStrength->strength_enable,
+                pStrength->percent,
+                fPercent);
 
     // SHARP_SHARP_EN (0x0000)
     pFix->sharp_clk_dis = 0;

@@ -218,6 +218,7 @@ typedef struct rk_aiq_sharp_strength_v4_s {
     rk_aiq_uapi_sync_t sync;
 
     float percent;
+    bool strength_enable;
 } rk_aiq_sharp_strength_v4_t;
 
 

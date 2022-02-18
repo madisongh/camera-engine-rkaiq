@@ -42,13 +42,15 @@ rk_aiq_uapi_asharpV4_GetAttrib(const RkAiqAlgoContext *ctx,
 
 XCamReturn
 rk_aiq_uapi_asharpV4_SetStrength(const RkAiqAlgoContext *ctx,
-                                 float fPercent)
+                                 rk_aiq_sharp_strength_v4_t *pStrength)
 {
 
     Asharp_Context_V4_t* pAsharpCtx = (Asharp_Context_V4_t*)ctx;
     float fMax = ASHSRPV4_STRENGTH_MAX_PERCENT;
     float fStrength = 1.0;
+    float fPercent = 0.5;
 
+    fPercent = pStrength->percent;
 
     if(fPercent <= 0.5) {
         fStrength =  fPercent / 0.5;
@@ -58,7 +60,8 @@ rk_aiq_uapi_asharpV4_SetStrength(const RkAiqAlgoContext *ctx,
         fStrength = 0.5 / (1.0 - fPercent);
     }
 
-    pAsharpCtx->fSharp_Strength = fStrength;
+    pAsharpCtx->stStrength = *pStrength;
+    pAsharpCtx->stStrength.percent = fStrength;
     pAsharpCtx->isReCalculate |= 1;
 
     LOGD_ASHARP("%s:%d percent:%f fStrength:%f \n",
@@ -70,29 +73,33 @@ rk_aiq_uapi_asharpV4_SetStrength(const RkAiqAlgoContext *ctx,
 
 XCamReturn
 rk_aiq_uapi_asharpV4_GetStrength(const RkAiqAlgoContext *ctx,
-                                 float *pPercent)
+                                 rk_aiq_sharp_strength_v4_t *pStrength)
 {
 
     Asharp_Context_V4_t* pAsharpCtx = (Asharp_Context_V4_t*)ctx;
     float fMax = ASHSRPV4_STRENGTH_MAX_PERCENT;
     float fStrength = 1.0;
+    float fPercent = 0.5;
 
-    fStrength = pAsharpCtx->fSharp_Strength;
+    fStrength = pAsharpCtx->stStrength.percent;
 
     if(fStrength <= 1) {
-        *pPercent = fStrength * 0.5;
+        fPercent = fStrength * 0.5;
     } else {
         float tmp = 1.0;
         tmp = 1 - 0.5 / fStrength;
         if(abs(tmp - 0.999999) < 0.000001) {
             tmp = 1.0;
         }
-        *pPercent = tmp;
+        fPercent = tmp;
     }
+
+    *pStrength = pAsharpCtx->stStrength;
+    pStrength->percent = fPercent;
 
     LOGD_ASHARP("%s:%d fStrength:%f percent:%f\n",
                 __FUNCTION__, __LINE__,
-                fStrength, *pPercent);
+                fStrength, fPercent);
 
     return XCAM_RETURN_NO_ERROR;
 }

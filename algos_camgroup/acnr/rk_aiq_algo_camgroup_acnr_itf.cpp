@@ -284,12 +284,14 @@ static XCamReturn groupAcnrProcessing(const RkAiqAlgoCom* inparams, RkAiqAlgoRes
                 ret = XCAM_RETURN_ERROR_FAILED;
                 LOGE_ANR("%s: processing ANR failed (%d)\n", __FUNCTION__, ret);
             }
+            Acnr_GetProcResult_V2(acnr_contex_v2, &stAcnrResultV2);
             stAcnrResultV2.isNeedUpdate = true;
             LOGD_ANR("recalculate: %d delta_iso:%d \n ", acnr_contex_v2->isReCalculate, deltaIso);
         } else {
+            stAcnrResultV2 = acnr_contex_v2->stProcResult;
             stAcnrResultV2.isNeedUpdate = true;
         }
-        Acnr_GetProcResult_V2(acnr_contex_v2, &stAcnrResultV2);
+
         for (int i = 0; i < procResParaGroup->arraySize; i++) {
             *(procResParaGroup->camgroupParmasArray[i]->acnr._acnr_procRes_v2) = stAcnrResultV2.stFix;
         }

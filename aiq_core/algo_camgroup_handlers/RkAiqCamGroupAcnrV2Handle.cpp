@@ -37,7 +37,7 @@ XCamReturn RkAiqCamGroupAcnrV2HandleInt::updateConfig(bool needSync) {
     if (updateStrength) {
         LOGD_ANR("%s:%d\n", __FUNCTION__, __LINE__);
         mCurStrength = mNewStrength;
-        rk_aiq_uapi_camgroup_acnrV2_SetChromaSFStrength(mAlgoCtx, mCurStrength.percent);
+        rk_aiq_uapi_camgroup_acnrV2_SetChromaSFStrength(mAlgoCtx, &mCurStrength);
         sendSignal(mCurStrength.sync.sync_mode);
         updateStrength = false;
     }
@@ -142,15 +142,15 @@ XCamReturn RkAiqCamGroupAcnrV2HandleInt::getStrength(rk_aiq_cnr_strength_v2_t *p
 
     if(pStrength->sync.sync_mode == RK_AIQ_UAPI_MODE_SYNC) {
         mCfgMutex.lock();
-        rk_aiq_uapi_camgroup_acnrV2_GetChromaSFStrength(mAlgoCtx, &pStrength->percent );
+        rk_aiq_uapi_camgroup_acnrV2_GetChromaSFStrength(mAlgoCtx, pStrength);
         pStrength->sync.done = true;
         mCfgMutex.unlock();
     } else {
         if(updateStrength) {
-            pStrength->percent = mNewStrength.percent;
+            *pStrength = mNewStrength;
             pStrength->sync.done = false;
         } else {
-            rk_aiq_uapi_camgroup_acnrV2_GetChromaSFStrength(mAlgoCtx, &pStrength->percent);
+            rk_aiq_uapi_camgroup_acnrV2_GetChromaSFStrength(mAlgoCtx, pStrength);
             pStrength->sync.done = true;
         }
     }

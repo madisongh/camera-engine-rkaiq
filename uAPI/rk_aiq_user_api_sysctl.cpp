@@ -840,17 +840,21 @@ rk_aiq_uapi_sysctl_setModuleCtl(const rk_aiq_sys_ctx_t* ctx, rk_aiq_module_id_t 
 
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     if (mId > RK_MODULE_INVAL && mId < RK_MODULE_MAX) {
-        if (mId == RK_MODULE_FEC) {
-            rk_aiq_fec_attrib_t fecAttr;
-            rk_aiq_user_api_afec_GetAttrib(ctx, &fecAttr);
-            fecAttr.en = mod_en;
-            if(XCAM_RETURN_NO_ERROR != rk_aiq_user_api_afec_SetAttrib(ctx, fecAttr))
-                LOGE("enable fec failed! maybe fec not enable in xml.");
+        if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+            const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+            for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+                if (!camCtx)
+                    continue;
+
+                ret = camCtx->_rkAiqManager->setModuleCtl(mId, mod_en);
+            }
+#else
+            return XCAM_RETURN_ERROR_FAILED;
+#endif
         } else {
             ret = ctx->_rkAiqManager->setModuleCtl(mId, mod_en);
         }
-    } else {
-        ret = XCAM_RETURN_ERROR_FAILED;
     }
 
     EXIT_XCORE_FUNCTION();
@@ -862,14 +866,32 @@ int32_t
 rk_aiq_uapi_sysctl_getModuleCtl(const rk_aiq_sys_ctx_t* ctx, rk_aiq_module_id_t mId, bool *mod_en)
 {
     ENTER_XCORE_FUNCTION();
-    NULL_RETURN_RET(ctx, -1);
-    NULL_RETURN_RET(ctx->_rkAiqManager.ptr(), -1);
-    RKAIQ_API_SMART_LOCK(ctx);
-
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
-    bool en;
-    ret = ctx->_rkAiqManager->getModuleCtl(mId, en);
-    *mod_en = en;
+    RKAIQ_API_SMART_LOCK(ctx);
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            bool en;
+            ret = ctx->_rkAiqManager->getModuleCtl(mId, en);
+            *mod_en = en;
+
+            return ret;
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        NULL_RETURN_RET(ctx, -1);
+        NULL_RETURN_RET(ctx->_rkAiqManager.ptr(), -1);
+
+        bool en;
+        ret = ctx->_rkAiqManager->getModuleCtl(mId, en);
+        *mod_en = en;
+    }
     EXIT_XCORE_FUNCTION();
 
     return ret;
@@ -880,7 +902,24 @@ rk_aiq_uapi_sysctl_setCpsLtCfg(const rk_aiq_sys_ctx_t* ctx,
                                rk_aiq_cpsl_cfg_t* cfg)
 {
     RKAIQ_API_SMART_LOCK(ctx);
-    return ctx->_analyzer->setCpsLtCfg(*cfg);
+    XCamReturn ret = XCAM_RETURN_NO_ERROR;
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            ret = camCtx->_analyzer->setCpsLtCfg(*cfg);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        ret = ctx->_analyzer->setCpsLtCfg(*cfg);
+    }
+
+    return ret;
 }
 
 XCamReturn
@@ -888,7 +927,23 @@ rk_aiq_uapi_sysctl_getCpsLtInfo(const rk_aiq_sys_ctx_t* ctx,
                                 rk_aiq_cpsl_info_t* info)
 {
     RKAIQ_API_SMART_LOCK(ctx);
-    return ctx->_analyzer->getCpsLtInfo(*info);
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            return camCtx->_analyzer->getCpsLtInfo(*info);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        return ctx->_analyzer->getCpsLtInfo(*info);
+    }
+
+    return XCAM_RETURN_ERROR_FAILED;
 }
 
 XCamReturn
@@ -896,7 +951,23 @@ rk_aiq_uapi_sysctl_queryCpsLtCap(const rk_aiq_sys_ctx_t* ctx,
                                  rk_aiq_cpsl_cap_t* cap)
 {
     RKAIQ_API_SMART_LOCK(ctx);
-    return ctx->_analyzer->queryCpsLtCap(*cap);
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            return camCtx->_analyzer->queryCpsLtCap(*cap);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        return ctx->_analyzer->queryCpsLtCap(*cap);
+    }
+
+    return XCAM_RETURN_ERROR_FAILED;
 }
 
 extern RkAiqAlgoDescription g_RkIspAlgoDescAe;
@@ -1009,7 +1080,21 @@ rk_aiq_uapi_sysctl_enqueueRkRawBuf(const rk_aiq_sys_ctx_t* ctx, void *rawdata, b
 {
     ENTER_XCORE_FUNCTION();
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
-    ret = ctx->_rkAiqManager->enqueueRawBuffer(rawdata, sync);
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            ret = camCtx->_rkAiqManager->enqueueRawBuffer(rawdata, sync);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        ret = ctx->_rkAiqManager->enqueueRawBuffer(rawdata, sync);
+    }
     EXIT_XCORE_FUNCTION();
 
     return ret;
@@ -1020,7 +1105,21 @@ rk_aiq_uapi_sysctl_enqueueRkRawFile(const rk_aiq_sys_ctx_t* ctx, const char *pat
 {
     ENTER_XCORE_FUNCTION();
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
-    ret = ctx->_rkAiqManager->enqueueRawFile(path);
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            ret = camCtx->_rkAiqManager->enqueueRawFile(path);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        ret = ctx->_rkAiqManager->enqueueRawFile(path);
+    }
     EXIT_XCORE_FUNCTION();
 
     return ret;
@@ -1032,9 +1131,23 @@ rk_aiq_uapi_sysctl_registRkRawCb(const rk_aiq_sys_ctx_t* ctx, void (*callback)(v
     ENTER_XCORE_FUNCTION();
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     if (callback == NULL)
-        ret = XCAM_RETURN_ERROR_PARAM;
-    else
+        return XCAM_RETURN_ERROR_PARAM;
+
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            ret = camCtx->_rkAiqManager->registRawdataCb(callback);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
         ret = ctx->_rkAiqManager->registRawdataCb(callback);
+    }
     EXIT_XCORE_FUNCTION();
     return ret;
 }
@@ -1044,7 +1157,21 @@ rk_aiq_uapi_sysctl_prepareRkRaw(const rk_aiq_sys_ctx_t* ctx, rk_aiq_raw_prop_t p
 {
     ENTER_XCORE_FUNCTION();
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
-    ret = ctx->_rkAiqManager->rawdataPrepare(prop);
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            ret = camCtx->_rkAiqManager->rawdataPrepare(prop);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        ret = ctx->_rkAiqManager->rawdataPrepare(prop);
+    }
     EXIT_XCORE_FUNCTION();
 
     return ret;
@@ -1056,7 +1183,21 @@ rk_aiq_uapi_sysctl_setSharpFbcRotation(const rk_aiq_sys_ctx_t* ctx, rk_aiq_rotat
     ENTER_XCORE_FUNCTION();
     RKAIQ_API_SMART_LOCK(ctx);
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
-    ret = ctx->_rkAiqManager->setSharpFbcRotation(rot);
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            ret = camCtx->_rkAiqManager->setSharpFbcRotation(rot);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        ret = ctx->_rkAiqManager->setSharpFbcRotation(rot);
+    }
     EXIT_XCORE_FUNCTION();
     return ret;
 }
@@ -1071,6 +1212,8 @@ XCamReturn
 rk_aiq_uapi_sysctl_swWorkingModeDyn(const rk_aiq_sys_ctx_t* ctx, rk_aiq_working_mode_t mode)
 {
     ENTER_XCORE_FUNCTION();
+    if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP)
+        return XCAM_RETURN_ERROR_FAILED;
     RKAIQ_API_SMART_LOCK(ctx);
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     /* ret = ctx->_rkAiqManager->swWorkingModeDyn(mode); */
@@ -1093,13 +1236,32 @@ rk_aiq_uapi_sysctl_setCrop(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq_rect_t rect)
 {
     RKAIQ_API_SMART_LOCK(sys_ctx);
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
-    ret = sys_ctx->_camHw->setSensorCrop(rect);
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+#ifdef RKAIQ_ENABLE_CAMGROUP
+        const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)sys_ctx;
+        for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
+            if (!camCtx)
+                continue;
+
+            ret = camCtx->_camHw->setSensorCrop(rect);
+        }
+#else
+        return XCAM_RETURN_ERROR_FAILED;
+#endif
+    } else {
+        ret = sys_ctx->_camHw->setSensorCrop(rect);
+    }
     return ret;
 }
 
 XCamReturn
 rk_aiq_uapi_sysctl_getCrop(const rk_aiq_sys_ctx_t* sys_ctx, rk_aiq_rect_t* rect)
 {
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+        LOGE("%s: not support for camgroup\n", __func__);
+        return XCAM_RETURN_ERROR_FAILED;
+    }
+
     RKAIQ_API_SMART_LOCK(sys_ctx);
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
     ret = sys_ctx->_camHw->getSensorCrop(*rect);
@@ -1112,6 +1274,11 @@ rk_aiq_uapi_sysctl_updateIq(rk_aiq_sys_ctx_t* sys_ctx, char* iqfile)
 {
     if (!sys_ctx) {
         LOGE("%s: sys_ctx is invalied\n", __func__);
+        return XCAM_RETURN_ERROR_FAILED;
+    }
+
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+        LOGE("%s: not support for camgroup\n", __func__);
         return XCAM_RETURN_ERROR_FAILED;
     }
 
@@ -1148,6 +1315,11 @@ rk_aiq_uapi_sysctl_tuning(const rk_aiq_sys_ctx_t* sys_ctx, char* param)
 
     if (!sys_ctx) {
         LOGE("%s: sys_ctx is invalied\n", __func__);
+        return XCAM_RETURN_ERROR_FAILED;
+    }
+
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+        LOGE("%s: not support for camgroup\n", __func__);
         return XCAM_RETURN_ERROR_FAILED;
     }
 
@@ -1200,6 +1372,11 @@ char* rk_aiq_uapi_sysctl_readiq(const rk_aiq_sys_ctx_t* sys_ctx, char* param)
         return NULL;
     }
 
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+        LOGE("%s: not support for camgroup\n", __func__);
+        return NULL;
+    }
+
     // Find json patch
     std::string patch_str(param);
     size_t json_start = patch_str.find_first_of("[");
@@ -1242,8 +1419,12 @@ XCamReturn rk_aiq_uapi_sysctl_regMemsSensorIntf(const rk_aiq_sys_ctx_t* sys_ctx,
 
     assert(sys_ctx != nullptr);
 
-    ret = sys_ctx->_analyzer->setMemsSensorIntf(intf);
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+        LOGE("%s: not support for camgroup\n", __func__);
+        return XCAM_RETURN_ERROR_FAILED;
+    }
 
+    ret = sys_ctx->_analyzer->setMemsSensorIntf(intf);
     if (ret) {
         LOGE("failed to update iqfile\n");
         ret = XCAM_RETURN_ERROR_FAILED;
@@ -1262,6 +1443,11 @@ int rk_aiq_uapi_sysctl_switch_scene(const rk_aiq_sys_ctx_t* sys_ctx,
     if (!sys_ctx) {
         LOGE("%s: sys_ctx is invalied\n", __func__);
         return XCAM_RETURN_ERROR_PARAM;
+    }
+
+    if (sys_ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
+        LOGE("%s: not support for camgroup\n", __func__);
+        return XCAM_RETURN_ERROR_FAILED;
     }
 
     if (!main_scene || !sub_scene) {

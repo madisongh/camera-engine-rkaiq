@@ -380,45 +380,48 @@ XCamReturn sample_asharp_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_sharp_strength_v4_t set_sharpV4Strength;
                 set_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                set_sharpV4Strength.strength_enable = true;
                 set_sharpV4Strength.percent = 1.0;
                 ret = rk_aiq_user_api2_asharpV4_SetStrength(ctx, &set_sharpV4Strength);
-                printf("Set asharp v4 set streangth ret:%d strength:%f \n\n", ret, set_sharpV4Strength.percent);
+                printf("Set asharp v4 set streangth ret:%d strength:%f strength_enable:%d\n\n", ret, set_sharpV4Strength.percent, set_sharpV4Strength.strength_enable);
 
                 rk_aiq_sharp_strength_v4_t get_sharpV4Strength;
                 get_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
                 ret = rk_aiq_user_api2_asharpV4_GetStrength(ctx, &get_sharpV4Strength);
-                printf("get asharp v4 attri ret:%d strength:%f done:%d\n\n",
-                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.sync.done);
+                printf("get asharp v4 attri ret:%d strength:%f strength_enable:%d done:%d \n\n",
+                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.strength_enable, get_sharpV4Strength.sync.done);
             }
             break;
         case '6':
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_sharp_strength_v4_t set_sharpV4Strength;
                 set_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                set_sharpV4Strength.strength_enable = true;
                 set_sharpV4Strength.percent = 0.0;
                 ret = rk_aiq_user_api2_asharpV4_SetStrength(ctx, &set_sharpV4Strength);
-                printf("Set asharp v4 set streangth ret:%d strength:%f \n\n", ret, set_sharpV4Strength.percent);
+                printf("Set asharp v4 set streangth ret:%d strength:%f strength_enable:%d\n\n", ret, set_sharpV4Strength.percent, set_sharpV4Strength.strength_enable);
 
                 rk_aiq_sharp_strength_v4_t get_sharpV4Strength;
                 get_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
                 ret = rk_aiq_user_api2_asharpV4_GetStrength(ctx, &get_sharpV4Strength);
-                printf("get asharp v4 attri ret:%d strength:%f done:%d\n\n",
-                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.sync.done);
+                printf("get asharp v4 attri ret:%d strength:%f strength_enable:%d done:%d \n\n",
+                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.strength_enable, get_sharpV4Strength.sync.done);
             }
             break;
         case '7':
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_sharp_strength_v4_t set_sharpV4Strength;
                 set_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                set_sharpV4Strength.strength_enable = true;
                 set_sharpV4Strength.percent = 0.5;
                 ret = rk_aiq_user_api2_asharpV4_SetStrength(ctx, &set_sharpV4Strength);
-                printf("Set asharp v4 set streangth ret:%d strength:%f \n\n", ret, set_sharpV4Strength.percent);
+                printf("Set asharp v4 set streangth ret:%d strength:%f strength_enable:%d\n\n", ret, set_sharpV4Strength.percent, set_sharpV4Strength.strength_enable);
 
                 rk_aiq_sharp_strength_v4_t get_sharpV4Strength;
                 get_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
                 ret = rk_aiq_user_api2_asharpV4_GetStrength(ctx, &get_sharpV4Strength);
-                printf("get asharp v4 attri ret:%d strength:%f done:%d\n\n",
-                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.sync.done);
+                printf("get asharp v4 attri ret:%d strength:%f strength_enable:%d done:%d \n\n",
+                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.strength_enable, get_sharpV4Strength.sync.done);
             }
             break;
         case '8':
@@ -732,45 +735,48 @@ XCamReturn sample_asharp_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_sharp_strength_v4_t set_sharpV4Strength;
                 set_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                set_sharpV4Strength.strength_enable = true;
                 set_sharpV4Strength.percent = 1.0;
                 ret = rk_aiq_user_api2_asharpV4_SetStrength(ctx, &set_sharpV4Strength);
-                printf("Set asharp v4 set streangth ret:%d strength:%f \n\n", ret, set_sharpV4Strength.percent);
+                printf("Set asharp v4 set streangth ret:%d strength:%f strength_enable:%d\n\n", ret, set_sharpV4Strength.percent, set_sharpV4Strength.strength_enable);
 
                 rk_aiq_sharp_strength_v4_t get_sharpV4Strength;
                 get_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
                 ret = rk_aiq_user_api2_asharpV4_GetStrength(ctx, &get_sharpV4Strength);
-                printf("get asharp v4 attri ret:%d strength:%f done:%d\n\n",
-                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.sync.done);
+                printf("get asharp v4 attri ret:%d strength:%f strength_enable:%d done:%d \n\n",
+                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.strength_enable, get_sharpV4Strength.sync.done);
             }
             break;
         case 'g':
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_sharp_strength_v4_t set_sharpV4Strength;
                 set_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                set_sharpV4Strength.strength_enable = true;
                 set_sharpV4Strength.percent = 0.0;
                 ret = rk_aiq_user_api2_asharpV4_SetStrength(ctx, &set_sharpV4Strength);
-                printf("Set asharp v4 set streangth ret:%d strength:%f \n\n", ret, set_sharpV4Strength.percent);
+                printf("Set asharp v4 set streangth ret:%d strength:%f strength_enable:%d\n\n", ret, set_sharpV4Strength.percent, set_sharpV4Strength.strength_enable);
 
                 rk_aiq_sharp_strength_v4_t get_sharpV4Strength;
                 get_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
                 ret = rk_aiq_user_api2_asharpV4_GetStrength(ctx, &get_sharpV4Strength);
-                printf("get asharp v4 attri ret:%d strength:%f done:%d\n\n",
-                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.sync.done);
+                printf("get asharp v4 attri ret:%d strength:%f strength_enable:%d done:%d \n\n",
+                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.strength_enable, get_sharpV4Strength.sync.done);
             }
             break;
         case 'h':
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_sharp_strength_v4_t set_sharpV4Strength;
                 set_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                set_sharpV4Strength.strength_enable = true;
                 set_sharpV4Strength.percent = 0.5;
                 ret = rk_aiq_user_api2_asharpV4_SetStrength(ctx, &set_sharpV4Strength);
-                printf("Set asharp v4 set streangth ret:%d strength:%f \n\n", ret, set_sharpV4Strength.percent);
+                printf("Set asharp v4 set streangth ret:%d strength:%f strength_enable:%d\n\n", ret, set_sharpV4Strength.percent, set_sharpV4Strength.strength_enable);
 
                 rk_aiq_sharp_strength_v4_t get_sharpV4Strength;
                 get_sharpV4Strength.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
                 ret = rk_aiq_user_api2_asharpV4_GetStrength(ctx, &get_sharpV4Strength);
-                printf("get asharp v4 attri ret:%d strength:%f done:%d\n\n",
-                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.sync.done);
+                printf("get asharp v4 attri ret:%d strength:%f strength_enable:%d done:%d \n\n",
+                       ret, get_sharpV4Strength.percent, get_sharpV4Strength.strength_enable, get_sharpV4Strength.sync.done);
             }
             break;
         case 'i':

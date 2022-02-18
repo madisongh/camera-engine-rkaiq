@@ -267,6 +267,7 @@ typedef struct rk_aiq_cnr_attrib_v2_s {
 typedef struct rk_aiq_cnr_strength_v2_s {
     rk_aiq_uapi_sync_t sync;
     float percent;
+    bool strength_enable;
 } rk_aiq_cnr_strength_v2_t;
 
 

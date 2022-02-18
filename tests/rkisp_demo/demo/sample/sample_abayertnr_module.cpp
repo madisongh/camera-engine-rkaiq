@@ -505,6 +505,7 @@ XCamReturn sample_abayertnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayertnr_strength_v2_t bayertnrV2Strenght;
                 bayertnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                bayertnrV2Strenght.strength_enable = true;
                 bayertnrV2Strenght.percent = 1.0;
                 ret = rk_aiq_user_api2_abayertnrV2_SetStrength(ctx, &bayertnrV2Strenght);
                 printf("Set abayertnr v2 set streangth ret:%d strength:%f \n\n", ret, bayertnrV2Strenght.percent);
@@ -520,6 +521,7 @@ XCamReturn sample_abayertnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayertnr_strength_v2_t bayertnrV2Strenght;
                 bayertnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                bayertnrV2Strenght.strength_enable = true;
                 bayertnrV2Strenght.percent = 0.0;
                 ret = rk_aiq_user_api2_abayertnrV2_SetStrength(ctx, &bayertnrV2Strenght);
                 printf("Set abayertnr v2 set streangth ret:%d strength:%f \n\n", ret, bayertnrV2Strenght.percent);
@@ -535,6 +537,7 @@ XCamReturn sample_abayertnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayertnr_strength_v2_t bayertnrV2Strenght;
                 bayertnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
+                bayertnrV2Strenght.strength_enable = true;
                 bayertnrV2Strenght.percent = 0.5;
                 ret = rk_aiq_user_api2_abayertnrV2_SetStrength(ctx, &bayertnrV2Strenght);
                 printf("Set abayertnr v2 set streangth ret:%d strength:%f \n\n", ret, bayertnrV2Strenght.percent);
@@ -980,6 +983,7 @@ XCamReturn sample_abayertnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayertnr_strength_v2_t bayertnrV2Strenght;
                 bayertnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                bayertnrV2Strenght.strength_enable = true;
                 bayertnrV2Strenght.percent = 1.0;
                 ret = rk_aiq_user_api2_abayertnrV2_SetStrength(ctx, &bayertnrV2Strenght);
                 printf("Set abayertnr v2 set streangth ret:%d strength:%f \n\n", ret, bayertnrV2Strenght.percent);
@@ -995,6 +999,7 @@ XCamReturn sample_abayertnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayertnr_strength_v2_t bayertnrV2Strenght;
                 bayertnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                bayertnrV2Strenght.strength_enable = true;
                 bayertnrV2Strenght.percent = 0.0;
                 ret = rk_aiq_user_api2_abayertnrV2_SetStrength(ctx, &bayertnrV2Strenght);
                 printf("Set abayertnr v2 set streangth ret:%d strength:%f \n\n", ret, bayertnrV2Strenght.percent);
@@ -1010,6 +1015,7 @@ XCamReturn sample_abayertnr_module (const void *arg)
             if (CHECK_ISP_HW_V30()) {
                 rk_aiq_bayertnr_strength_v2_t bayertnrV2Strenght;
                 bayertnrV2Strenght.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
+                bayertnrV2Strenght.strength_enable = true;
                 bayertnrV2Strenght.percent = 0.5;
                 ret = rk_aiq_user_api2_abayertnrV2_SetStrength(ctx, &bayertnrV2Strenght);
                 printf("Set abayertnr v2 set streangth ret:%d strength:%f \n\n", ret, bayertnrV2Strenght.percent);

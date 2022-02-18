@@ -23,10 +23,10 @@ rk_aiq_uapi_camgroup_abayertnrV2_GetAttrib(const RkAiqAlgoContext *ctx,
 
 XCamReturn
 rk_aiq_uapi_camgroup_abayertnrV2_SetStrength(const RkAiqAlgoContext *ctx,
-        float fPercent);
+        rk_aiq_bayertnr_strength_v2_t *pStrength);
 
 XCamReturn
 rk_aiq_uapi_camgroup_abayertnrV2_GetStrength(const RkAiqAlgoContext *ctx,
-        float *pPercent);
+        rk_aiq_bayertnr_strength_v2_t *pStrength);
 
 #endif

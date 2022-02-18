@@ -318,12 +318,13 @@ static XCamReturn groupAsharpProcessing(const RkAiqAlgoCom* inparams, RkAiqAlgoR
                 ret = XCAM_RETURN_ERROR_FAILED;
                 LOGE_ASHARP("%s: processing ASHARP failed (%d)\n", __FUNCTION__, ret);
             }
+            Asharp_GetProcResult_V4(asharp_contex_v4, &stAsharpResultV4);
             stAsharpResultV4.isNeedUpdate = true;
             LOGD_ASHARP("recalculate: %d delta_iso:%d \n ", asharp_contex_v4->isReCalculate, deltaIso);
         } else {
+            stAsharpResultV4 = asharp_contex_v4->stProcResult;
             stAsharpResultV4.isNeedUpdate = false;
         }
-        Asharp_GetProcResult_V4(asharp_contex_v4, &stAsharpResultV4);
         for (int i = 0; i < procResParaGroup->arraySize; i++) {
             *(procResParaGroup->camgroupParmasArray[i]->asharp._asharp_procRes_v4) = stAsharpResultV4.stFix;
         }

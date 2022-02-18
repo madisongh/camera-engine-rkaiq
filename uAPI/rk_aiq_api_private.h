@@ -23,7 +23,7 @@ typedef enum {
     CTX_TYPE_NULL           = -255,
 } rk_aiq_ctx_type_e;
 
-typedef struct rk_aiq_sys_ctx_s {
+struct rk_aiq_sys_ctx_s {
     rk_aiq_cam_type_t cam_type;
     const char* _sensor_entity_name;
     SmartPtr<RkAiqManager> _rkAiqManager;
@@ -48,7 +48,16 @@ typedef struct rk_aiq_sys_ctx_s {
     struct RkAiqHwInfo _hw_info;
     int _use_fakecam;
     rk_aiq_raw_prop_t _raw_prop;
-} rk_aiq_sys_ctx_t;
+};
+
+/**
+ * gcc-4.4.7 disallow typedef redefinition
+ * error: redefinition of typedef 'RKAiqAecExpInfo_t' with include/uAPI2/rk_aiq_user_api2_xxxx.h
+ */
+#ifndef RK_AIQ_SYS_CTX_T
+#define RK_AIQ_SYS_CTX_T
+typedef struct rk_aiq_sys_ctx_s rk_aiq_sys_ctx_t;
+#endif
 
 typedef struct rk_aiq_camgroup_ctx_s {
 #ifdef RKAIQ_ENABLE_CAMGROUP

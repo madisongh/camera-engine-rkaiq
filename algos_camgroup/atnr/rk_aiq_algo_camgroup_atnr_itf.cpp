@@ -241,12 +241,14 @@ static XCamReturn groupAbayertnrProcessing(const RkAiqAlgoCom* inparams, RkAiqAl
                 ret = XCAM_RETURN_ERROR_FAILED;
                 LOGE_ANR("%s: processing ANR failed (%d)\n", __FUNCTION__, ret);
             }
+            Abayertnr_GetProcResult_V2(abayertnr_contex_v2, &stAbayertnrResultV2);
             stAbayertnrResultV2.isNeedUpdate = true;
             LOGD_ANR("recalculate: %d delta_iso:%d \n ", abayertnr_contex_v2->isReCalculate, deltaIso);
         } else {
+            stAbayertnrResultV2 = abayertnr_contex_v2->stProcResult;
             stAbayertnrResultV2.isNeedUpdate = true;
         }
-        Abayertnr_GetProcResult_V2(abayertnr_contex_v2, &stAbayertnrResultV2);
+
         for (int i = 0; i < procResParaGroup->arraySize; i++) {
             *(procResParaGroup->camgroupParmasArray[i]->abayertnr._abayertnr_procRes_v2) = stAbayertnrResultV2.st3DFix;
         }

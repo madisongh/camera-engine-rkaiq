@@ -251,6 +251,9 @@ protected:
     int mState;
     bool mInit;
     CamCalibDbCamgroup_t* mCamgroupCalib;
+    uint32_t mClearedSofId;
+    uint32_t mClearedResultId;
+
 protected:
     XCamReturn reProcess(rk_aiq_groupcam_result_t* gc_res);
     rk_aiq_groupcam_result_t* getGroupCamResult(uint32_t frameId, bool query_ready = true);
@@ -258,7 +261,9 @@ protected:
     void setSingleCamStatusReady(rk_aiq_singlecam_result_status_t* status, rk_aiq_groupcam_result_t* gc_result);
     void relayToHwi(rk_aiq_groupcam_result_t* gc_res);
     void clearGroupCamResult(uint32_t frameId);
+    void clearGroupCamResult_Locked(uint32_t frameId);
     void clearGroupCamSofsync(uint32_t frameId);
+    void clearGroupCamSofsync_Locked(uint32_t frameId);
     void addDefaultAlgos(const struct RkAiqAlgoDesCommExt* algoDes);
     virtual SmartPtr<RkAiqCamgroupHandle> newAlgoHandle(RkAiqAlgoDesComm* algo, int hw_ver);
     SmartPtr<RkAiqCamgroupHandle> getDefAlgoTypeHandle(int algo_type);
