@@ -819,6 +819,7 @@ XCamReturn RkAiqAeHandleInt::processing() {
     }
     if ((!xAecStats || !xAecStats->aec_stats_valid) && !sharedCom->init) {
         LOGW("no aec stats, ignore!");
+        mProcResShared.release();
         return XCAM_RETURN_BYPASS;
     }
 
@@ -886,6 +887,8 @@ XCamReturn RkAiqAeHandleInt::genIspResult(RkAiqFullParams* params, RkAiqFullPara
     RkAiqCore::RkAiqAlgosGroupShared_t* shared =
         (RkAiqCore::RkAiqAlgosGroupShared_t*)(getGroupShared());
     RkAiqCore::RkAiqAlgosComShared_t* sharedCom = &mAiqCore->mAlogsComSharedParams;
+    if (!mProcResShared.ptr())
+        return XCAM_RETURN_NO_ERROR;
     RkAiqAlgoProcResAe* ae_proc                 = &mProcResShared->result;
     RkAiqAlgoPostResAe* ae_post                 = (RkAiqAlgoPostResAe*)mPostOutParam;
     if (!ae_proc) {
