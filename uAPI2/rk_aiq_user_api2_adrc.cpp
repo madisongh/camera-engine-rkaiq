@@ -41,6 +41,7 @@ rk_aiq_user_api2_adrc_SetAttrib(const rk_aiq_sys_ctx_t* sys_ctx, drc_attrib_t at
             if (algo_handle) {
                 return algo_handle->setAttrib(attr);
             } else {
+                XCamReturn ret                            = XCAM_RETURN_NO_ERROR;
                 const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)sys_ctx;
                 for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
                     if (!camCtx)
@@ -48,9 +49,12 @@ rk_aiq_user_api2_adrc_SetAttrib(const rk_aiq_sys_ctx_t* sys_ctx, drc_attrib_t at
 
                     RkAiqAdrcHandleInt* singleCam_algo_handle =
                         algoHandle<RkAiqAdrcHandleInt>(camCtx, RK_AIQ_ALGO_TYPE_ADRC);
-                    if (singleCam_algo_handle)
-                        return singleCam_algo_handle->setAttrib(attr);
+                    if (singleCam_algo_handle) {
+                        ret = singleCam_algo_handle->setAttrib(attr);
+                        if (ret != XCAM_RETURN_NO_ERROR) LOGE("%s returned: %d", __FUNCTION__, ret);
+                    }
                 }
+                return ret;
             }
 #else
             return XCAM_RETURN_ERROR_FAILED;

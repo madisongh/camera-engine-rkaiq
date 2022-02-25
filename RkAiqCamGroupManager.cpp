@@ -592,7 +592,7 @@ RkAiqCamGroupManager::getDefAlgoTypeHandle(int algo_type)
     if (mDefAlgoHandleMap.find(algo_type) != mDefAlgoHandleMap.end())
         return mDefAlgoHandleMap.at(algo_type);
 
-    LOGE("can't find algo handle %d", algo_type);
+    LOG1_CAMGROUP("can't find algo handle %d", algo_type);
     return NULL;
 }
 
@@ -602,7 +602,7 @@ std::map<int, SmartPtr<RkAiqCamgroupHandle>>*
     if (mAlgoHandleMaps.find(algo_type) != mAlgoHandleMaps.end())
         return &mAlgoHandleMaps.at(algo_type);
 
-    LOGE("can't find algo map %d", algo_type);
+    LOG1_CAMGROUP("can't find algo map %d", algo_type);
     return NULL;
 }
 
@@ -1036,19 +1036,39 @@ RkAiqCamGroupManager::relayToHwi(rk_aiq_groupcam_result_t* gc_res)
     rk_aiq_singlecam_result_t* singlecam_res = NULL;
     {
         SmartLock locker (mCamGroupApiSyncMutex);
+
+        int exp_tbl_size = -1;
+        bool skip_apply_exp = false;
+        for (int i = 0; i < RK_AIQ_CAM_GROUP_MAX_CAMS; i++) {
+            if ((gc_res->_validCamResBits >> i) & 1) {
+                singlecam_res = &gc_res->_singleCamResultsStatus[i]._singleCamResults;
+                if (singlecam_res->_fullIspParam->data()->mExposureParams.ptr()) {
+                    int tmp_size = singlecam_res->_fullIspParam->data()->mExposureParams->data()->exp_tbl_size;
+                    if (exp_tbl_size == -1)
+                        exp_tbl_size = tmp_size;
+                    else if (exp_tbl_size != tmp_size) {
+                        skip_apply_exp = true;
+                        break;
+                    }
+                }
+            }
+        }
+
         for (int i = 0; i < RK_AIQ_CAM_GROUP_MAX_CAMS; i++) {
             // apply exposure directly
             if ((gc_res->_validCamResBits >> i) & 1) {
                 singlecam_res = &gc_res->_singleCamResultsStatus[i]._singleCamResults;
-                SmartPtr<RkAiqFullParams> fullParam = new RkAiqFullParams();
-                SmartPtr<RkAiqFullParamsProxy> fullParamProxy = new RkAiqFullParamsProxy(fullParam );
-                fullParamProxy->data()->mExposureParams = singlecam_res->_fullIspParam->data()->mExposureParams;
-                if (fullParamProxy->data()->mExposureParams.ptr()) {
-                    LOGD_CAMGROUP("camgroup: camId:%d, frameId:%d, exp_tbl_size:%d",
-                                  i, gc_res->_frameId, fullParamProxy->data()->mExposureParams->data()->exp_tbl_size);
+                if (!skip_apply_exp) {
+                    SmartPtr<RkAiqFullParams> fullParam = new RkAiqFullParams();
+                    SmartPtr<RkAiqFullParamsProxy> fullParamProxy = new RkAiqFullParamsProxy(fullParam );
+                    fullParamProxy->data()->mExposureParams = singlecam_res->_fullIspParam->data()->mExposureParams;
+                    if (fullParamProxy->data()->mExposureParams.ptr()) {
+                        LOGD_CAMGROUP("camgroup: camId:%d, frameId:%d, exp_tbl_size:%d",
+                                      i, gc_res->_frameId, fullParamProxy->data()->mExposureParams->data()->exp_tbl_size);
+                    }
+                    mBindAiqsMap[i]->applyAnalyzerResult(fullParamProxy);
                 }
                 singlecam_res->_fullIspParam->data()->mExposureParams.release();
-                mBindAiqsMap[i]->applyAnalyzerResult(fullParamProxy);
             }
         }
     }
