@@ -104,6 +104,7 @@ set (MISC_SRC
 	abayernr/rk_aiq_uapi_camgroup_abayer2dnr_int_v2.cpp
 	asharp/rk_aiq_uapi_camgroup_asharp_int_v4.cpp
 	atnr/rk_aiq_uapi_camgroup_atnr_int_v2.cpp
+	again/rk_aiq_uapi_camgroup_again_int_v2.cpp
 )
 add_library(rkaiq_camgroup_misc STATIC ${MISC_SRC})
 set_target_properties(rkaiq_camgroup_misc PROPERTIES FOLDER "algos_camgroup/misc")

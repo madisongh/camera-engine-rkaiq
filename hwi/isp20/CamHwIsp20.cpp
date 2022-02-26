@@ -4589,18 +4589,21 @@ CamHwIsp20::getModuleCtl(rk_aiq_module_id_t moduleId, bool &en)
 
 XCamReturn CamHwIsp20::notify_capture_raw()
 {
-    return CaptureRawData::getInstance().notify_capture_raw();
-
-    return XCAM_RETURN_ERROR_FAILED;
+    if (mRawProcUnit.ptr())
+        return mRawProcUnit->notify_capture_raw();
+    else
+        return XCAM_RETURN_ERROR_FAILED;
 }
 
 XCamReturn CamHwIsp20::capture_raw_ctl(capture_raw_t type, int count, const char* capture_dir, char* output_dir)
 {
-    if (type == CAPTURE_RAW_AND_YUV_SYNC)
-        return CaptureRawData::getInstance().capture_raw_ctl(type);
-    else if (type == CAPTURE_RAW_SYNC)
-        return CaptureRawData::getInstance().capture_raw_ctl(type, count, capture_dir, output_dir);
+    if (!mRawProcUnit.ptr())
+        return XCAM_RETURN_ERROR_FAILED;
 
+    if (type == CAPTURE_RAW_AND_YUV_SYNC)
+        return mRawProcUnit->capture_raw_ctl(type);
+    else if (type == CAPTURE_RAW_SYNC)
+        return mRawProcUnit->capture_raw_ctl(type, count, capture_dir, output_dir);
     return XCAM_RETURN_ERROR_FAILED;
 }
 

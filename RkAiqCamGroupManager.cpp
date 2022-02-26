@@ -72,18 +72,28 @@ RkAiqCamGroupReprocTh::loop ()
     rk_aiq_groupcam_result_t* camGroupRes = camGroupRes_wrapper->_gc_result;
     if (camGroupRes->_ready) {
         ret = mCamGroupManager->reProcess(camGroupRes);
-        if (ret) {
+        if (ret < 0) {
             LOGW_CAMGROUP("reprocess error, ignore!");
-        }
-
-        mCamGroupManager->relayToHwi(camGroupRes);
-
-        // delete the processed result
-        mCamGroupManager->clearGroupCamResult(camGroupRes->_frameId);
+        } else
+            mCamGroupManager->relayToHwi(camGroupRes);
     }
+    // delete the processed result
+    mCamGroupManager->putGroupCamResult(camGroupRes); // paired with sendFrame
+    mCamGroupManager->clearGroupCamResult(camGroupRes->_frameId);
 
     return true;
 }
+
+bool
+RkAiqCamGroupReprocTh::sendFrame(rk_aiq_groupcam_result_t* gc_result)
+{
+    {
+        SmartLock locker (mCamGroupManager->mCamGroupResMutex);
+        gc_result->_refCnt++;
+    }
+    mMsgQueue.push(new rk_aiq_groupcam_result_wrapper_t(gc_result));
+    return true;
+};
 
 RkAiqCamGroupManager::RkAiqCamGroupManager()
 {
@@ -101,6 +111,7 @@ RkAiqCamGroupManager::RkAiqCamGroupManager()
     mVicapReadyMask = 0;
     mClearedSofId = 0;
     mClearedResultId = 0;
+    mGroupCtx = NULL;
 
     EXIT_CAMGROUP_FUNCTION();
 }
@@ -121,19 +132,19 @@ RkAiqCamGroupManager::getGroupCamResult(uint32_t frameId, bool query_ready)
         camGroupRes = mCamGroupResMap[frameId];
         if (!query_ready && camGroupRes->_ready)
             return NULL;
-        LOG1_CAMGROUP("camgroup res of frame: %d exists", frameId);
+        camGroupRes->_refCnt++;
+        LOG1_CAMGROUP("camgroup res of frame: %u exists", frameId);
     } else {
         if (!query_ready)
             return NULL;
 
-        if (mCamGroupResMap.size() > 16) {
-            LOGE_CAMGROUP("camgroup result map overflow:%d, first_id: %d",
+        if (mCamGroupResMap.size() > 8) {
+            LOGE_CAMGROUP("camgroup result map overflow:%d, first_id: %u",
                           mCamGroupResMap.size(), mCamGroupResMap.begin()->first);
-
-            clearGroupCamResult_Locked(frameId - 8);
+            clearGroupCamResult_Locked(frameId - 4);
         }
         if (frameId < mClearedResultId) {
-            LOGE_CAMGROUP("disorder frameId(%d) < mClearedResultId(%d)", frameId, mClearedResultId);
+            LOGW_CAMGROUP("disorder frameId(%d) < mClearedResultId(%d)", frameId, mClearedResultId);
             return NULL;
         }
         camGroupRes = new rk_aiq_groupcam_result_t();
@@ -143,8 +154,9 @@ RkAiqCamGroupManager::getGroupCamResult(uint32_t frameId, bool query_ready)
         }
         camGroupRes->reset();
         camGroupRes->_frameId = frameId;
+        camGroupRes->_refCnt++;
         mCamGroupResMap[frameId] = camGroupRes;
-        LOGD_CAMGROUP("malloc camgroup res for frame: %d success", frameId);
+        LOGD_CAMGROUP("malloc camgroup res for frame: %u success", frameId);
     }
 
     return camGroupRes;
@@ -168,10 +180,19 @@ RkAiqCamGroupManager::clearGroupCamResult_Locked(uint32_t frameId)
         for (iter = mCamGroupResMap.begin(); iter != mCamGroupResMap.end();) {
             if (iter->first <= frameId) {
                 camGroupRes = iter->second;
-                LOGD_CAMGROUP("clear camgroup res of frame: %d, ready: %d", iter->first, camGroupRes->_ready);
+                if (camGroupRes->_refCnt > 0) {
+                    if (iter->first < mClearedResultId) {
+                        LOGE("impossible, id:%u < mClearedResultId:%u, refCnt: %u",
+                             iter->first, mClearedResultId, camGroupRes->_refCnt);
+                    }
+                    iter++;
+                    continue;
+                }
+                LOGD_CAMGROUP("clear camgroup res of frame: %u, ready: %d", iter->first, camGroupRes->_ready);
                 camGroupRes->reset();
                 delete camGroupRes;
-                mClearedResultId = iter->first;
+                if (iter->first > mClearedResultId)
+                    mClearedResultId = iter->first;
                 iter = mCamGroupResMap.erase(iter);
             } else {
                 iter++;
@@ -187,30 +208,39 @@ RkAiqCamGroupManager::clearGroupCamResult(uint32_t frameId) {
     clearGroupCamResult_Locked(frameId);
 }
 
+void
+RkAiqCamGroupManager::putGroupCamResult(rk_aiq_groupcam_result_t* gc_res)
+{
+    SmartLock locker (mCamGroupResMutex);
+    if (gc_res && gc_res->_refCnt != 0)
+        gc_res->_refCnt--;
+}
+
 rk_aiq_groupcam_sofsync_t*
 RkAiqCamGroupManager::getGroupCamSofsync(uint32_t frameId, bool query_ready)
 {
-    SmartLock locker (mCamGroupResMutex);
+    SmartLock locker (mSofMutex);
     rk_aiq_groupcam_sofsync_t* camGroupSofsync = NULL;
 
     if (mCamGroupSofsyncMap.find(frameId) != mCamGroupSofsyncMap.end()) {
         camGroupSofsync = mCamGroupSofsyncMap[frameId];
         if (!query_ready && (camGroupSofsync->_validCamSofSyncBits == mRequiredCamsResMask))
             return NULL;
-        LOG1_CAMGROUP("camgroup sofSync of frame: %d exists", frameId);
+        camGroupSofsync->_refCnt++;
+        LOG1_CAMGROUP("camgroup sofSync of frame: %u exists", frameId);
     } else {
         if (!query_ready)
             return NULL;
 
         // if overflow, clear some ones
         if (mCamGroupSofsyncMap.size() > 16) {
-            LOGE_CAMGROUP("camgroup sofSync overflow:%d, first_id: %d",
-                          mCamGroupSofsyncMap.begin()->first, mCamGroupSofsyncMap.size());
+            LOGW_CAMGROUP("camgroup sofSync overflow:%d, first_id: %d",
+                          mCamGroupSofsyncMap.size(), mCamGroupSofsyncMap.begin()->first);
             clearGroupCamSofsync_Locked(frameId - 8);
         }
 
         if (frameId < mClearedSofId) {
-            LOGE_CAMGROUP("disorder frameId(%d) < mClearedSofId(%d)", frameId, mClearedSofId);
+            LOGE_CAMGROUP("disorder frameId(%u) < mClearedSofId(%u)", frameId, mClearedSofId);
             return NULL;
         }
 
@@ -221,11 +251,20 @@ RkAiqCamGroupManager::getGroupCamSofsync(uint32_t frameId, bool query_ready)
         }
 
         camGroupSofsync->reset();
+        camGroupSofsync->_refCnt++;
         mCamGroupSofsyncMap[frameId] = camGroupSofsync;
-        LOGD_CAMGROUP("malloc camgroup sofSync for frame: %d success", frameId);
+        LOGD_CAMGROUP("malloc camgroup sofSync for frame: %u success", frameId);
     }
 
     return camGroupSofsync;
+}
+
+void
+RkAiqCamGroupManager::putGroupCamSofsync(rk_aiq_groupcam_sofsync_t* syncSof)
+{
+    SmartLock locker (mSofMutex);
+    if (syncSof && syncSof->_refCnt != 0)
+        syncSof->_refCnt--;
 }
 
 void
@@ -245,7 +284,11 @@ RkAiqCamGroupManager::clearGroupCamSofsync_Locked(uint32_t frameId) {
         for (iter = mCamGroupSofsyncMap.begin(); iter != mCamGroupSofsyncMap.end();) {
             if (iter->first <= frameId) {
                 camGroupSofsync = iter->second;
-                LOGD_CAMGROUP("clear camgroup sofSync of frame: %d, ready: %d",
+                if (camGroupSofsync->_refCnt > 0) {
+                    iter++;
+                    continue;
+                }
+                LOGD_CAMGROUP("clear camgroup sofSync of frame: %u, ready: %d",
                               iter->first,
                               camGroupSofsync->_validCamSofSyncBits == mRequiredCamsResMask);
                 camGroupSofsync->reset();
@@ -256,12 +299,14 @@ RkAiqCamGroupManager::clearGroupCamSofsync_Locked(uint32_t frameId) {
                 iter++;
             }
         }
+        if (mCamGroupSofsyncMap.size() > 100)
+            LOGE_CAMGROUP("mCamGroupSofsyncMap size > 100 !!!");
     }
 }
 void
 RkAiqCamGroupManager::clearGroupCamSofsync(uint32_t frameId) {
 
-    SmartLock locker (mCamGroupResMutex);
+    SmartLock locker (mSofMutex);
     clearGroupCamSofsync_Locked(frameId);
 }
 
@@ -274,14 +319,14 @@ RkAiqCamGroupManager::setSingleCamStatusReady(rk_aiq_singlecam_result_status_t* 
         if (((status->_validCoreMsgsBits & mRequiredMsgsMask) == mRequiredMsgsMask) &&
                 ((status->_validAlgoResBits & mRequiredAlgoResMask) == mRequiredAlgoResMask)) {
             status->_ready = true;
-            LOGD_CAMGROUP("camgroup single cam res ready, camId:%d, frameId:%d",
+            LOGD_CAMGROUP("camgroup single cam res ready, camId:%d, frameId:%u",
                           status->_singleCamResults._3aResults._camId,
                           status->_singleCamResults._3aResults._frameId);
             gc_result->_validCamResBits |= 1 << status->_singleCamResults._3aResults._camId;
             if (!gc_result->_ready && (gc_result->_validCamResBits == mRequiredCamsResMask)) {
                 gc_result->_ready = true;
                 gc_result_ready = true;
-                LOGD_CAMGROUP("camgroup all cam res ready, frameId:%d",
+                LOGD_CAMGROUP("camgroup all cam res ready, frameId:%u",
                               status->_singleCamResults._3aResults._frameId);
             }
         }
@@ -302,13 +347,14 @@ RkAiqCamGroupManager::setSingleCamStatusReady(rk_aiq_singlecam_result_status_t* 
                     last_scam_status->_validCoreMsgsBits = mRequiredAlgoResMask;
                 }
             }
-            LOGW_CAMGROUP("camgroup res frameId disorder, unready frameId:%d < cur ready frame %d",
+            LOGW_CAMGROUP("camgroup res frameId disorder, unready frameId:%u < cur ready frame %u",
                           lastFrameId, status->_singleCamResults._3aResults._frameId);
             mCamGroupReprocTh->sendFrame(last_gc_result);
         }
+        putGroupCamResult(last_gc_result);
         // init params is reprocessed in func prepare
         if (mState == CAMGROUP_MANAGER_STARTED) {
-            LOGD_CAMGROUP("send frameId:%d ",gc_result->_frameId);
+            LOGD_CAMGROUP("send frameId:%u ",gc_result->_frameId);
             mCamGroupReprocTh->sendFrame(gc_result);
         }
     } else {
@@ -317,7 +363,7 @@ RkAiqCamGroupManager::setSingleCamStatusReady(rk_aiq_singlecam_result_status_t* 
             RkAiqFullParams* scam_aiqParams = status->_singleCamResults._fullIspParam->data().ptr();
             LOG1_CAMGROUP("scam_aiqParams %p ", scam_aiqParams);
         }
-        LOG1_CAMGROUP("camgroup result status: validCams:0x%x(req:0x%x), camId:%d, frameId:%d, "
+        LOG1_CAMGROUP("camgroup result status: validCams:0x%x(req:0x%x), camId:%d, frameId:%u, "
                       "validAlgoResBits:0x%" PRIx64 "(req:0x%" PRIx64 "), validMsgBits:0x%" PRIx64 "(req:0x%" PRIx64 ")",
                       gc_result->_validCamResBits, mRequiredCamsResMask,
                       status->_singleCamResults._3aResults._camId,
@@ -335,7 +381,7 @@ RkAiqCamGroupManager::processAiqCoreMsgs(RkAiqCore* src, SmartPtr<XCamMessage> &
 
     // check if the msg is required firstly
     if (!(mRequiredMsgsMask & (1 << msg->msg_id))) {
-        LOG1_CAMGROUP("camgroup: not required core msg :%s of frameId: %d, ignore",
+        LOG1_CAMGROUP("camgroup: not required core msg :%s of frameId: %u, ignore",
                       MessageType2Str[msg->msg_id], msg->frame_id);
         return;
     }
@@ -348,9 +394,10 @@ RkAiqCamGroupManager::processAiqCoreMsgs(RkAiqCore* src, SmartPtr<XCamMessage> &
     default:
         break;
     }
+
     rk_aiq_groupcam_result_t* camGroupRes = getGroupCamResult(frameId);
     if (!camGroupRes) {
-        LOGE_CAMGROUP("camgroup: get cam result faild for camId: %d, frame: %d", camId, frameId);
+        LOGW_CAMGROUP("camgroup: get cam result faild for msg_id:%d, camId: %d, msg_id:%d, frame: %d", msg->msg_id, camId, frameId);
         return;
     }
     rk_aiq_singlecam_result_status_t* singleCamStatus = &camGroupRes->_singleCamResultsStatus[camId];
@@ -405,9 +452,10 @@ RkAiqCamGroupManager::processAiqCoreMsgs(RkAiqCore* src, SmartPtr<XCamMessage> &
         singleCamRes->_3aResults._camId = camId;
         singleCamRes->_3aResults._frameId = frameId;
     }
-    LOGD_CAMGROUP("camgroup: got required core msg :%s of camId:%d, frameId: %d, ",
+    LOGD_CAMGROUP("camgroup: got required core msg :%s of camId:%d, frameId: %u, ",
                   MessageType2Str[msg->msg_id], camId, frameId);
     setSingleCamStatusReady(singleCamStatus, camGroupRes);
+    putGroupCamResult(camGroupRes);
 }
 
 void
@@ -429,7 +477,7 @@ RkAiqCamGroupManager::RelayAiqCoreResults(RkAiqCore* src, SmartPtr<RkAiqFullPara
         frame_id = aiqParams->m##lc##Params->data()->frame_id; \
         rk_aiq_groupcam_result_t* camGroupRes = getGroupCamResult(frame_id); \
         if (!camGroupRes) { \
-            LOGE_CAMGROUP("camgroup: get cam result faild for camId: %d, frame: %d", camId, frame_id); \
+            LOGW_CAMGROUP("camgroup: get cam result faild for type:%s, camId: %d, frame: %d", #BC, camId, frame_id); \
             return; \
         } \
         rk_aiq_singlecam_result_status_t* singleCamStatus = \
@@ -440,7 +488,7 @@ RkAiqCamGroupManager::RelayAiqCoreResults(RkAiqCore* src, SmartPtr<RkAiqFullPara
             SmartLock locker (mCamGroupResMutex); \
             if (!singleCamRes->_fullIspParam.ptr()) { \
                 singleCamRes->_fullIspParam = results; \
-                LOGD_CAMGROUP("init scam_aiqParams_proxy : %p for camId:%d, frameId: %d",\
+                LOGD_CAMGROUP("init scam_aiqParams_proxy : %p for camId:%d, frameId: %u",\
                               singleCamRes->_fullIspParam.ptr(), camId, frame_id); \
             } \
             RkAiqFullParams* scam_aiqParams = singleCamRes->_fullIspParam->data().ptr();\
@@ -450,9 +498,10 @@ RkAiqCamGroupManager::RelayAiqCoreResults(RkAiqCore* src, SmartPtr<RkAiqFullPara
             singleCamRes->_3aResults._camId = camId; \
             singleCamRes->_3aResults._frameId = frame_id; \
         } \
-        LOG1_CAMGROUP("%s: relay results: camId:%d, frameId:%d, type:%s", \
+        LOG1_CAMGROUP("%s: relay results: camId:%d, frameId:%u, type:%s", \
                       __FUNCTION__, camId, frame_id, #BC); \
         setSingleCamStatusReady(singleCamStatus, camGroupRes); \
+        putGroupCamResult(camGroupRes);\
     } \
 
     SET_TO_CAMGROUP(Exposure, EXPOSURE);
@@ -520,36 +569,35 @@ RkAiqCamGroupManager::sofSync(RkAiqManager* aiqManager, SmartPtr<VideoBuffer>& s
         return XCAM_RETURN_NO_ERROR;
     }
 
-    LOGD_CAMGROUP("sofSync event camId: %d, frameId: %d ...\n", camId, frameId);
+    LOGD_CAMGROUP("sofSync event camId: %d, frameId: %u ...\n", camId, frameId);
 
     rk_aiq_groupcam_sofsync_t* camGroupSofsync = getGroupCamSofsync(frameId);
     if (!camGroupSofsync) {
-        LOGE_CAMGROUP("camgroup: get sofSync failed for camId: %d, frame: %d, igore", camId, frameId);
+        LOGE_CAMGROUP("camgroup: get sofSync failed for camId: %d, frame: %u, igore", camId, frameId);
         return XCAM_RETURN_NO_ERROR;
     }
     camGroupSofsync->_singleCamSofEvt[camId] = sof_evt;
 
     bool sync_done = false;
     {
-        SmartLock locker (mCamGroupResMutex);
+        SmartLock locker (mSofMutex);
         camGroupSofsync->_validCamSofSyncBits |= ((uint8_t)1) << camId;
         if (camGroupSofsync->_validCamSofSyncBits == mRequiredCamsResMask)
             sync_done = true;
     }
 
     if (sync_done) {
-        {
-            SmartLock locker (mCamGroupApiSyncMutex);
-            for (int i = 0; i < RK_AIQ_CAM_GROUP_MAX_CAMS; i++) {
-                if ((camGroupSofsync->_validCamSofSyncBits >> i) & 1) {
-                    mBindAiqsMap[i]->syncSofEvt(camGroupSofsync->_singleCamSofEvt[i]);
-                }
+        for (int i = 0; i < RK_AIQ_CAM_GROUP_MAX_CAMS; i++) {
+            if ((camGroupSofsync->_validCamSofSyncBits >> i) & 1) {
+                mBindAiqsMap[i]->syncSofEvt(camGroupSofsync->_singleCamSofEvt[i]);
             }
         }
+        putGroupCamSofsync(camGroupSofsync);
         clearGroupCamSofsync(frameId);
-    }
+    } else
+        putGroupCamSofsync(camGroupSofsync);
 
-    LOGD_CAMGROUP("sofSync event camId: %d, frameId: %d done\n", camId, frameId);
+    LOGD_CAMGROUP("sofSync event camId: %d, frameId: %u done\n", camId, frameId);
 
     return XCAM_RETURN_NO_ERROR;
 }
@@ -795,7 +843,7 @@ RkAiqCamGroupManager::prepare()
     mInit = true;
 
     ret = reProcess(camGroupRes);
-    if (ret) {
+    if (ret < 0) {
         goto failed;
     }
     mInit = false;
@@ -805,6 +853,7 @@ RkAiqCamGroupManager::prepare()
 
     LOGD_CAMGROUP("camgroup: clear init params ...");
     // delete the processed result
+    putGroupCamResult(camGroupRes);
     clearGroupCamResult(0);
 
     LOGD_CAMGROUP("camgroup: prepare done");
@@ -813,6 +862,7 @@ RkAiqCamGroupManager::prepare()
     return XCAM_RETURN_NO_ERROR;
     EXIT_CAMGROUP_FUNCTION();
 failed:
+    putGroupCamResult(camGroupRes);
     clearGroupCamResult(-1);
     return ret;
 }
@@ -911,19 +961,25 @@ RkAiqCamGroupManager::reProcess(rk_aiq_groupcam_result_t* gc_res)
             scam_res = &gc_res->_singleCamResultsStatus[i]._singleCamResults;
             scam_3a_res = &scam_res->_3aResults;
             if (!scam_res->_fullIspParam.ptr())
-                return XCAM_RETURN_NO_ERROR;
+                return XCAM_RETURN_ERROR_FAILED;
             aiqParams = scam_res->_fullIspParam->data().ptr();
             // fill 3a params
             if ((aiqParams->mExposureParams.ptr())) {
                 scam_3a_res->aec.exp_tbl = aiqParams->mExposureParams->data()->exp_tbl;
                 scam_3a_res->aec.exp_tbl_size = &aiqParams->mExposureParams->data()->exp_tbl_size;
             } else {
-                LOGW_CAMGROUP("camId:%d, framId:%d, exp is null", i, gc_res->_frameId);
+                LOGW_CAMGROUP("camId:%d, framId:%u, exp is null", i, gc_res->_frameId);
                 // frame 1,2 exp may be null now
                 //if (gc_res->_frameId == 1)
                 return XCAM_RETURN_NO_ERROR;
             }
+
+            if (!aiqParams->mAecParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->aec._aeMeasParams = &aiqParams->mAecParams->data()->result;
+
+            if (!aiqParams->mHistParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->aec._aeHistMeasParams = &aiqParams->mHistParams->data()->result;
 
             if (CHECK_ISP_HW_V21()) {
@@ -935,15 +991,46 @@ RkAiqCamGroupManager::reProcess(rk_aiq_groupcam_result_t* gc_res)
                     return XCAM_RETURN_NO_ERROR;
                 scam_3a_res->awb._awbCfgV3x = &aiqParams->mAwbV3xParams->data()->result;
             }
+
+            if (!aiqParams->mDehazeParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
+
             scam_3a_res->_adehazeConfig = &aiqParams->mDehazeParams->data()->result;
+
+            if (!aiqParams->mMergeParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->_amergeConfig = &aiqParams->mMergeParams->data()->result;
+
+            if (!aiqParams->mAgammaParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->_agammaConfig = &aiqParams->mAgammaParams->data()->result;
+
+            if (!aiqParams->mDrcParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->_adrcConfig = &aiqParams->mDrcParams->data()->result;
+
+            if (!aiqParams->mAwbGainParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->awb._awbGainParams = &aiqParams->mAwbGainParams->data()->result;
+
+            if (!aiqParams->mLscParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->_lscConfig = &aiqParams->mLscParams->data()->result;
+
+            if (!aiqParams->mDpccParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->_dpccConfig = &aiqParams->mDpccParams->data()->result;
+
+            if (!aiqParams->mCcmParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->_ccmCfg = &aiqParams->mCcmParams->data()->result;
+
+            if (!aiqParams->mLut3dParams.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->_lut3dCfg = &aiqParams->mLut3dParams->data()->result;
+
+            if (!aiqParams->mBlcV21Params.ptr())
+                return XCAM_RETURN_NO_ERROR;
             scam_3a_res->_blcConfig = &aiqParams->mBlcV21Params->data()->result;
 
 
@@ -1009,7 +1096,7 @@ RkAiqCamGroupManager::reProcess(rk_aiq_groupcam_result_t* gc_res)
     }
 
     uint32_t frameId = camgroupParmasArray[0]->_frameId;
-    LOGD_CAMGROUP("camgroup: frameId:%d reprocessing ... ", frameId);
+    LOGD_CAMGROUP("camgroup: frameId:%u reprocessing ... ", frameId);
 
     for (auto algoHdl : mDefAlgoHandleList) {
         RkAiqCamgroupHandle* curHdl = algoHdl.ptr();
@@ -1035,8 +1122,6 @@ RkAiqCamGroupManager::relayToHwi(rk_aiq_groupcam_result_t* gc_res)
 {
     rk_aiq_singlecam_result_t* singlecam_res = NULL;
     {
-        SmartLock locker (mCamGroupApiSyncMutex);
-
         int exp_tbl_size = -1;
         bool skip_apply_exp = false;
         for (int i = 0; i < RK_AIQ_CAM_GROUP_MAX_CAMS; i++) {
@@ -1063,7 +1148,7 @@ RkAiqCamGroupManager::relayToHwi(rk_aiq_groupcam_result_t* gc_res)
                     SmartPtr<RkAiqFullParamsProxy> fullParamProxy = new RkAiqFullParamsProxy(fullParam );
                     fullParamProxy->data()->mExposureParams = singlecam_res->_fullIspParam->data()->mExposureParams;
                     if (fullParamProxy->data()->mExposureParams.ptr()) {
-                        LOGD_CAMGROUP("camgroup: camId:%d, frameId:%d, exp_tbl_size:%d",
+                        LOGD_CAMGROUP("camgroup: camId:%d, frameId:%u, exp_tbl_size:%d",
                                       i, gc_res->_frameId, fullParamProxy->data()->mExposureParams->data()->exp_tbl_size);
                     }
                     mBindAiqsMap[i]->applyAnalyzerResult(fullParamProxy);

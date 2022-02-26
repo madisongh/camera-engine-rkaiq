@@ -18,6 +18,7 @@
 #ifndef __RK_AIQ_USER_API2_WRAPPER_H__
 #define __RK_AIQ_USER_API2_WRAPPER_H__
 
+#include "RkAiqUapitypes.h"
 #include "rk_aiq_user_api_sysctl.h"
 
 int rk_aiq_uapi_sysctl_swWorkingModeDyn2(const rk_aiq_sys_ctx_t *ctx,
@@ -30,10 +31,10 @@ int rk_aiq_uapi2_setWBMode2(rk_aiq_sys_ctx_t *ctx, uapi_wb_mode_t *mode);
 
 int rk_aiq_uapi2_getWBMode2(rk_aiq_sys_ctx_t *ctx, uapi_wb_mode_t *mode);
 
-int rk_aiq_user_api2_amerge_SetAttrib2(const rk_aiq_sys_ctx_t *sys_ctx,
+int rk_aiq_user_api2_amerge_SetCtldata(const rk_aiq_sys_ctx_t *sys_ctx,
                                        uapiMergeCurrCtlData_t *ctldata);
 
-int rk_aiq_user_api2_amerge_GetAttrib2(const rk_aiq_sys_ctx_t *sys_ctx,
+int rk_aiq_user_api2_amerge_GetCtldata(const rk_aiq_sys_ctx_t *sys_ctx,
                                        uapiMergeCurrCtlData_t *ctldata);
 
 int rk_aiq_user_api2_set_scene(const rk_aiq_sys_ctx_t *sys_ctx,
@@ -42,10 +43,89 @@ int rk_aiq_user_api2_set_scene(const rk_aiq_sys_ctx_t *sys_ctx,
 int rk_aiq_user_api2_get_scene(const rk_aiq_sys_ctx_t *sys_ctx,
                                aiq_scene_t *scene);
 
-int rk_aiq_uapi_get_awb_stat(const rk_aiq_sys_ctx_t* sys_ctx,
-                          rk_tool_awb_stat_res2_v30_t* awb_stat);
+int rk_aiq_uapi_get_awb_stat(const rk_aiq_sys_ctx_t *sys_ctx,
+                             rk_tool_awb_stat_res2_v30_t *awb_stat);
 
-int rk_aiq_uapi_get_ae_hwstats(const rk_aiq_sys_ctx_t* sys_ctx,
-                               uapi_ae_hwstats_t* ae_hwstats);
+int rk_aiq_uapi_get_ae_hwstats(const rk_aiq_sys_ctx_t *sys_ctx,
+                               uapi_ae_hwstats_t *ae_hwstats);
+
+XCamReturn rk_aiq_get_adpcc_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                        Adpcc_Manual_Attr_t *manual);
+
+XCamReturn rk_aiq_set_adpcc_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                        Adpcc_Manual_Attr_t *manual);
+
+XCamReturn rk_aiq_user_api2_adrc_queryinfo(const rk_aiq_sys_ctx_t *sys_ctx,
+                                           DrcInfo_t *drc_info);
+
+XCamReturn rk_aiq_set_adrc_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       mdrcAttr_V30_t *manual);
+
+XCamReturn rk_aiq_get_adrc_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       mdrcAttr_V30_t *manual);
+
+XCamReturn rk_aiq_set_amerge_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                         mMergeAttrV30_t *manual);
+
+XCamReturn rk_aiq_get_amerge_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                         mMergeAttrV30_t *manual);
+
+XCamReturn rk_aiq_set_agamma_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                         Agamma_api_manualV30_t *manual);
+
+XCamReturn rk_aiq_get_agamma_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                         Agamma_api_manualV30_t *manual);
+
+XCamReturn rk_aiq_set_asharp_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                         RK_SHARP_Params_V4_Select_t *manual);
+
+XCamReturn rk_aiq_get_asharp_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                         RK_SHARP_Params_V4_Select_t *manual);
+
+XCamReturn
+rk_aiq_set_abayer2dnr_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                  RK_Bayer2dnr_Params_V2_Select_t *manual);
+
+XCamReturn
+rk_aiq_get_abayer2dnr_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                  RK_Bayer2dnr_Params_V2_Select_t *manual);
+
+XCamReturn
+rk_aiq_set_abayertnr_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                 RK_Bayertnr_Params_V2_Select_t *manual);
+
+XCamReturn
+rk_aiq_get_abayertnr_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                 RK_Bayertnr_Params_V2_Select_t *manual);
+
+XCamReturn rk_aiq_set_aynr_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       RK_YNR_Params_V3_Select_t *manual);
+
+XCamReturn rk_aiq_get_aynr_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       RK_YNR_Params_V3_Select_t *manual);
+
+XCamReturn rk_aiq_set_acnr_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       RK_CNR_Params_V2_Select_t *manual);
+
+XCamReturn rk_aiq_get_acnr_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       RK_CNR_Params_V2_Select_t *manual);
+
+XCamReturn rk_aiq_set_again_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                        RK_GAIN_Select_V2_t *manual);
+
+XCamReturn rk_aiq_get_again_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                        RK_GAIN_Select_V2_t *manual);
+
+XCamReturn rk_aiq_set_ablc0_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                        AblcSelect_t *manual);
+
+XCamReturn rk_aiq_get_ablc0_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                        AblcSelect_t *manual);
+
+XCamReturn rk_aiq_set_ablc1_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                        AblcSelect_t *manual);
+
+XCamReturn rk_aiq_get_ablc1_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                        AblcSelect_t *manual);
 
 #endif /*__RK_AIQ_USER_API2_WRAPPER_H__*/

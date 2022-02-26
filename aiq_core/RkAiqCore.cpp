@@ -494,11 +494,11 @@ RkAiqCore::RkAiqCore(int isp_hw_ver)
         mHasPp = true;
         mAlgosDesArray = g_default_3a_des;
         mTranslator = new RkAiqResourceTranslator();
-    } else if (mIspHwVer == 1){
+    } else if (mIspHwVer == 1) {
         mHasPp = false;
         mAlgosDesArray = g_default_3a_des_v21;
         mTranslator = new RkAiqResourceTranslatorV21();
-    } else if (mIspHwVer == 3){
+    } else if (mIspHwVer == 3) {
         mHasPp = false;
         mAlgosDesArray = g_default_3a_des_v3x;
         mTranslator = new RkAiqResourceTranslatorV3x();
@@ -918,7 +918,7 @@ RkAiqCore::getAiqParamsBuffer(RkAiqFullParams* aiqParams, enum rk_aiq_core_analy
     }
 
     std::vector<SmartPtr<RkAiqHandle>>& algo_list =
-        mRkAiqCoreGroupManager->getGroupAlgoList(type);
+                                        mRkAiqCoreGroupManager->getGroupAlgoList(type);
 
     for (auto& algoHdl : algo_list) {
         bool get_buffer = false;
@@ -1150,7 +1150,7 @@ RkAiqCore::genIspParamsResult(RkAiqFullParams *aiqParams, enum rk_aiq_core_analy
     SmartPtr<RkAiqFullParams> curParams = mAiqCurParams->data();
 
     std::vector<SmartPtr<RkAiqHandle>>& algo_list =
-        mRkAiqCoreGroupManager->getGroupAlgoList(type);
+                                        mRkAiqCoreGroupManager->getGroupAlgoList(type);
 
     for (auto& algoHdl : algo_list) {
         RkAiqHandle* curHdl = algoHdl.ptr();
@@ -1945,7 +1945,7 @@ RkAiqCore::preProcess(enum rk_aiq_core_analyze_type_e type)
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
 
     std::vector<SmartPtr<RkAiqHandle>>& algo_list =
-        mRkAiqCoreGroupManager->getGroupAlgoList(type);
+                                        mRkAiqCoreGroupManager->getGroupAlgoList(type);
 
     for (auto& algoHdl : algo_list) {
         RkAiqHandle* curHdl = algoHdl.ptr();
@@ -1973,7 +1973,7 @@ RkAiqCore::processing(enum rk_aiq_core_analyze_type_e type)
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
 
     std::vector<SmartPtr<RkAiqHandle>>& algo_list =
-        mRkAiqCoreGroupManager->getGroupAlgoList(type);
+                                        mRkAiqCoreGroupManager->getGroupAlgoList(type);
 
     for (auto& algoHdl : algo_list) {
         RkAiqHandle* curHdl = algoHdl.ptr();
@@ -2000,7 +2000,7 @@ RkAiqCore::postProcess(enum rk_aiq_core_analyze_type_e type)
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
 
     std::vector<SmartPtr<RkAiqHandle>>& algo_list =
-        mRkAiqCoreGroupManager->getGroupAlgoList(type);
+                                        mRkAiqCoreGroupManager->getGroupAlgoList(type);
 
     for (auto& algoHdl : algo_list) {
         if (algoHdl.ptr() && algoHdl->getEnable()) {
@@ -2266,6 +2266,17 @@ RkAiqCore::genCpslResult(RkAiqFullParams* params, RkAiqAlgoPreResAsd* asd_pre_rk
     } else {
         cpsl_param->update_ir = false;
         cpsl_param->update_fl = false;
+    }
+
+    RkAiqAlgosGroupShared_t* shared = nullptr;
+    int groupId = getGroupId(RK_AIQ_ALGO_TYPE_ASD);
+    if (groupId >= 0) {
+        if (getGroupSharedParams(groupId, shared) == XCAM_RETURN_NO_ERROR) {
+            if (mAlogsComSharedParams.init)
+                cpsl_param->frame_id = 0;
+            else
+                cpsl_param->frame_id = shared->frameId;
+        }
     }
 
     return XCAM_RETURN_NO_ERROR;
@@ -2553,7 +2564,7 @@ void RkAiqCore::newAiqParamsPool()
             case RK_AIQ_ALGO_TYPE_ARAWNR:
 #if defined(ISP_HW_V30)
                 mAiqIspBaynrV3xParamsPool      = new RkAiqIspBaynrParamsPoolV3x("RkAiqIspRawnrParams", RkAiqCore::DEFAULT_POOL_SIZE);
-#elif defined(ISP_HW_V21) 
+#elif defined(ISP_HW_V21)
                 mAiqIspBaynrV21ParamsPool      = new RkAiqIspBaynrParamsPoolV21("RkAiqIspRawnrParams", RkAiqCore::DEFAULT_POOL_SIZE);
 #else
                 mAiqIspRawnrParamsPool      = new RkAiqIspRawnrParamsPool("RkAiqIspRawnrParams", RkAiqCore::DEFAULT_POOL_SIZE);
@@ -2938,7 +2949,7 @@ XCamReturn RkAiqCore::handleAtmoStats(const SmartPtr<VideoBuffer>& buffer,
 }
 
 XCamReturn RkAiqCore::handleAdehazeStats(const SmartPtr<VideoBuffer>& buffer,
-                                         SmartPtr<RkAiqAdehazeStatsProxy>& dehazeStat) {
+        SmartPtr<RkAiqAdehazeStatsProxy>& dehazeStat) {
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
 
     if (mAiqAdehazeStatsPool.ptr() && mAiqAdehazeStatsPool->has_free_items()) {

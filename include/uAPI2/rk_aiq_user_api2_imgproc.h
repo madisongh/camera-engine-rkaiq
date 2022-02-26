@@ -52,6 +52,7 @@
 #include "rk_aiq_user_api2_asharp_v4.h"
 #include "rk_aiq_user_api2_abayer2dnr_v2.h"
 #include "rk_aiq_user_api2_abayertnr_v2.h"
+#include "rk_aiq_user_api2_again_v2.h"
 
 
 
@@ -66,11 +67,11 @@ RKAIQ_BEGIN_DECLARE
 *
 * Desc: set ae lock
 * Argument:
-*		true, ae lock
+*       true, ae lock
 *           false, ae unlock
 *****************************
 */
-XCamReturn rk_aiq_uapi2_setAeLock(const rk_aiq_sys_ctx_t* ctx,bool on);
+XCamReturn rk_aiq_uapi2_setAeLock(const rk_aiq_sys_ctx_t* ctx, bool on);
 
 /*
 *****************************

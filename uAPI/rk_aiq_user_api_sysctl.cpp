@@ -53,6 +53,16 @@ rk_aiq_sys_ctx_t* get_next_ctx(const rk_aiq_sys_ctx_t* ctx)
         return ctx->next_ctx;
 }
 
+rk_aiq_camgroup_ctx_t* get_binded_group_ctx(const rk_aiq_sys_ctx_t* ctx)
+{
+#ifdef RKAIQ_ENABLE_CAMGROUP
+    if (ctx->_camGroupManager)
+        return (rk_aiq_camgroup_ctx_t*)ctx->_camGroupManager->getContainerCtx();
+    else
+#endif
+    return NULL;
+}
+
 void rk_aiq_ctx_set_tool_mode(const rk_aiq_sys_ctx_t* ctx, bool status)
 {
     if (!ctx)
@@ -76,13 +86,13 @@ bool is_ctx_need_bypass(const rk_aiq_sys_ctx_t* ctx)
         return true;
 
     if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
-#ifdef RKAIQ_ENABLE_CAMGROUP
+#if 0
         const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
         for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
             if(camCtx && camCtx->_socket) {
                 if (camCtx->_socket->is_connected() && \
-                    camCtx->ctx_type != CTX_TYPE_TOOL_SERVER) {
-                        return true;
+                        camCtx->ctx_type != CTX_TYPE_TOOL_SERVER) {
+                    return true;
                 }
             }
         }
@@ -90,8 +100,8 @@ bool is_ctx_need_bypass(const rk_aiq_sys_ctx_t* ctx)
     } else {
         if(ctx->_socket) {
             if (ctx->_socket->is_connected() && \
-                ctx->ctx_type != CTX_TYPE_TOOL_SERVER) {
-                    return true;
+                    ctx->ctx_type != CTX_TYPE_TOOL_SERVER) {
+                return true;
             }
         }
     }
@@ -161,51 +171,51 @@ static int rk_aiq_offline_init(rk_aiq_sys_ctx_t* ctx)
     ENTER_XCORE_FUNCTION();
 
     if (aiq_ini) {
-      const char* raw_offline_str = rkaiq_ini_get(aiq_ini, "rkaiq", "offline");
-      const char* raw_w_str = rkaiq_ini_get(aiq_ini, "rkaiq", "width");
-      const char* raw_h_str = rkaiq_ini_get(aiq_ini, "rkaiq", "height");
-      const char* raw_fmt_str = rkaiq_ini_get(aiq_ini, "rkaiq", "format");
+        const char* raw_offline_str = rkaiq_ini_get(aiq_ini, "rkaiq", "offline");
+        const char* raw_w_str = rkaiq_ini_get(aiq_ini, "rkaiq", "width");
+        const char* raw_h_str = rkaiq_ini_get(aiq_ini, "rkaiq", "height");
+        const char* raw_fmt_str = rkaiq_ini_get(aiq_ini, "rkaiq", "format");
 
-      bool offline = atoi(raw_offline_str) > 0 ? true : false;
-      int raw_w = atoi(raw_w_str);
-      int raw_h = atoi(raw_h_str);
+        bool offline = atoi(raw_offline_str) > 0 ? true : false;
+        int raw_w = atoi(raw_w_str);
+        int raw_h = atoi(raw_h_str);
 
-      // valid offline mode
-      if (offline && raw_w && raw_h && raw_fmt_str) {
-        ctx->_raw_prop.frame_width = raw_w;
-        ctx->_raw_prop.frame_height = raw_h;
-        ctx->_raw_prop.rawbuf_type = RK_AIQ_RAW_FILE;
-        ctx->_use_fakecam = true;
+        // valid offline mode
+        if (offline && raw_w && raw_h && raw_fmt_str) {
+            ctx->_raw_prop.frame_width = raw_w;
+            ctx->_raw_prop.frame_height = raw_h;
+            ctx->_raw_prop.rawbuf_type = RK_AIQ_RAW_FILE;
+            ctx->_use_fakecam = true;
 
-        if (strcmp(raw_fmt_str, "BG10") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SBGGR10;
-        else if (strcmp(raw_fmt_str, "GB10") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SGBRG10;
-        else if (strcmp(raw_fmt_str, "RG10") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SRGGB10;
-        else if (strcmp(raw_fmt_str, "BA10") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SGRBG10;
-        else if (strcmp(raw_fmt_str, "BG12") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SBGGR12;
-        else if (strcmp(raw_fmt_str, "GB12") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SGBRG12;
-        else if (strcmp(raw_fmt_str, "RG12") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SRGGB12;
-        else if (strcmp(raw_fmt_str, "BA12") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SGRBG12;
-        else if (strcmp(raw_fmt_str, "BG14") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SBGGR14;
-        else if (strcmp(raw_fmt_str, "GB14") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SGBRG14;
-        else if (strcmp(raw_fmt_str, "RG14") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SRGGB14;
-        else if (strcmp(raw_fmt_str, "BA14") == 0)
-          ctx->_raw_prop.format = RK_PIX_FMT_SGRBG14;
-        else
-          ctx->_raw_prop.format = RK_PIX_FMT_SBGGR10;
-      }
+            if (strcmp(raw_fmt_str, "BG10") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SBGGR10;
+            else if (strcmp(raw_fmt_str, "GB10") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SGBRG10;
+            else if (strcmp(raw_fmt_str, "RG10") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SRGGB10;
+            else if (strcmp(raw_fmt_str, "BA10") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SGRBG10;
+            else if (strcmp(raw_fmt_str, "BG12") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SBGGR12;
+            else if (strcmp(raw_fmt_str, "GB12") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SGBRG12;
+            else if (strcmp(raw_fmt_str, "RG12") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SRGGB12;
+            else if (strcmp(raw_fmt_str, "BA12") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SGRBG12;
+            else if (strcmp(raw_fmt_str, "BG14") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SBGGR14;
+            else if (strcmp(raw_fmt_str, "GB14") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SGBRG14;
+            else if (strcmp(raw_fmt_str, "RG14") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SRGGB14;
+            else if (strcmp(raw_fmt_str, "BA14") == 0)
+                ctx->_raw_prop.format = RK_PIX_FMT_SGRBG14;
+            else
+                ctx->_raw_prop.format = RK_PIX_FMT_SBGGR10;
+        }
 
-      rkaiq_ini_free(aiq_ini);
+        rkaiq_ini_free(aiq_ini);
     }
 
     if (use_as_fake_cam_env)
@@ -485,12 +495,12 @@ rk_aiq_uapi_sysctl_prepare(const rk_aiq_sys_ctx_t* ctx,
     ENTER_XCORE_FUNCTION();
     XCAM_ASSERT(ctx != nullptr);
 
-   if (ctx->_use_fakecam && ctx->_raw_prop.format &&
-       ctx->_raw_prop.frame_width &&
-       ctx->_raw_prop.frame_height &&
-       ctx->_raw_prop.rawbuf_type) {
-     rk_aiq_uapi_sysctl_prepareRkRaw(ctx, ctx->_raw_prop);
-   }
+    if (ctx->_use_fakecam && ctx->_raw_prop.format &&
+            ctx->_raw_prop.frame_width &&
+            ctx->_raw_prop.frame_height &&
+            ctx->_raw_prop.rawbuf_type) {
+        rk_aiq_uapi_sysctl_prepareRkRaw(ctx, ctx->_raw_prop);
+    }
 
     RKAIQ_API_SMART_LOCK(ctx);
 
@@ -827,6 +837,9 @@ camgroupAlgoHandle(const rk_aiq_sys_ctx_t* ctx, const int algo_type)
 #include "uAPI2/rk_aiq_user_api2_abayertnr_v2.cpp"
 #include "rk_aiq_user_api_abayertnr_v2.cpp"
 #include "uAPI2/rk_aiq_user_api2_acsm.cpp"
+#include "uAPI2/rk_aiq_user_api2_again_v2.cpp"
+#include "rk_aiq_user_api_again_v2.cpp"
+
 
 #define RK_AIQ_ALGO_TYPE_MODULES (RK_AIQ_ALGO_TYPE_MAX + 1)
 

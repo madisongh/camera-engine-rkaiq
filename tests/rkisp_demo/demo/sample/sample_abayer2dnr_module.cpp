@@ -106,6 +106,8 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
                 bayer2dnrV2_attr.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
                 bayer2dnrV2_attr.eMode = ABAYER2DNR_OP_MODE_AUTO;
                 bayer2dnrV2_attr.stAuto.st2DParams.enable = 1;
+                bayer2dnrV2_attr.stAuto.st2DParams.hdrdgain_ctrl_en = 1;
+
                 for(int i = 0; i < RK_BAYER2DNR_V2_MAX_ISO_NUM; i++) {
                     bayer2dnrV2_attr.stAuto.st2DParams.iso[i] = 50 * pow(2, i);
 
@@ -151,6 +153,9 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
                     bayer2dnrV2_attr.stAuto.st2DParams.pix_diff[i] = 16383;
                     bayer2dnrV2_attr.stAuto.st2DParams.diff_thld[i] = 1024;
 
+                    bayer2dnrV2_attr.stAuto.st2DParams.hdr_dgain_scale_s[i] = 1.0;
+                    bayer2dnrV2_attr.stAuto.st2DParams.hdr_dgain_scale_m[i] = 1.0;
+
                 }
 
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetAttrib(ctx, &bayer2dnrV2_attr);
@@ -170,6 +175,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
                 bayer2dnrV2_attr.sync.sync_mode = RK_AIQ_UAPI_MODE_SYNC;
                 bayer2dnrV2_attr.eMode = ABAYER2DNR_OP_MODE_MANUAL;
                 bayer2dnrV2_attr.stManual.st2DSelect.enable = 1;
+                bayer2dnrV2_attr.stManual.st2DSelect.hdrdgain_ctrl_en = 1;
 
                 bayer2dnrV2_attr.stManual.st2DSelect.lumapoint[0] = 512;
                 bayer2dnrV2_attr.stManual.st2DSelect.lumapoint[1] = 1024;
@@ -212,6 +218,9 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
                 bayer2dnrV2_attr.stManual.st2DSelect.gauss_guide = 0;
                 bayer2dnrV2_attr.stManual.st2DSelect.pix_diff = 16383;
                 bayer2dnrV2_attr.stManual.st2DSelect.diff_thld = 1023;
+
+                bayer2dnrV2_attr.stManual.st2DSelect.hdr_dgain_scale_s = 1.0;
+                bayer2dnrV2_attr.stManual.st2DSelect.hdr_dgain_scale_m = 1.0;
 
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetAttrib(ctx, &bayer2dnrV2_attr);
                 printf("set bayer2dnr v2 attri manual ret:%d \n\n", ret);
@@ -389,6 +398,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
                 bayer2dnrV2_attr.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
                 bayer2dnrV2_attr.eMode = ABAYER2DNR_OP_MODE_AUTO;
                 bayer2dnrV2_attr.stAuto.st2DParams.enable = 1;
+                bayer2dnrV2_attr.stAuto.st2DParams.hdrdgain_ctrl_en = 1;
                 for(int i = 0; i < RK_BAYER2DNR_V2_MAX_ISO_NUM; i++) {
                     bayer2dnrV2_attr.stAuto.st2DParams.iso[i] = 50 * pow(2, i);
 
@@ -434,6 +444,9 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
                     bayer2dnrV2_attr.stAuto.st2DParams.pix_diff[i] = 16383;
                     bayer2dnrV2_attr.stAuto.st2DParams.diff_thld[i] = 1024;
 
+                    bayer2dnrV2_attr.stAuto.st2DParams.hdr_dgain_scale_s[i] = 1.0;
+                    bayer2dnrV2_attr.stAuto.st2DParams.hdr_dgain_scale_m[i] = 1.0;
+
                 }
 
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetAttrib(ctx, &bayer2dnrV2_attr);
@@ -453,6 +466,7 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
                 bayer2dnrV2_attr.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
                 bayer2dnrV2_attr.eMode = ABAYER2DNR_OP_MODE_MANUAL;
                 bayer2dnrV2_attr.stManual.st2DSelect.enable = 1;
+                bayer2dnrV2_attr.stManual.st2DSelect.hdrdgain_ctrl_en = 1;
 
                 bayer2dnrV2_attr.stManual.st2DSelect.lumapoint[0] = 512;
                 bayer2dnrV2_attr.stManual.st2DSelect.lumapoint[1] = 1024;
@@ -495,6 +509,9 @@ XCamReturn sample_abayer2dnr_module (const void *arg)
                 bayer2dnrV2_attr.stManual.st2DSelect.gauss_guide = 0;
                 bayer2dnrV2_attr.stManual.st2DSelect.pix_diff = 16383;
                 bayer2dnrV2_attr.stManual.st2DSelect.diff_thld = 1023;
+
+                bayer2dnrV2_attr.stManual.st2DSelect.hdr_dgain_scale_s = 1.0;
+                bayer2dnrV2_attr.stManual.st2DSelect.hdr_dgain_scale_m = 1.0;
 
                 ret = rk_aiq_user_api2_abayer2dnrV2_SetAttrib(ctx, &bayer2dnrV2_attr);
                 printf("set bayer2dnr v2 attri manual ret:%d \n\n", ret);

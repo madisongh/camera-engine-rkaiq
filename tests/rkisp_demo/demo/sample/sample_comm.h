@@ -51,16 +51,17 @@ enum RK_ISP_HW_MODULE_e {
     RK_ISP_ADEBAYER,
     RK_ISP_ACP,
     RK_ISP_AIE,
+    RK_ISP_AGAIN,
     RK_ISP_MAX,
 };
 
 typedef int (*uapi_case_func)(const void*);
 
 typedef struct __uapi_case {
-  // description of this uapi
-  const char* desc;
-  // uapi function
-  uapi_case_func func;
+    // description of this uapi
+    const char* desc;
+    // uapi function
+    uapi_case_func func;
 } uapi_case_t;
 
 int uapi_usage_show(uapi_case_t* uapi_list);

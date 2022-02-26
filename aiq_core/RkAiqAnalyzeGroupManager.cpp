@@ -68,7 +68,7 @@ void RkAiqAnalyzerGroup::msgReduction(std::map<uint32_t, GroupMessage>& msgMap) 
                 unreadyFlag >>= 1;
                 i++;
             }
-            LOGE_ANALYZER_SUBM(ANALYZER_SUBM,
+            LOGW_ANALYZER_SUBM(ANALYZER_SUBM,
                     "camId:%d group(%s): id[%d] map size is %d, erase %d, element, missing conditions: %s",
                     mAiqCore->mAlogsComSharedParams.mCamPhyId,
                     AnalyzerGroupType2Str[mGroupType], mGroupMsgMap.begin()->first,

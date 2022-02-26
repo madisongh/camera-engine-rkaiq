@@ -110,15 +110,15 @@ Asharp4_result_t sharp_select_params_by_ISO_V4(
     pSelect->bf_add = INTERP_V4(pParams->bf_add[gain_low], pParams->bf_add[gain_high], ratio);
     pSelect->bf_ratio = INTERP_V4(pParams->bf_ratio[gain_low], pParams->bf_ratio[gain_high], ratio);
 
-    for(int i = 0; i < RK_SHARP_V4_PBF_DIAM * RK_SHARP_V4_PBF_DIAM; i++) {
+    for(int i = 0; i < 3; i++) {
         pSelect->prefilter_coeff[i] = INTERP_V4(pParams->prefilter_coeff [gain_low][i], pParams->prefilter_coeff[gain_high][i], ratio);
     }
 
-    for(int i = 0; i < RK_SHARP_V4_RF_DIAM * RK_SHARP_V4_RF_DIAM; i++) {
+    for(int i = 0; i < 6; i++) {
         pSelect->GaussianFilter_coeff[i] = INTERP_V4(pParams->GaussianFilter_coeff [gain_low][i], pParams->GaussianFilter_coeff[gain_high][i], ratio);
     }
 
-    for(int i = 0; i < RK_SHARP_V4_BF_DIAM * RK_SHARP_V4_BF_DIAM; i++) {
+    for(int i = 0; i < 3; i++) {
         pSelect->hfBilateralFilter_coeff[i] = INTERP_V4(pParams->hfBilateralFilter_coeff [gain_low][i], pParams->hfBilateralFilter_coeff[gain_high][i], ratio);
     }
 

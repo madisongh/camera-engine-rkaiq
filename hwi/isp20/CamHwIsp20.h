@@ -50,6 +50,7 @@ class CamHwIsp20
     : public CamHwBase, virtual public Isp20Params, public V4l2Device
     , public isp_drv_share_mem_ops_t {
 public:
+    friend class RawStreamProcUnit;
     explicit CamHwIsp20();
     virtual ~CamHwIsp20();
 

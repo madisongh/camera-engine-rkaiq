@@ -2421,7 +2421,7 @@ AdpccResult_t Api_Fast_mode_select(
 }
 
 AdpccResult_t Api_select_bpt_params(
-    Adpcc_bpt_params_select_t *pSelect,
+    Adpcc_bpt_params_t *pSelect,
     Adpcc_Manual_Attr_t *pstmaunal)
 {
     AdpccResult_t ret = ADPCC_RET_SUCCESS;
@@ -2440,7 +2440,7 @@ AdpccResult_t Api_select_bpt_params(
         return ret;
     }
 
-    memcpy(pSelect, &pstmaunal->stBpt, sizeof(Adpcc_bpt_params_select_t));
+    memcpy(pSelect, &pstmaunal->stBpt, sizeof(Adpcc_bpt_params_t));
 
     LOGI_ADPCC("%s(%d): exit!\n", __FUNCTION__, __LINE__);
     return ret;
@@ -2448,7 +2448,7 @@ AdpccResult_t Api_select_bpt_params(
 
 AdpccResult_t select_bpt_params_by_ISO(
     Adpcc_bpt_params_t *pParams,
-    Adpcc_bpt_params_select_t *pSelect,
+    Adpcc_bpt_params_t *pSelect,
     AdpccExpInfo_t *pExpInfo)
 {
     AdpccResult_t ret = ADPCC_RET_SUCCESS;
@@ -2473,14 +2473,14 @@ AdpccResult_t select_bpt_params_by_ISO(
         return ret;
     }
 
-    memcpy(pSelect, pParams, sizeof(Adpcc_bpt_params_select_t));
+    memcpy(pSelect, pParams, sizeof(Adpcc_bpt_params_t));
 
     LOGI_ADPCC("%s(%d): exit!\n", __FUNCTION__, __LINE__);
     return ret;
 }
 
 AdpccResult_t Api_select_pdaf_params(
-    Adpcc_pdaf_params_select_t *pSelect,
+    Adpcc_pdaf_params_t *pSelect,
     Adpcc_Manual_Attr_t *pstmaunal)
 {
     AdpccResult_t ret = ADPCC_RET_SUCCESS;
@@ -2499,7 +2499,7 @@ AdpccResult_t Api_select_pdaf_params(
         return ret;
     }
 
-    memcpy(pSelect, &pstmaunal->stPdaf, sizeof(Adpcc_pdaf_params_select_t));
+    memcpy(pSelect, &pstmaunal->stPdaf, sizeof(Adpcc_pdaf_params_t));
 
     LOGI_ADPCC("%s(%d): exit!\n", __FUNCTION__, __LINE__);
     return ret;
@@ -2507,7 +2507,7 @@ AdpccResult_t Api_select_pdaf_params(
 
 AdpccResult_t select_pdaf_params_by_ISO(
     Adpcc_pdaf_params_t *pParams,
-    Adpcc_pdaf_params_select_t *pSelect,
+    Adpcc_pdaf_params_t *pSelect,
     AdpccExpInfo_t *pExpInfo)
 {
     AdpccResult_t ret = ADPCC_RET_SUCCESS;
@@ -2532,7 +2532,7 @@ AdpccResult_t select_pdaf_params_by_ISO(
         return ret;
     }
 
-    memcpy(pSelect, pParams, sizeof(Adpcc_pdaf_params_select_t));
+    memcpy(pSelect, pParams, sizeof(Adpcc_pdaf_params_t));
 
     LOGI_ADPCC("%s(%d): exit!\n", __FUNCTION__, __LINE__);
     return ret;
@@ -2540,7 +2540,7 @@ AdpccResult_t select_pdaf_params_by_ISO(
 
 AdpccResult_t DpccExpertMode(
     Adpcc_pdaf_params_t *pParams,
-    Adpcc_pdaf_params_select_t *pSelect,
+    Adpcc_pdaf_params_t *pSelect,
     AdpccExpInfo_t *pExpInfo)
 {
     AdpccResult_t ret = ADPCC_RET_SUCCESS;
@@ -2565,7 +2565,7 @@ AdpccResult_t DpccExpertMode(
         return ret;
     }
 
-    memcpy(pSelect, pParams, sizeof(Adpcc_pdaf_params_select_t));
+    memcpy(pSelect, pParams, sizeof(Adpcc_pdaf_params_t));
 
     LOGI_ADPCC("%s(%d): exit!\n", __FUNCTION__, __LINE__);
     return ret;

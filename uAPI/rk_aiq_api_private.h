@@ -74,6 +74,8 @@ typedef struct rk_aiq_camgroup_ctx_s {
 
 
 rk_aiq_sys_ctx_t* get_next_ctx(const rk_aiq_sys_ctx_t* ctx);
+rk_aiq_camgroup_ctx_t* get_binded_group_ctx(const rk_aiq_sys_ctx_t* ctx);
+
 bool is_ctx_need_bypass(const rk_aiq_sys_ctx_t* ctx);
 void rk_aiq_ctx_set_tool_mode(const rk_aiq_sys_ctx_t* ctx, bool status);
 

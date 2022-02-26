@@ -508,7 +508,7 @@ RKStatsStream::new_video_buffer(SmartPtr<V4l2Buffer> buf,
     isp20stats_buf->_buf_type = _dev_type;
     isp20stats_buf->getEffectiveIspParams(buf->get_buf().sequence, ispParams);
     isp20stats_buf->getEffectiveExpParams(buf->get_buf().sequence, expParams);
-    CaptureRawData::getInstance().save_metadata_and_register(buf->get_buf().sequence, ispParams, expParams, afParams, _rx_handle_dev->get_workingg_mode());
+    //CaptureRawData::getInstance().save_metadata_and_register(buf->get_buf().sequence, ispParams, expParams, afParams, _rx_handle_dev->get_workingg_mode());
 
     EXIT_CAMHW_FUNCTION();
 

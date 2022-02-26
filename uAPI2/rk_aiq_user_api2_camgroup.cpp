@@ -40,6 +40,8 @@ _cam_group_bind(rk_aiq_camgroup_ctx_t* camgroup_ctx, rk_aiq_sys_ctx_t* aiq_ctx)
         return ret;
     }
 
+    camgroup_ctx->cam_group_manager->setContainerCtx(camgroup_ctx);
+
     // bind group to aiq
     aiq_ctx->_camGroupManager = camgroup_ctx->cam_group_manager.ptr();
     aiq_ctx->_analyzer->setCamGroupManager(aiq_ctx->_camGroupManager);

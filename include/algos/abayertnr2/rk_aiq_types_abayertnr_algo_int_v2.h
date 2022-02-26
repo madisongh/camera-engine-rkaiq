@@ -27,6 +27,8 @@
 #include "RkAiqCalibDbTypes.h"
 #include "abayertnr2/rk_aiq_types_abayertnr_algo_v2.h"
 #include "bayertnr_head_v2.h"
+#include "bayertnr_uapi_head_v2.h"
+
 
 //RKAIQ_BEGIN_DECLARE
 
@@ -116,7 +118,7 @@ typedef struct RK_Bayertnr_Params_V2_s
     float hidif_th[RK_BAYERNR_V2_MAX_ISO_NUM];
 } RK_Bayertnr_Params_V2_t;
 
-
+#if 0
 typedef struct RK_Bayertnr_Params_V2_Select_s
 {
     int enable;
@@ -148,7 +150,7 @@ typedef struct RK_Bayertnr_Params_V2_Select_s
     float hi_wgt_comp;
     float hidif_th;
 } RK_Bayertnr_Params_V2_Select_t;
-
+#endif
 
 typedef struct Abayertnr_Manual_Attr_V2_s
 {
