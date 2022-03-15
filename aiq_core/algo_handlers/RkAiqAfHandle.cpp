@@ -301,6 +301,91 @@ XCamReturn RkAiqAfHandleInt::GetFocusRange(rk_aiq_af_focusrange* range) {
     return ret;
 }
 
+XCamReturn RkAiqAfHandleInt::GetCustomAfRes(rk_tool_customAf_res_t* att) {
+    ENTER_ANALYZER_FUNCTION();
+
+    XCamReturn ret = XCAM_RETURN_NO_ERROR;
+
+    RkAiqAlgoProcResAf* af_com = &mProcResShared->result;
+    RkAiqAlgoProcResAf* af_rk = (RkAiqAlgoProcResAf*)af_com;
+    int i;
+
+    memset(att, 0, sizeof(*att));
+#if defined(ISP_HW_V30)
+    rk_aiq_isp_af_meas_v3x_t* af_param = &af_rk->af_isp_param_v3x;
+
+    att->af_en = af_param->af_en;
+    att->rawaf_sel = af_param->rawaf_sel;
+    att->gamma_en = af_param->gamma_en;
+    att->gaus_en = af_param->gaus_en;
+    att->v1_fir_sel = af_param->v1_fir_sel;
+    att->hiir_en = af_param->hiir_en;
+    att->viir_en = af_param->viir_en;
+    att->v1_fv_outmode = af_param->v1_fv_outmode;
+    att->v2_fv_outmode = af_param->v2_fv_outmode;
+    att->h1_fv_outmode = af_param->h1_fv_outmode;
+    att->h2_fv_outmode = af_param->h2_fv_outmode;
+    att->ldg_en = af_param->ldg_en;
+    att->accu_8bit_mode = af_param->accu_8bit_mode;
+    att->ae_mode = af_param->ae_mode;
+    att->y_mode = af_param->y_mode;
+
+    att->window_num = af_param->window_num;
+    att->wina_h_offs = af_param->wina_h_offs;
+    att->wina_v_offs = af_param->wina_v_offs;
+    att->wina_h_size = af_param->wina_h_size;
+    att->wina_v_size = af_param->wina_v_size;
+    att->winb_h_offs = af_param->winb_h_offs;
+    att->winb_v_offs = af_param->winb_v_offs;
+    att->winb_h_size = af_param->winb_h_size;
+    att->winb_v_size = af_param->winb_v_size;
+
+    for (i = 0; i < RKAIQ_RAWAF_GAMMA_NUM; i++)
+        att->gamma_y[i] = af_param->gamma_y[i];
+
+    att->thres = af_param->thres;
+    att->shift_sum_a = af_param->shift_sum_a;
+    att->shift_sum_b = af_param->shift_sum_b;
+    att->shift_y_a = af_param->shift_y_a;
+    att->shift_y_b = af_param->shift_y_b;
+
+    for (i = 0; i < 9; i++)
+        att->v1_iir_coe[i] = af_param->v1_iir_coe[i] << 2;
+    for (i = 0; i < 3; i++) {
+        att->v1_fir_coe[i] = af_param->v1_fir_coe[i];
+        att->v2_iir_coe[i] = af_param->v2_iir_coe[i];
+        att->v2_fir_coe[i] = af_param->v2_fir_coe[i];
+    }
+
+    for (i = 0; i < 6; i++) {
+        att->h1_iir1_coe[i] = af_param->h1_iir1_coe[i];
+        att->h2_iir1_coe[i] = af_param->h2_iir1_coe[i];
+        att->h1_iir2_coe[i] = af_param->h1_iir2_coe[i];
+        att->h2_iir2_coe[i] = af_param->h2_iir2_coe[i];
+    }
+
+    for (i = 0; i < 2; i++) {
+        att->h_ldg_lumth[i] = af_param->h_ldg_lumth[i];
+        att->h_ldg_gain[i] = af_param->h_ldg_gain[i];
+        att->h_ldg_gslp[i] = af_param->h_ldg_gslp[i];
+        att->v_ldg_lumth[i] = af_param->v_ldg_lumth[i];
+        att->v_ldg_gain[i] = af_param->v_ldg_gain[i];
+        att->v_ldg_gslp[i] = af_param->v_ldg_gslp[i];
+    }
+
+    att->v_fv_thresh = af_param->v_fv_thresh;
+    att->h_fv_thresh = af_param->h_fv_thresh;
+    att->v1_fv_shift = af_param->v1_fv_shift;
+    att->v2_fv_shift = af_param->v2_fv_shift;
+    att->h1_fv_shift = af_param->h1_fv_shift;
+    att->h2_fv_shift = af_param->h2_fv_shift;
+    att->highlit_thresh = af_param->highlit_thresh;
+#endif
+
+    EXIT_ANALYZER_FUNCTION();
+    return ret;
+}
+
 XCamReturn RkAiqAfHandleInt::prepare() {
     ENTER_ANALYZER_FUNCTION();
 

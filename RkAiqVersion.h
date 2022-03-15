@@ -367,10 +367,19 @@
  * - add hw event callback
  * - add group module API of CP/IE/CSM
  * - notify all vicaps ready to app
+ * v3.0x8.7
+ * - fix compille error with gcc-4.4.7
+ * - add parameters of uapi for some algos
+ * - RkAiqxxxHandle: fix wrong 3a result caused by no 3a stats
+ * - CamGroup: skip incomplete expoure params
+ * - common: fix the compile error of 'defined but not used' with GUNC
+ * - camgroup: add refCnt for shared resources
+ * - reduce error log for RKAIQ running on serial port using 11520 baudrate
+ * - add the function of reading/writing uapi parameters in real time for iq tools
  */
 
-#define RK_AIQ_VERSION_REAL_V "v3.0x8.5"
-#define RK_AIQ_RELEASE_DATE "2022-01-26"
+#define RK_AIQ_VERSION_REAL_V "v3.0x8.7"
+#define RK_AIQ_RELEASE_DATE "2022-03-18"
 
 /******* DO NOT EDIT THE FOLLOWINGS ***********/
 

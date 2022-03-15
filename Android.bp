@@ -192,6 +192,7 @@ cc_library_shared {
         "ipc_server/rkaiq_tool_sharp.cpp",
         "ipc_server/rkaiq_tool_sysctl.cpp",
         "ipc_server/command_process.cpp",
+        "ipc_server/MessageParser.cpp",
 
         "RkAiqManager.cpp",
 		"RkAiqCamGroupManager.cpp"
@@ -327,5 +328,7 @@ cc_library_shared {
         "include/common/mediactl",
         "include/xcore/base",
         "include/algos",
+        "include/ipc_server",
+        "ipc_server",
     ],
 }

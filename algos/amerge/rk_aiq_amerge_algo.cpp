@@ -1219,6 +1219,15 @@ bool AmergeByPassProcessing
     bool bypass = false;
     float diff = 0.0;
 
+    // get envlv from AecPreRes
+    AmergeGetEnvLv(pAmergeCtx, AecHdrPreResult);
+    pAmergeCtx->CurrData.CtrlData.EnvLv =
+        LIMIT_VALUE(pAmergeCtx->CurrData.CtrlData.EnvLv, ENVLVMAX, ENVLVMIN);
+
+    pAmergeCtx->CurrData.CtrlData.MoveCoef = MOVE_COEF_DEFAULT;
+    pAmergeCtx->CurrData.CtrlData.MoveCoef =
+        LIMIT_VALUE(pAmergeCtx->CurrData.CtrlData.MoveCoef, MOVECOEFMAX, MOVECOEFMIN);
+
     merge_OpModeV21_t ApiMode = MERGE_OPMODE_API_OFF;
     if(CHECK_ISP_HW_V21())
         ApiMode = pAmergeCtx->mergeAttr.attrV21.opMode;
@@ -1243,15 +1252,7 @@ bool AmergeByPassProcessing
             pAmergeCtx->CurrData.HandleData.Merge_v30.MergeMode = pAmergeCtx->FrameNumber - 1;
             LOG1_AMERGE("%s:  Current MergeMode: %d \n", __FUNCTION__, pAmergeCtx->CurrData.HandleData.Merge_v30.MergeMode);
             ByPassThr = pAmergeCtx->Config.Merge_v30.ByPassThr;
-
         }
-
-        //get envlv from AecPreRes
-        AmergeGetEnvLv(pAmergeCtx, AecHdrPreResult);
-        pAmergeCtx->CurrData.CtrlData.EnvLv = LIMIT_VALUE(pAmergeCtx->CurrData.CtrlData.EnvLv, ENVLVMAX, ENVLVMIN);
-
-        pAmergeCtx->CurrData.CtrlData.MoveCoef = MOVE_COEF_DEFAULT;
-        pAmergeCtx->CurrData.CtrlData.MoveCoef = LIMIT_VALUE(pAmergeCtx->CurrData.CtrlData.MoveCoef, MOVECOEFMAX, MOVECOEFMIN);
 
         //use Envlv for now
         diff = pAmergeCtx->PrevData.CtrlData.EnvLv - pAmergeCtx->CurrData.CtrlData.EnvLv;

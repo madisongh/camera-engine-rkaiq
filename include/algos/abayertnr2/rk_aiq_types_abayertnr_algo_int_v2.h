@@ -154,7 +154,6 @@ typedef struct RK_Bayertnr_Params_V2_Select_s
 
 typedef struct Abayertnr_Manual_Attr_V2_s
 {
-    int bayernr3DEn;
     RK_Bayertnr_Params_V2_Select_t st3DSelect;
 
     RK_Bayertnr_Fix_V2_t st3DFix;
@@ -163,7 +162,6 @@ typedef struct Abayertnr_Manual_Attr_V2_s
 typedef struct Abayertnr_Auto_Attr_V2_s
 {
     //all ISO params and select param
-    int bayernr3DEn;
 
     RK_Bayertnr_Params_V2_t st3DParams;
     RK_Bayertnr_Params_V2_Select_t st3DSelect;
@@ -171,7 +169,6 @@ typedef struct Abayertnr_Auto_Attr_V2_s
 } Abayertnr_Auto_Attr_V2_t;
 
 typedef struct Abayertnr_ProcResult_V2_s {
-    int bayernr3DEn;
 
     //for sw simultaion
     RK_Bayertnr_Params_V2_Select_t st3DSelect;

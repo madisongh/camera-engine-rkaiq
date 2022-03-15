@@ -1326,7 +1326,7 @@ void AdehazeApiToolProcess(CalibDbV2_dehaze_V20_t* pStool, RkAiqAdehazeProcResul
 void AdehazeApiManuV21Process(RkAiqAdehazeProcResult_t* pProcRes, mDehazeAttr_t* pStManu)
 {
     LOG1_ADEHAZE("ENTER: %s \n", __func__);
-    LOGD_ADEHAZE(" %s: Adehaze Api off!!!\n", __func__);
+    LOGD_ADEHAZE(" %s: Adehaze Api stManual!!!\n", __func__);
 
     //cfg setting
     pProcRes->ProcResV21.cfg_alpha = (int)LIMIT_VALUE((pStManu->cfg_alpha * 256.0), 255, 0);
@@ -1349,7 +1349,7 @@ void AdehazeApiManuV21Process(RkAiqAdehazeProcResult_t* pProcRes, mDehazeAttr_t*
 void AdehazeApiManuV30Process(RkAiqAdehazeProcResult_t* pProcRes, mDehazeAttr_t* pStManu)
 {
     LOG1_ADEHAZE("ENTER: %s \n", __func__);
-    LOGD_ADEHAZE(" %s: Adehaze Api off!!!\n", __func__);
+    LOGD_ADEHAZE(" %s: Adehaze Api stManual!!!\n", __func__);
 
     //cfg setting
     pProcRes->ProcResV30.cfg_alpha = (int)LIMIT_VALUE((pStManu->cfg_alpha * 256.0), 255, 0);

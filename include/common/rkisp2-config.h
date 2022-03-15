@@ -15,7 +15,7 @@
 #define RKISP_API_VERSION		KERNEL_VERSION(1, 7, 0)
 
 #ifndef BIT
-#define BIT(x) (~0 & (1 << x))
+#define BIT(x) (~0ULL & (1ULL << x))
 #endif
 
 #define RKISP_CMD_TRIGGER_READ_BACK \

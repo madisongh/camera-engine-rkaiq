@@ -291,6 +291,8 @@ typedef struct CalibDbV2_Af_ZoomFocusTbl_s {
     int widemod_deviate;
     // M4_NUMBER_DESC("telemod deviate", "u32", M4_RANGE(0, 1000), "0", M4_DIGIT(0))
     int telemod_deviate;
+    // M4_NUMBER_DESC("focus backward value", "u32", M4_RANGE(0, 1000), "0", M4_DIGIT(0))
+    int focus_backval;
     // M4_ARRAY_DESC("zoom move dot", "u32", M4_SIZE(1,32), M4_RANGE(0,1000000), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     int *zoom_move_dot;
     int zoom_move_dot_len;
@@ -416,7 +418,7 @@ typedef struct {
 typedef struct CalibDbV2_AfV30_MeasCfg_s {
     // M4_NUMBER_DESC("table index", "u32", M4_RANGE(0, 1000000), "0", M4_DIGIT(0))
     unsigned int tbl_idx;
-    // M4_NUMBER_DESC("afmThres", "u16", M4_RANGE(0, 255), "4", M4_DIGIT(0))
+    // M4_NUMBER_DESC("afmThres", "u16", M4_RANGE(0, 65535), "4", M4_DIGIT(0))
     unsigned short afmThres;
     // M4_ARRAY_MARK_DESC("Gamma Curve", "u16", M4_SIZE(1,17),  M4_RANGE(0, 1023), "[0,45,108,179,245,344,409,459,500,567,622,676,759,833,896,962,1023]", M4_DIGIT(0), M4_DYNAMIC(0), "curve_table")
     unsigned short gammaY[17];
@@ -428,7 +430,7 @@ typedef struct CalibDbV2_AfV30_MeasCfg_s {
     unsigned char v1_fir_sel;
     // M4_ARRAY_DESC("v1 band", "f32", M4_SIZE(1,2), M4_RANGE(0, 1), "0", M4_DIGIT(3), M4_DYNAMIC(0))
     float v1_band[2];
-    // M4_ARRAY_DESC("vertical first iir filter", "s16", M4_SIZE(1,9), M4_RANGE(-255,255), "0", M4_DIGIT(0), M4_DYNAMIC(0))
+    // M4_ARRAY_DESC("vertical first iir filter", "s16", M4_SIZE(1,9), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short v1_iir_coe[9];
     // M4_ARRAY_DESC("vertical first fir filter", "s16", M4_SIZE(1,3), M4_RANGE(-2047,2047), "0", M4_DIGIT(0), M4_DYNAMIC(0))
     short v1_fir_coe[3];
@@ -491,6 +493,8 @@ typedef struct CalibDbV2_AfV30_IsoMeasCfg_s {
     float iso;
     // M4_NUMBER_DESC("meas table index", "u32", M4_RANGE(0, 100), "0", M4_DIGIT(0))
     int idx;
+    // M4_NUMBER_DESC("spotlight scene meas table index", "u32", M4_RANGE(0, 100), "0", M4_DIGIT(0))
+    int spotlt_scene_idx;
 } CalibDbV2_AfV30_IsoMeasCfg_t;
 
 typedef struct CalibDbV2_AfV30_ZoomMeas_s {

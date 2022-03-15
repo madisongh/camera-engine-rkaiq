@@ -5558,88 +5558,59 @@
 										"zoom_idx":	0,
 										"measiso":	[{
 												"iso":	50,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	100,
-												"idx":	1
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	200,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	400,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	800,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	1600,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	3200,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	6400,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	12800,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	25600,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	51200,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	102400,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	204800,
-												"idx":	0
-											}]
-									}, {
-										"zoom_idx":	1000,
-										"measiso":	[{
-												"iso":	50,
-												"idx":	0
-											}, {
-												"iso":	100,
-												"idx":	0
-											}, {
-												"iso":	200,
-												"idx":	0
-											}, {
-												"iso":	400,
-												"idx":	0
-											}, {
-												"iso":	800,
-												"idx":	0
-											}, {
-												"iso":	1600,
-												"idx":	0
-											}, {
-												"iso":	3200,
-												"idx":	0
-											}, {
-												"iso":	6400,
-												"idx":	0
-											}, {
-												"iso":	12800,
-												"idx":	0
-											}, {
-												"iso":	25600,
-												"idx":	0
-											}, {
-												"iso":	51200,
-												"idx":	0
-											}, {
-												"iso":	102400,
-												"idx":	0
-											}, {
-												"iso":	204800,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}]
 									}],
-								"zoom_meas_len":	2,
+								"zoom_meas_len":	1,
 								"meascfg_tbl":	[{
 										"tbl_idx":	0,
 										"afmThres":	4,
@@ -11166,88 +11137,59 @@
 										"zoom_idx":	0,
 										"measiso":	[{
 												"iso":	50,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	100,
-												"idx":	1
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	200,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	400,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	800,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	1600,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	3200,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	6400,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	12800,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	25600,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	51200,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	102400,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}, {
 												"iso":	204800,
-												"idx":	0
-											}]
-									}, {
-										"zoom_idx":	1000,
-										"measiso":	[{
-												"iso":	50,
-												"idx":	0
-											}, {
-												"iso":	100,
-												"idx":	0
-											}, {
-												"iso":	200,
-												"idx":	0
-											}, {
-												"iso":	400,
-												"idx":	0
-											}, {
-												"iso":	800,
-												"idx":	0
-											}, {
-												"iso":	1600,
-												"idx":	0
-											}, {
-												"iso":	3200,
-												"idx":	0
-											}, {
-												"iso":	6400,
-												"idx":	0
-											}, {
-												"iso":	12800,
-												"idx":	0
-											}, {
-												"iso":	25600,
-												"idx":	0
-											}, {
-												"iso":	51200,
-												"idx":	0
-											}, {
-												"iso":	102400,
-												"idx":	0
-											}, {
-												"iso":	204800,
-												"idx":	0
+												"idx":	0,
+												"spotlt_scene_idx":	0
 											}]
 									}],
-								"zoom_meas_len":	2,
+								"zoom_meas_len":	1,
 								"meascfg_tbl":	[{
 										"tbl_idx":	0,
 										"afmThres":	4,

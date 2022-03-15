@@ -467,7 +467,7 @@ RkAiqCore::RkAiqCore(int isp_hw_ver)
     , mAiqAfStatsPool(nullptr)
     , mAiqOrbStatsIntPool(nullptr)
     , mAiqPdafStatsPool(nullptr)
-    , mCustomEnAlgosMask(0xffffffff)
+    , mCustomEnAlgosMask(0xffffffffffffffff)
 {
     ENTER_ANALYZER_FUNCTION();
     // mAlogsSharedParams.reset();
@@ -583,7 +583,7 @@ RkAiqCore::init(const char* sns_ent_name, const CamCalibDbContext_t* aiqCalib,
     if (algoSwitch->enable && algoSwitch->enable_algos) {
         mCustomEnAlgosMask = 0x0;
         for (uint16_t i = 0; i < algoSwitch->enable_algos_len; i++)
-            mCustomEnAlgosMask |= 1 << algoSwitch->enable_algos[i];
+            mCustomEnAlgosMask |= 1ULL << algoSwitch->enable_algos[i];
     }
     LOGI_ANALYZER("mCustomEnAlgosMask: 0x%x\n", mCustomEnAlgosMask);
     addDefaultAlgos(mAlgosDesArray);
@@ -1241,7 +1241,7 @@ RkAiqCore::addDefaultAlgos(const struct RkAiqAlgoDesCommExt* algoDes)
     for (size_t i = 0; algoDes[i].des != NULL; i++) {
         int algo_type = algoDes[i].des->type;
         // enable only the specified algorithm modules
-        if (!(1 << algo_type & mCustomEnAlgosMask))
+        if (!((1ULL << algo_type) & mCustomEnAlgosMask))
             continue;
         int32_t grpMask = 1ULL << algoDes[i].group;
 #ifdef RKAIQ_ENABLE_PARSER_V1

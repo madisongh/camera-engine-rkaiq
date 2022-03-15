@@ -7,8 +7,7 @@
 
 #if 1
 
-#define RAWNR_LUMA_TF_STRENGTH_MAX_PERCENT (100.0)
-#define RAWNR_LUMA_SF_STRENGTH_MAX_PERCENT (100.0)
+#define RAWNR_LUMA_SF_STRENGTH_SLOPE_FACTOR (8.0)
 
 
 XCamReturn
@@ -54,7 +53,7 @@ rk_aiq_uapi_abayer2dnrV2_SetStrength(const RkAiqAlgoContext *ctx,
     Abayer2dnr_Context_V2_t* pCtx = (Abayer2dnr_Context_V2_t*)ctx;
 
     float fStrength = 1.0f;
-    float fMax = RAWNR_LUMA_SF_STRENGTH_MAX_PERCENT;
+    float fslope = RAWNR_LUMA_SF_STRENGTH_SLOPE_FACTOR;
     float fPercent = 0.5f;
 
     fPercent = pStrength->percent;
@@ -64,7 +63,7 @@ rk_aiq_uapi_abayer2dnrV2_SetStrength(const RkAiqAlgoContext *ctx,
     } else {
         if(fPercent >= 0.999999)
             fPercent = 0.999999;
-        fStrength = 0.5 / (1.0 - fPercent);
+        fStrength = 0.5 * fslope / (1.0 - fPercent) - fslope + 1;
     }
 
     pCtx->stStrength = *pStrength;
@@ -84,24 +83,24 @@ rk_aiq_uapi_abayer2dnrV2_GetStrength(const RkAiqAlgoContext *ctx,
     Abayer2dnr_Context_V2_t* pCtx = (Abayer2dnr_Context_V2_t*)ctx;
 
     float fStrength = 1.0f;
-    float fMax = RAWNR_LUMA_SF_STRENGTH_MAX_PERCENT;
-    float Percent = 0.0f;
+    float fslope = RAWNR_LUMA_SF_STRENGTH_SLOPE_FACTOR;
+    float fPercent = 0.0f;
 
     fStrength = pCtx->stStrength.percent;
 
     if(fStrength <= 1) {
-        Percent = fStrength * 0.5;
+        fPercent = fStrength * 0.5;
     } else {
         float tmp = 1.0;
-        tmp = 1 - 0.5 / fStrength;
+        tmp = 1 - 0.5 * fslope / (fStrength + fslope - 1);
         if(abs(tmp - 0.999999) < 0.000001) {
             tmp = 1.0;
         }
-        Percent = tmp;
+        fPercent = tmp;
     }
 
     *pStrength = pCtx->stStrength;
-    pStrength->percent = Percent;
+    pStrength->percent = fPercent;
 
     return XCAM_RETURN_NO_ERROR;
 }

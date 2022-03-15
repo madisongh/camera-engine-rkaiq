@@ -31,9 +31,6 @@ int rk_aiq_uapi2_setWBMode2(rk_aiq_sys_ctx_t *ctx, uapi_wb_mode_t *mode);
 
 int rk_aiq_uapi2_getWBMode2(rk_aiq_sys_ctx_t *ctx, uapi_wb_mode_t *mode);
 
-int rk_aiq_user_api2_amerge_SetCtldata(const rk_aiq_sys_ctx_t *sys_ctx,
-                                       uapiMergeCurrCtlData_t *ctldata);
-
 int rk_aiq_user_api2_amerge_GetCtldata(const rk_aiq_sys_ctx_t *sys_ctx,
                                        uapiMergeCurrCtlData_t *ctldata);
 
@@ -127,5 +124,43 @@ XCamReturn rk_aiq_set_ablc1_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
 
 XCamReturn rk_aiq_get_ablc1_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
                                         AblcSelect_t *manual);
+
+XCamReturn rk_aiq_set_accm_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       rk_aiq_ccm_mccm_attrib_t *manual);
+
+XCamReturn rk_aiq_get_accm_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       rk_aiq_ccm_mccm_attrib_t *manual);
+
+XCamReturn rk_aiq_set_a3dlut_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                         rk_aiq_lut3d_mlut3d_attrib_t *manual);
+
+XCamReturn rk_aiq_get_a3dlut_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                         rk_aiq_lut3d_mlut3d_attrib_t *manual);
+
+XCamReturn rk_aiq_set_acsm_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       Csm_Param_t *manual);
+
+XCamReturn rk_aiq_get_acsm_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       Csm_Param_t *manual);
+
+XCamReturn rk_aiq_set_adehaze_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                          mDehazeAttr_t *manual);
+
+XCamReturn rk_aiq_get_adehaze_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                          mDehazeAttr_t *manual);
+
+XCamReturn rk_aiq_set_alsc_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       rk_aiq_lsc_table_t *manual);
+
+XCamReturn rk_aiq_get_alsc_manual_attr(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       rk_aiq_lsc_table_t *manual);
+
+XCamReturn rk_aiq_set_current_camindex(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       camgroup_uapi_t *manual);
+
+XCamReturn rk_aiq_get_current_camindex(const rk_aiq_sys_ctx_t *sys_ctx,
+                                       camgroup_uapi_t *manual);
+
+rk_aiq_sys_ctx_t* rk_aiq_get_last_sysctx(rk_aiq_sys_ctx_t *sys_ctx);
 
 #endif /*__RK_AIQ_USER_API2_WRAPPER_H__*/

@@ -85,8 +85,10 @@ bool is_ctx_need_bypass(const rk_aiq_sys_ctx_t* ctx)
     if (!ctx)
         return true;
 
+    /* TODO: remove the uapi enable check for the tool that configure the uapi in real time */
+    return false;
+
     if (ctx->cam_type == RK_AIQ_CAM_TYPE_GROUP) {
-#if 0
         const rk_aiq_camgroup_ctx_t* camgroup_ctx = (rk_aiq_camgroup_ctx_t *)ctx;
         for (auto camCtx : camgroup_ctx->cam_ctxs_array) {
             if(camCtx && camCtx->_socket) {
@@ -96,7 +98,6 @@ bool is_ctx_need_bypass(const rk_aiq_sys_ctx_t* ctx)
                 }
             }
         }
-#endif
     } else {
         if(ctx->_socket) {
             if (ctx->_socket->is_connected() && \

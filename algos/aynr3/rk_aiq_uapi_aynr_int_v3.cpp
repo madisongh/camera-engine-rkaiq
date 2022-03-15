@@ -2,6 +2,7 @@
 #include "aynr3/rk_aiq_types_aynr_algo_prvt_v3.h"
 
 #if 1
+#define AYNRV3_CHROMA_SF_STRENGTH_SLOPE_FACTOR (5.0)
 
 
 XCamReturn
@@ -48,6 +49,7 @@ rk_aiq_uapi_aynrV3_SetLumaSFStrength(const RkAiqAlgoContext *ctx,
 
     float fStrength = 1.0f;
     float fPercent = 0.5;
+    float fslope = AYNRV3_CHROMA_SF_STRENGTH_SLOPE_FACTOR;
 
     fPercent = pStrength->percent;
 
@@ -57,7 +59,7 @@ rk_aiq_uapi_aynrV3_SetLumaSFStrength(const RkAiqAlgoContext *ctx,
     } else {
         if(fPercent >= 0.999999)
             fPercent = 0.999999;
-        fStrength = 0.5 / (1.0 - fPercent);
+        fStrength = 0.5 * fslope / (1.0 - fPercent) - fslope + 1;
     }
 
     pCtx->stStrength = *pStrength;
@@ -77,6 +79,7 @@ rk_aiq_uapi_aynrV3_GetLumaSFStrength(const RkAiqAlgoContext *ctx,
 
     float fStrength = 1.0f;
     float fPercent = 0.5;
+    float fslope = AYNRV3_CHROMA_SF_STRENGTH_SLOPE_FACTOR;
 
     fStrength = pCtx->stStrength.percent;
 
@@ -84,7 +87,7 @@ rk_aiq_uapi_aynrV3_GetLumaSFStrength(const RkAiqAlgoContext *ctx,
         fPercent = fStrength * 0.5;
     } else {
         float tmp = 1.0;
-        tmp = 1 - 0.5 / fStrength;
+        tmp = 1 - 0.5 * fslope / (fStrength + fslope - 1);
         if(abs(tmp - 0.999999) < 0.000001) {
             tmp = 1.0;
         }

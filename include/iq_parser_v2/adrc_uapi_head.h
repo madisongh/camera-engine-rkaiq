@@ -21,7 +21,7 @@
 #include "adrc_head.h"
 
 typedef struct mDrcGain_t {
-    // M4_NUMBER_DESC("DrcGain", "f32", M4_RANGE(1,4), "1.00", M4_DIGIT(2))
+    // M4_NUMBER_DESC("DrcGain", "f32", M4_RANGE(1,8), "1.00", M4_DIGIT(2))
     float DrcGain;
     // M4_NUMBER_DESC("Alpha", "f32", M4_RANGE(0,1), "0.20", M4_DIGIT(2))
     float Alpha;

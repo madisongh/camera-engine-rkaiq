@@ -99,8 +99,8 @@ RkAiqCamGroupManager::RkAiqCamGroupManager()
 {
     ENTER_CAMGROUP_FUNCTION();
     mCamGroupReprocTh = new RkAiqCamGroupReprocTh(this);
-    mRequiredMsgsMask = (1 << XCAM_MESSAGE_AWB_STATS_OK) | (1 << XCAM_MESSAGE_AWB_PROC_RES_OK) | (1 << XCAM_MESSAGE_SOF_INFO_OK) |
-                        (1 << XCAM_MESSAGE_AEC_STATS_OK) | (1 << XCAM_MESSAGE_AE_PRE_RES_OK) | (1 << XCAM_MESSAGE_AE_PROC_RES_OK);
+    mRequiredMsgsMask = (1ULL << XCAM_MESSAGE_AWB_STATS_OK) | (1ULL << XCAM_MESSAGE_AWB_PROC_RES_OK) | (1ULL << XCAM_MESSAGE_SOF_INFO_OK) |
+                        (1ULL << XCAM_MESSAGE_AEC_STATS_OK) | (1ULL << XCAM_MESSAGE_AE_PRE_RES_OK) | (1ULL << XCAM_MESSAGE_AE_PROC_RES_OK);
 
     mGroupAlgosDesArray = g_camgroup_algos;
     mState = CAMGROUP_MANAGER_INVALID;
@@ -380,8 +380,8 @@ RkAiqCamGroupManager::processAiqCoreMsgs(RkAiqCore* src, SmartPtr<XCamMessage> &
     uint32_t frameId = msg->frame_id;
 
     // check if the msg is required firstly
-    if (!(mRequiredMsgsMask & (1 << msg->msg_id))) {
-        LOG1_CAMGROUP("camgroup: not required core msg :%s of frameId: %u, ignore",
+    if (!(mRequiredMsgsMask & (1ULL << msg->msg_id))) {
+        LOG1_CAMGROUP("camgroup: not required core msg :%s of frameId: %d, ignore",
                       MessageType2Str[msg->msg_id], msg->frame_id);
         return;
     }
