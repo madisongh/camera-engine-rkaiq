@@ -1424,6 +1424,7 @@ CamHwIsp20::init(const char* sns_ent_name)
     mRawProcUnit->set_devices(mIspCoreDev, this);
     mRawCapUnit->set_devices(mIspCoreDev, this, mRawProcUnit.ptr());
     mRawProcUnit->setCamPhyId(mCamPhyId);
+    mRawCapUnit->setCamPhyId(mCamPhyId);
     //isp stats
     mIspStatsStream = new RKStatsStream(mIspStatsDev, ISP_POLL_3A_STATS);
     mIspStatsStream->setPollCallback (this);
@@ -1432,6 +1433,7 @@ CamHwIsp20::init(const char* sns_ent_name)
         mIspStatsStream->set_focus_handle_dev(lensHw);
     }
     mIspStatsStream->set_rx_handle_dev(this);
+    mIspStatsStream->setCamPhyId(mCamPhyId);
     //luma
     if (mIspLumaDev.ptr()) {
         mLumaStream = new RKStream(mIspLumaDev, ISP_POLL_LUMA);
@@ -1439,6 +1441,7 @@ CamHwIsp20::init(const char* sns_ent_name)
     }
     //isp params
     mIspParamStream = new RKStream(mIspParamsDev, ISP_POLL_PARAMS);
+    mIspParamStream->setCamPhyId(mCamPhyId);
 
     if (s_info->flash_num) {
         mFlashLight = new FlashLightHw(s_info->module_flash_dev_name, s_info->flash_num);
@@ -2467,18 +2470,23 @@ CamHwIsp20::start()
     }
 
     // set inital params
-    ret = mParamsAssembler->start();
-    if (ret < 0) {
-        LOGE_CAMHW_SUBM(ISP20HW_SUBM, "params assembler start err: %d\n", ret);
-    }
+    if (mParamsAssembler.ptr()) {
+        mParamsAssembler->setCamPhyId(mCamPhyId);
+        ret = mParamsAssembler->start();
+        if (ret < 0) {
+            LOGE_CAMHW_SUBM(ISP20HW_SUBM, "params assembler start err: %d\n", ret);
+        }
 
-    if (mParamsAssembler->ready())
-        setIspConfig();
+        if (mParamsAssembler->ready())
+            setIspConfig();
+    }
 
     if (mLumaStream.ptr())
         mLumaStream->start();
-    if (mIspSofStream.ptr())
+    if (mIspSofStream.ptr()) {
+        mIspSofStream->setCamPhyId(mCamPhyId);
         mIspSofStream->start();
+    }
 
     if (_linked_to_isp)
         mIspCoreDev->subscribe_event(V4L2_EVENT_FRAME_SYNC);
@@ -5096,12 +5104,11 @@ CamHwIsp20::dispatchResult(SmartPtr<cam3aResult> result)
     if (!result.ptr())
         return XCAM_RETURN_ERROR_PARAM;
 
-    LOGD("%s enter, msg type(0x%x)", __FUNCTION__, result->getType());
+    LOG1("%s enter, msg type(0x%x)", __FUNCTION__, result->getType());
     switch (result->getType())
     {
     case RESULT_TYPE_EXPOSURE_PARAM:
     {
-        LOGD_CAMHW_SUBM(ISP20HW_SUBM, "RESULT_TYPE_EXPOSURE");
         SmartPtr<RkAiqExpParamsProxy> exp = result.dynamic_cast_ptr<RkAiqExpParamsProxy>();
         ret = setExposureParams(exp);
         if (ret)
