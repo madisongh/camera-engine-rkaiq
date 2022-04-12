@@ -89,6 +89,7 @@ __RKAIQUAPI_CALLER(aie_attrib_t);
 __RKAIQUAPI_CALLER(acp_attrib_t);
 __RKAIQUAPI_CALLER(rk_aiq_lsc_table_t);
 __RKAIQUAPI_CALLER(camgroup_uapi_t);
+__RKAIQUAPI_CALLER(adebayer_attrib_t);
 
 RkAiqUapiDesc_t rkaiq_uapidesc_list[] = {
     __RKAIQUAPI_DESC_DEF("/uapi/0/ae_uapi/expsw_attr", uapi_expsw_attr_t,
@@ -172,6 +173,10 @@ RkAiqUapiDesc_t rkaiq_uapidesc_list[] = {
                          camgroup_uapi_t,
                          rk_aiq_set_current_camindex,
                          rk_aiq_get_current_camindex),
+    __RKAIQUAPI_DESC_DEF("/uapi/0/adebayer_uapi/adebayer_attr",
+                         adebayer_attrib_t,
+                         rk_aiq_set_adebayer_attr,
+                         rk_aiq_get_adebayer_attr),
 };
 /***********************END OF CUSTOM AREA**************************/
 

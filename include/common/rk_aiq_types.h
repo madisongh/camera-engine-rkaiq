@@ -24,7 +24,7 @@
 #include "rk_aiq_comm.h"
 #include "rk_aiq_mems_sensor.h"
 #include "common/rk-camera-module.h"
-#include "adebayer/rk_aiq_types_algo_adebayer.h"
+#include "adebayer/rk_aiq_types_algo_adebayer_int.h"
 #include "ae/rk_aiq_types_ae_algo.h"
 #include "awb/rk_aiq_types_awb_algo.h"
 #include "alsc/rk_aiq_types_alsc_algo.h"
