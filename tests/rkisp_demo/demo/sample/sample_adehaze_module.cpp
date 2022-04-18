@@ -143,6 +143,12 @@ XCamReturn sample_adehaze_module(const void *arg)
             attr.stManual.hist_setting.HistData.hist_min = 0.015;
             attr.stManual.hist_setting.HistData.hist_scale = 0.09;
             attr.stManual.hist_setting.HistData.cfg_gratio = 2;
+
+            attr.stManual.sigma_curve[0] = -7.80229e-013;
+            attr.stManual.sigma_curve[1] = -7.80229e-013;
+            attr.stManual.sigma_curve[2] = -2.20431e-005;
+            attr.stManual.sigma_curve[3] = 0.0298751;
+            attr.stManual.sigma_curve[4] = 10.9382;
             rk_aiq_user_api2_adehaze_setSwAttrib(ctx, attr);
             break;
         }
@@ -151,7 +157,7 @@ XCamReturn sample_adehaze_module(const void *arg)
             attr.sync.sync_mode = RK_AIQ_UAPI_MODE_ASYNC;
             attr.sync.done = false;
             attr.mode = DEHAZE_API_MANUAL;
-            attr.stManual.Enable = false;
+            attr.stManual.Enable                                    = true;
             attr.stManual.cfg_alpha = 0.0;
             attr.stManual.dehaze_setting.en = false;
             attr.stManual.dehaze_setting.air_lc_en = true;
@@ -212,6 +218,12 @@ XCamReturn sample_adehaze_module(const void *arg)
             attr.stManual.hist_setting.HistData.hist_min = 0.015;
             attr.stManual.hist_setting.HistData.hist_scale = 0.09;
             attr.stManual.hist_setting.HistData.cfg_gratio = 2;
+
+            attr.stManual.sigma_curve[0] = -7.80229e-013;
+            attr.stManual.sigma_curve[1] = -7.80229e-013;
+            attr.stManual.sigma_curve[2] = -2.20431e-005;
+            attr.stManual.sigma_curve[3] = 0.0298751;
+            attr.stManual.sigma_curve[4] = 18.7607;
             rk_aiq_user_api2_adehaze_setSwAttrib(ctx, attr);
             break;
         }
@@ -323,6 +335,8 @@ XCamReturn sample_adehaze_module(const void *arg)
             printf("\t stManual Enable: %d cfg_alpha:%f\n\n", attr.stManual.Enable, attr.stManual.cfg_alpha);
             printf("\t stDehazeManu level: %d\n\n", attr.stDehazeManu.level);
             printf("\t stEnhanceManu level: %d\n\n", attr.stEnhanceManu.level);
+            printf("\t sigma_curve[3]:%f sigma_curve[4]:%f\n\n", attr.stManual.sigma_curve[3],
+                   attr.stManual.sigma_curve[4]);
             break;
         }
         case 'f': {

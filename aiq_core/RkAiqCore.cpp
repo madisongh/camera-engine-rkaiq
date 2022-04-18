@@ -783,7 +783,8 @@ RkAiqCore::prepare(const rk_aiq_exposure_sensor_descriptor* sensor_des,
         mAlogsComSharedParams.is_multi_isp_mode = mHwInfo.is_multi_isp_mode;
         mAlogsComSharedParams.multi_isp_extended_pixels = extended_pixel;
     } else {
-        static_cast<RkAiqResourceTranslatorV3x*>(mTranslator.ptr())->SetMultiIspMode(false);
+        if (mIspHwVer == 3)
+            static_cast<RkAiqResourceTranslatorV3x*>(mTranslator.ptr())->SetMultiIspMode(false);
     }
 
     if ((mAlogsComSharedParams.snsDes.sensor_pixelformat == V4L2_PIX_FMT_GREY) ||

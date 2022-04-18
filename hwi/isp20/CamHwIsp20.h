@@ -328,6 +328,7 @@ protected:
     int _isp_stream_status;
 
     rk_sensor_pdaf_info_t mPdafInfo;
+    Mutex     _stop_cond_mutex;
 };
 
 };

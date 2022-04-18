@@ -5088,9 +5088,14 @@ CamHwIsp20::handleIsp3aReslut(cam3aResultList& list)
 
     // set all ready params to drv
     while (_state == CAM_HW_STATE_STARTED &&
-            mParamsAssembler->ready()) {
-        if (setIspConfig() != XCAM_RETURN_NO_ERROR)
+           mParamsAssembler->ready()) {
+        SmartLock locker(_stop_cond_mutex);
+        if (_isp_stream_status != ISP_STREAM_STATUS_STREAM_OFF) {
+            if (setIspConfig() != XCAM_RETURN_NO_ERROR)
+                break;
+        } else {
             break;
+        }
     }
 
     EXIT_CAMHW_FUNCTION();
@@ -5644,8 +5649,11 @@ void CamHwIsp20::notify_isp_stream_status(bool on)
         _isp_stream_status = ISP_STREAM_STATUS_STREAM_OFF;
         // if CIFISP_V4L2_EVENT_STREAM_STOP event is listened, isp driver
         // will wait isp params streaming off
-        if (mIspParamStream.ptr())
-            mIspParamStream->stop();
+        {
+            SmartLock locker(_stop_cond_mutex);
+            if (mIspParamStream.ptr())
+                mIspParamStream->stop();
+        }
         hdr_mipi_stop();
         LOGI_CAMHW_SUBM(ISP20HW_SUBM, "camId:%d, %s off done", mCamPhyId, __func__);
     }

@@ -633,11 +633,14 @@ RkAiqManager::hwResCb(SmartPtr<VideoBuffer>& hwres)
             memset(&hwevt, 0, sizeof(hwevt));
             hwevt.cam_id = mCamHw->getCamPhyId();
 #ifdef RKAIQ_ENABLE_CAMGROUP
-            mCamGroupCoreManager->setVicapReady(&hwevt);
-            if (mCamGroupCoreManager->isAllVicapReady())
+            if (mCamGroupCoreManager) {
+                mCamGroupCoreManager->setVicapReady(&hwevt);
+                if (mCamGroupCoreManager->isAllVicapReady())
+                    hwevt.aiq_status = RK_AIQ_STATUS_VICAP_READY;
+                else
+                    hwevt.aiq_status = 0;
+            } else
                 hwevt.aiq_status = RK_AIQ_STATUS_VICAP_READY;
-            else
-                hwevt.aiq_status = 0;
 #else
             hwevt.aiq_status = RK_AIQ_STATUS_VICAP_READY;
 #endif
