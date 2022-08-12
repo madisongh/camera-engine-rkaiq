@@ -27,7 +27,10 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #endif
-
+#define NEON_OPT
+#ifdef NEON_OPT
+#include <arm_neon.h>
+#endif
 
 namespace RkCam {
 
@@ -612,13 +615,14 @@ RkAiqResourceTranslator::translatePdafStats (const SmartPtr<VideoBuffer> &from, 
 
     rk_aiq_isp_pdaf_meas_t* pdaf = &buf->pdaf_meas;
     uint16_t *pdLData, *pdRData, *pdData;
-    bool pdMirrorInCalib = pdaf->pdMirrorInCalib;
     uint32_t i, j, pixelperline;
-    uint64_t pdMean;
 
     pdLData = statsInt->pdaf_stats.pdLData;
     pdRData = statsInt->pdaf_stats.pdRData;
     pdData = (uint16_t *)pdafstats;
+
+    //LOGD_AF("%s: frame_id %d, timestamp %lld, pdLData %p, pdRData %p, pdData %p, pdMirrorInCalib %d",
+    //    __func__, buf->get_sequence(), buf->get_timestamp(), pdLData, pdRData, pdData, pdMirrorInCalib);
 
 //#define PDAF_RAW_DUMP
 #ifdef PDAF_RAW_DUMP
@@ -628,7 +632,7 @@ RkAiqResourceTranslator::translatePdafStats (const SmartPtr<VideoBuffer> &from, 
         int frame_id = buf->get_sequence() % 10;
 
         memset(name, 0, sizeof(name));
-        sprintf(name, "/tmp/pdaf_raw_%d.raw", frame_id);
+        sprintf(name, "/data/pdaf_raw_%d.raw", frame_id);
         fp = fopen(name, "wb");
         fwrite(pdData, 1016 * 760, 2, fp);
         fflush(fp);
@@ -636,39 +640,49 @@ RkAiqResourceTranslator::translatePdafStats (const SmartPtr<VideoBuffer> &from, 
     }
 #endif
 
-    pdMean = 0;
+#ifdef NEON_OPT
+    uint16x8x2_t vld2_data;
+    uint16x8_t vrev_data;
     pixelperline = 2 * pdaf->pdWidth;
-    if (pdMirrorInCalib) {
-        for (j = 0; j < pdaf->pdHeight; j++) {
-            for (i = 0; i < pixelperline; i+=2) {
-                pdMean += pdData[j * pixelperline + (pixelperline - 1 - i)];
-                *pdRData++ = pdData[j * pixelperline + (pixelperline - 1 - i)];
-                pdMean += pdData[j * pixelperline + (pixelperline - 1 - (i+1))];
-                *pdLData++ = pdData[j * pixelperline + (pixelperline - 1 - (i+1))];
-            }
+    for (j = 0; j < pdaf->pdHeight; j++) {
+        pdData = (uint16_t *)pdafstats + j * pixelperline;
+        for (i = 0; i < pixelperline / 16 * 16; i+=16) {
+            vld2_data = vld2q_u16(pdData);
+            vst1q_u16(pdLData, vld2_data.val[0]);
+            vst1q_u16(pdRData, vld2_data.val[1]);
+            pdLData += 8;
+            pdRData += 8;
+            pdData += 16;
         }
-    } else {
-        for (j = 0; j < pdaf->pdHeight; j++) {
-            for (i = 0; i < pixelperline; i+=2) {
-                pdMean += pdData[j * pixelperline + i];
-                *pdLData++ = pdData[j * pixelperline + i];
-                pdMean += pdData[j * pixelperline + (i+1)];
-                *pdRData++ = pdData[j * pixelperline + (i+1)];
+
+        if (pixelperline % 16) {
+            for (i = 0; i < pixelperline % 16; i+=2) {
+                *pdLData++ = pdData[i];
+                *pdRData++ = pdData[i+1];
             }
         }
     }
-    pdMean /= pixelperline * pdaf->pdHeight;
+#else
+    pixelperline = 2 * pdaf->pdWidth;
+    for (j = 0; j < pdaf->pdHeight; j++) {
+        pdData = (uint16_t *)pdafstats + j * pixelperline;
+        for (i = 0; i < pixelperline; i+=2) {
+            *pdLData++ = pdData[i];
+            *pdRData++ = pdData[i+1];
+        }
+    }
+#endif
 
 #ifdef PDAF_RAW_DUMP
     {
         FILE* fp;
 
-        fp = fopen("/tmp/pdaf_L.raw", "wb");
+        fp = fopen("/data/pdaf_L.raw", "wb");
         fwrite(statsInt->pdaf_stats.pdLData, pdaf->pdWidth * pdaf->pdHeight, 2, fp);
         fflush(fp);
         fclose(fp);
 
-        fp = fopen("/tmp/pdaf_R.raw", "wb");
+        fp = fopen("/data/pdaf_R.raw", "wb");
         fwrite(statsInt->pdaf_stats.pdRData, pdaf->pdWidth * pdaf->pdHeight, 2, fp);
         fflush(fp);
         fclose(fp);
@@ -680,7 +694,7 @@ RkAiqResourceTranslator::translatePdafStats (const SmartPtr<VideoBuffer> &from, 
     statsInt->pdaf_stats.pdWidth = pdaf->pdWidth;
     statsInt->pdaf_stats.pdHeight = pdaf->pdHeight;
     statsInt->pdaf_stats.pdMirror = sns_mirror;
-    statsInt->pdaf_stats.pdMean = (uint32_t)pdMean;
+    statsInt->pdaf_stats.pdMean = 0;
 
     return ret;
 }

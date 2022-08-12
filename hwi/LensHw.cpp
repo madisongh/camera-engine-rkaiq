@@ -346,7 +346,7 @@ LensHw::setFocusParams(SmartPtr<RkAiqFocusParamsProxy>& focus_params)
         attrPtr->next_pos_num = 1;
         attrPtr->next_lens_pos[0] = p_focus->next_lens_pos[0];
 
-        LOGD_CAMHW_SUBM(LENS_SUBM, "set focus position: %d", attrPtr->next_lens_pos[0]);
+        LOGI_AF("set focus position: %d", attrPtr->next_lens_pos[0]);
         _lenshw_thd->push_attr(attrPtr);
     } else {
         struct v4l2_control control;
@@ -377,7 +377,7 @@ LensHw::setFocusParams(SmartPtr<RkAiqFocusParamsProxy>& focus_params)
 
         start_time = _focus_tim.vcm_start_t.tv_sec * 1000 + _focus_tim.vcm_start_t.tv_usec / 1000;
         end_time = _focus_tim.vcm_end_t.tv_sec * 1000 + _focus_tim.vcm_end_t.tv_usec / 1000;
-        LOGD_CAMHW_SUBM(LENS_SUBM, "|||set focus result: %d, focus_pos %d, end time %ld, need time %d",
+        LOGI_AF("|||set focus result: %d, focus_pos %d, end time %ld, need time %d",
                         position, position, end_time, end_time - start_time);
     }
 
