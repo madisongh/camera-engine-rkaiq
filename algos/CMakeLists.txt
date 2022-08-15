@@ -23,6 +23,8 @@ else()
     set(SUFFIX a)
 endif()
 
+string(TOLOWER ${RKAIQ_TARGET_SOC} SOC)
+
 macro(dec_algo_v name version chk_file src_list)
     set(_src_list ${src_list} ${ARGN} )
     if (${version} EQUAL 0)
@@ -41,7 +43,7 @@ macro(dec_algo_v name version chk_file src_list)
     else()
         message(STATUS "Can NOT found ${CMAKE_CURRENT_SOURCE_DIR}/${chk_file}. Using lib")
         string(TOLOWER ${CMAKE_SYSTEM_NAME} OS)
-        set(PREFIX "${CMAKE_CURRENT_LIST_DIR}/${OS}/${ARCH}/lib")
+        set(PREFIX "${CMAKE_CURRENT_LIST_DIR}/${OS}/${SOC}/${ARCH}/lib")
         add_library(${target_name} STATIC IMPORTED GLOBAL)
         set_target_properties(${target_name} PROPERTIES IMPORTED_LOCATION
             "${PREFIX}${target_name}.${SUFFIX}")
