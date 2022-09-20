@@ -107,16 +107,16 @@ typedef struct CalibDbV2_Af_Contrast_s {
     CalibDbV2_Af_SS_t         Afss;                       /**< enumeration type for search strategy */
     // M4_ENUM_DESC("FullDir", "CalibDbV2_Af_SearchDir_t", "CalibDbV2_CAM_AFM_ADAPTIVE_SEARCH")
     CalibDbV2_Af_SearchDir_t  FullDir;
-    // M4_ARRAY_DESC("FullRangeTbl", "u16", M4_SIZE(1,65), M4_RANGE(0,64), "[0, 8, 16, 24, 32, 40, 48, 56, 64]", M4_DIGIT(0), M4_DYNAMIC(1))
-    unsigned short          *FullRangeTbl;             /**< full range search table*/
-    int                     FullRangeTbl_len;
+    // M4_ARRAY_DESC("FullRangeTbl", "s16", M4_SIZE(1,3), M4_RANGE(-1023,1023), "[0,1,64]", M4_DIGIT(0), M4_DYNAMIC(0))
+    short                   FullRangeTbl[3];
     // M4_ENUM_DESC("AdaptiveDir", "CalibDbV2_Af_SearchDir_t", "CalibDbV2_CAM_AFM_ADAPTIVE_SEARCH")
     CalibDbV2_Af_SearchDir_t  AdaptiveDir;
-    // M4_ARRAY_DESC("AdaptRangeTbl", "u16", M4_SIZE(1,65), M4_RANGE(0,64), "[0, 8, 16, 24, 32, 40, 48, 56, 64]", M4_DIGIT(0), M4_DYNAMIC(1))
+    // M4_ARRAY_DESC("AdaptRangeTbl", "u16", M4_SIZE(1,65), M4_RANGE(0,1023), "[0,8,16,24,32,40,48,56,64]", M4_DIGIT(0), M4_DYNAMIC(1))
     unsigned short          *AdaptRangeTbl;            /**< adaptive range search table*/
     int                     AdaptRangeTbl_len;
-    // M4_NUMBER_DESC("FineSearchStep", "s8", M4_RANGE(0, 64), "4", M4_DIGIT(0),M4_HIDE(0))
-    char                    FineSearchStep;
+    // M4_ARRAY_DESC("FineSearchStep", "u16", M4_SIZE(1,65), M4_RANGE(0,1023), "[4]", M4_DIGIT(0), M4_DYNAMIC(1))
+    unsigned short          *FineSearchStep;
+    int                     FineSearchStep_len;
     // M4_NUMBER_DESC("SkipCurveFitGain", "f32", M4_RANGE(0, 1000), "0", M4_DIGIT(3))
     float                   SkipCurveFitGain;
     // M4_ARRAY_DESC("TrigThers", "f32", M4_SIZE(1,32), M4_RANGE(0,1), "0.075", M4_DIGIT(3), M4_DYNAMIC(1))
@@ -201,9 +201,9 @@ typedef struct CalibDbV2_Af_Laser_s {
 typedef struct CalibDbV2_Af_Pdaf_fineSearch_s {
     // M4_NUMBER_DESC("confidence", "f32", M4_RANGE(0,1), "0.5", M4_DIGIT(3),M4_HIDE(0))
     float confidence;
-    // M4_NUMBER_DESC("range", "s32", M4_RANGE(0,64), "0", M4_DIGIT(0))
+    // M4_NUMBER_DESC("range", "s32", M4_RANGE(0,1023), "0", M4_DIGIT(0))
     int range;
-    // M4_NUMBER_DESC("stepPos", "s32", M4_RANGE(1,64), "1", M4_DIGIT(0))
+    // M4_NUMBER_DESC("stepPos", "s32", M4_RANGE(1,1023), "1", M4_DIGIT(0))
     int stepPos;
 } CalibDbV2_Af_Pdaf_fineSearch_t;
 
@@ -216,6 +216,8 @@ typedef struct CalibDbV2_Af_PdafIsoPara_s {
     float pdConfdRatio1;
     // M4_NUMBER_DESC("pdConfdRatio2", "f32", M4_RANGE(0,1), "1", M4_DIGIT(3),M4_HIDE(0))
     float pdConfdRatio2;
+    // M4_NUMBER_DESC("pdConfdRatio3", "f32", M4_RANGE(0,1), "1", M4_DIGIT(3),M4_HIDE(0))
+    float pdConfdRatio3;
     // M4_NUMBER_DESC("pdConfdRhresh", "f32", M4_RANGE(0,1), "0.4", M4_DIGIT(3),M4_HIDE(0))
     float pdConfdThresh;
     // M4_NUMBER_DESC("convergedInfPdThresh", "u16", M4_RANGE(0,1023), "12", M4_DIGIT(0),M4_HIDE(0))
@@ -273,6 +275,8 @@ typedef struct CalibDbV2_Af_Pdaf_s {
     unsigned char pdMirrorInCalib;
     // M4_NUMBER_DESC("pdVsImgoutMirror", "u8", M4_RANGE(0, 3), "0", M4_DIGIT(0))
     unsigned char pdVsImgoutMirror;
+    // M4_NUMBER_DESC("pdLRInDiffLine", "u8", M4_RANGE(0, 1), "0", M4_DIGIT(0))
+    unsigned char pdLRInDiffLine;
     // M4_NUMBER_DESC("pdWidth", "u16", M4_RANGE(0, 65535), "508", M4_DIGIT(0))
     unsigned short pdWidth;
     // M4_NUMBER_DESC("pdHeight", "u16", M4_RANGE(0, 65535), "760", M4_DIGIT(0))
@@ -321,6 +325,8 @@ typedef struct CalibDbV2_Af_Pdaf_s {
 } CalibDbV2_Af_Pdaf_t;
 
 typedef struct CalibDbV2_Af_VcmCfg_s {
+    // M4_NUMBER_DESC("max logical pos", "u32", M4_RANGE(0,4095), "64", M4_DIGIT(0))
+    unsigned int max_logical_pos;
     // M4_NUMBER_DESC("start current", "s32", M4_RANGE(-1, 2048), "-1", M4_DIGIT(0))
     int start_current;
     // M4_NUMBER_DESC("rated current", "s32", M4_RANGE(-1, 2048), "-1", M4_DIGIT(0))

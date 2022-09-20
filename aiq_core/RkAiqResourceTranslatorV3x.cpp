@@ -1103,11 +1103,14 @@ XCamReturn RkAiqResourceTranslatorV3x::translateMultiAwbStats(const SmartPtr<Vid
 
         for(int i = 0; i < RK_AIQ_AWB_GRID_NUM_TOTAL; i++) {
             statsInt->awb_stats_v3x.blockResult[i].Rvalue -=
-                (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_r + 0.5 + 8) >> 4 ;
+                (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_r *
+                statsInt->awb_stats_v3x.awb_cfg_effect_v201.pre_wbgain_inv_r + 2048) >> 12 ;
             statsInt->awb_stats_v3x.blockResult[i].Gvalue -=
-                (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * (bls_cfg->blc1_gr + bls_cfg->blc1_gb) + 0.5 + 16) >> 5 ;
+               (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * (bls_cfg->blc1_gr + bls_cfg->blc1_gb) *
+               statsInt->awb_stats_v3x.awb_cfg_effect_v201.pre_wbgain_inv_g+ 4096) >> 13 ;
             statsInt->awb_stats_v3x.blockResult[i].Bvalue -=
-                (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_b + 0.5 + 8) >> 4 ; ;
+               (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_b  *
+               statsInt->awb_stats_v3x.awb_cfg_effect_v201.pre_wbgain_inv_b + 2048)>> 12 ; ;
         }
     }
 
@@ -1899,11 +1902,14 @@ RkAiqResourceTranslatorV3x::translateAwbStats (const SmartPtr<VideoBuffer> &from
 
         for(int i = 0; i < RK_AIQ_AWB_GRID_NUM_TOTAL; i++) {
             statsInt->awb_stats_v3x.blockResult[i].Rvalue -=
-                (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_r + 0.5 + 8) >> 4 ;
+                (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_r *
+                statsInt->awb_stats_v3x.awb_cfg_effect_v201.pre_wbgain_inv_r + 2048) >> 12 ;
             statsInt->awb_stats_v3x.blockResult[i].Gvalue -=
-               (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * (bls_cfg->blc1_gr + bls_cfg->blc1_gb) + 0.5 + 16) >> 5 ;
+               (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * (bls_cfg->blc1_gr + bls_cfg->blc1_gb) *
+               statsInt->awb_stats_v3x.awb_cfg_effect_v201.pre_wbgain_inv_g+ 4096) >> 13 ;
             statsInt->awb_stats_v3x.blockResult[i].Bvalue -=
-               (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_b + 0.5 + 8) >> 4 ; ;
+               (long long)(statsInt->awb_stats_v3x.blockResult[i].WpNo * bls_cfg->blc1_b  *
+               statsInt->awb_stats_v3x.awb_cfg_effect_v201.pre_wbgain_inv_b + 2048)>> 12 ; ;
         }
     }
     LOGV_AWBGROUP("mIsGroupMode %d, mCamPhyId %d,mModuleRotation %d", mIsGroupMode, mCamPhyId, mModuleRotation);

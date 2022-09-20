@@ -290,6 +290,7 @@ private:
     bool needReprepare;
     XCam::Mutex _update_mutex;
     XCam::Cond _update_done_cond;
+    std::atomic<bool> _sync_sof_running;
 };
 
 }; //namespace

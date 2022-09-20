@@ -110,6 +110,7 @@ CamHwIsp20::CamHwIsp20()
     mIsGroupMode = false;
     mIsMain = false;
     _isp_stream_status = ISP_STREAM_STATUS_INVALID;
+    _module_cfg_update_frome_drv = 0;
 }
 
 CamHwIsp20::~CamHwIsp20()
@@ -1049,9 +1050,11 @@ CamHwIsp20::initCamHwInfos()
                 strcmp(device->info.model, "rkispp2") == 0 ||
                 strcmp(device->info.model, "rkispp3") == 0 ||
                 strcmp(device->info.model, "rkispp") == 0) {
+#if defined(ISP_HW_V20)
             rk_aiq_ispp_t* ispp_info = get_ispp_subdevs(device, sys_path, CamHwIsp20::mIspHwInfos.ispp_info);
             if (ispp_info)
                 ispp_info->valid = true;
+#endif
             goto media_unref;
         } else if (strcmp(device->info.model, "rkisp0") == 0 ||
                    strcmp(device->info.model, "rkisp1") == 0 ||
@@ -1549,6 +1552,7 @@ CamHwIsp20::init(const char* sns_ent_name)
     //isp params
     mIspParamStream = new RKStream(mIspParamsDev, ISP_POLL_PARAMS);
     mIspParamStream->setCamPhyId(mCamPhyId);
+    mIspParamStream->setPollCallback (this);
 
     if (s_info->flash_num) {
         mFlashLight = new FlashLightHw(s_info->module_flash_dev_name, s_info->flash_num);
@@ -1620,6 +1624,14 @@ CamHwIsp20::poll_buffer_ready (SmartPtr<VideoBuffer> &buf)
         // stats is comming, means that next params should be ready
         if (mNoReadBack)
             mParamsAssembler->forceReady(buf->get_sequence() + 1);
+    } else if (buf->_buf_type == ISP_POLL_PARAMS) {
+        const SmartPtr<V4l2BufferProxy> v4lbuf = buf.dynamic_cast_ptr<V4l2BufferProxy>();
+        struct isp2x_isp_params_cfg* data = (struct isp2x_isp_params_cfg*)(v4lbuf->get_v4l2_userptr());
+        {
+            SmartLock locker (_isp_params_cfg_mutex);
+            _module_cfg_update_frome_drv |= data->module_cfg_update;
+        }
+        return XCAM_RETURN_NO_ERROR;
     }
     return CamHwBase::poll_buffer_ready(buf);
 }
@@ -2261,10 +2273,14 @@ CamHwIsp20::setLensVcmCfg(struct rkmodule_inf& mod_info)
     ENTER_CAMHW_FUNCTION();
     SmartPtr<LensHw> lensHw = mLensDev.dynamic_cast_ptr<LensHw>();
     rk_aiq_lens_vcmcfg old_cfg, new_cfg;
+    int old_maxpos, new_maxpos;
     XCamReturn ret = XCAM_RETURN_NO_ERROR;
 
     if (lensHw.ptr()) {
         ret = lensHw->getLensVcmCfg(old_cfg);
+        if (ret != XCAM_RETURN_NO_ERROR)
+            return ret;
+        ret = lensHw->getLensVcmMaxlogpos(old_maxpos);
         if (ret != XCAM_RETURN_NO_ERROR)
             return ret;
 
@@ -2301,8 +2317,18 @@ CamHwIsp20::setLensVcmCfg(struct rkmodule_inf& mod_info)
             }
         }
 
-        if (memcmp(&new_cfg, &old_cfg, sizeof(new_cfg)) != 0) {
+        if ((new_cfg.start_ma != old_cfg.start_ma) ||
+            (new_cfg.rated_ma != old_cfg.rated_ma) ||
+            (new_cfg.step_mode != old_cfg.step_mode)) {
             ret = lensHw->setLensVcmCfg(new_cfg);
+        }
+
+        new_maxpos = old_maxpos;
+        if (vcmcfg->max_logical_pos > 0) {
+            new_maxpos = vcmcfg->max_logical_pos;
+        }
+        if (old_maxpos != new_maxpos) {
+            ret = lensHw->setLensVcmMaxlogpos(new_maxpos);
         }
     }
     EXIT_CAMHW_FUNCTION();
@@ -2607,6 +2633,7 @@ CamHwIsp20::prepare(uint32_t width, uint32_t height, int mode, int t_delay, int 
 
     get_sensor_pdafinfo(s_info, &mPdafInfo);
     if (mPdafInfo.pdaf_support && pdaf->enable) {
+        mPdafInfo.pdaf_lrdiffline = pdaf->pdLRInDiffLine;
         mPdafStreamUnit->prepare(&mPdafInfo);
     } else {
         mPdafInfo.pdaf_support = false;
@@ -2930,6 +2957,7 @@ XCamReturn CamHwIsp20::stop()
         SmartLock locker (_isp_params_cfg_mutex);
         _camIsp3aResult.clear();
         _effecting_ispparam_map.clear();
+        _module_cfg_update_frome_drv = 0;
     }
 
     {

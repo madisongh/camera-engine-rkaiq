@@ -246,6 +246,7 @@ typedef struct {
 
 typedef struct {
     unsigned char pdMirrorInCalib;
+    unsigned char pdLRInDiffLine;
     unsigned short pdWidth;
     unsigned short pdHeight;
     struct rkmodule_pdaf_inf *otp_pdaf;
@@ -256,6 +257,7 @@ typedef struct {
     float pdConfdRatio0;
     float pdConfdRatio1;
     float pdConfdRatio2;
+    float pdConfdRatio3;
     float pdConfdThresh;
     float stablePdRatio;
     float stableCntRatio;

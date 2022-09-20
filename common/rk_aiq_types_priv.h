@@ -358,6 +358,7 @@ typedef struct {
     uint32_t pdaf_height;
     uint32_t pdaf_pixelformat;
     uint32_t pdaf_code;
+    uint8_t pdaf_lrdiffline;
     char pdaf_vdev[DEV_PATH_LEN];
 } rk_sensor_pdaf_info_t;
 

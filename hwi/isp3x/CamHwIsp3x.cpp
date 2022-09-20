@@ -250,7 +250,7 @@ CamHwIsp3x::setIspConfig(uint32_t triggeredId)
 
     int64_t framdIdInt64 = frameId;
     int64_t tgIdInt64 = triggeredId;
-    if ((!mNoReadBack && std::abs(framdIdInt64 - tgIdInt64) > 10) || (frameId == -1)) {
+    if ((!mNoReadBack && std::abs(framdIdInt64 - tgIdInt64) > 10) || (frameId == (uint32_t)(-1))) {
         LOGE_CAMHW_SUBM(ISP20HW_SUBM, "camId: %d, params id err: %d, tgId: %d",
                         mCamPhyId, frameId, triggeredId);
         mIspParamsDev->return_buffer_to_pool (v4l2buf);
@@ -434,6 +434,9 @@ CamHwIsp3x::setIspConfig(uint32_t triggeredId)
                     _effecting_ispparam_map[frameId].isp_params_v3x[2] = isp_params[1];
                 }
             }
+            // update the lost params by ISP driver again
+            isp_params->module_cfg_update |= _module_cfg_update_frome_drv;
+            _module_cfg_update_frome_drv = 0;
         }
 
         if (mIspParamsDev->queue_buffer (v4l2buf) != 0) {

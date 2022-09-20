@@ -14,6 +14,7 @@ PROJECT(rk_aiq)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+set(C_LIBRARY_NAME "glibc" CACHE INTERNAL "")
 include(BuildOptions)
 include(CompileOptions)
 include(GNUInstallDirs)

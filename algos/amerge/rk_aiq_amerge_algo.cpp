@@ -1147,11 +1147,11 @@ void AmergeExpoProcessing
         pAmergeCtx->ProcRes.Merge_v30.sw_hdrmge_gain2 = SW_HDRMGE_GAIN_FIX;
 
         //isp30 add
-        float Coef = pAmergeCtx->CurrData.HandleData.Merge_v30.MDCurve_Coef / SHORT_MODE_COEF_MAX;
+        float Coef = pAmergeCtx->CurrData.HandleData.Merge_v30.MDCurve_Coef * SHORT_MODE_COEF_MAX;
         float sw_hdrmge_ms_thd0 = pAmergeCtx->CurrData.HandleData.Merge_v30.MDCurve_ms_thd0;
         float sw_hdrmge_lm_thd0 = pAmergeCtx->CurrData.HandleData.Merge_v30.MDCurve_lm_thd0;
-        float sw_hdrmge_ms_thd1 = 1024 * pow(100 * Coef * pExpoData->nextSGain, 0.5f);
-        float sw_hdrmge_lm_thd1 = 1024 * pow(100 * Coef * pExpoData->nextMGain, 0.5f);
+        float sw_hdrmge_ms_thd1 = pow(100 * Coef * pExpoData->nextSGain, 0.5f);
+        float sw_hdrmge_lm_thd1 = pow(100 * Coef * pExpoData->nextMGain, 0.5f);
         float sw_hdrmge_ms_scl = (sw_hdrmge_ms_thd1 == sw_hdrmge_ms_thd0) ? 0 : (1 / (sw_hdrmge_ms_thd1 - sw_hdrmge_ms_thd0));
         float sw_hdrmge_lm_scl = (sw_hdrmge_lm_thd1 == sw_hdrmge_lm_thd0) ? 0 : (1 / (sw_hdrmge_lm_thd1 - sw_hdrmge_lm_thd0));
         pAmergeCtx->ProcRes.Merge_v30.sw_hdrmge_ms_thd0 = (int)(1024 * sw_hdrmge_ms_thd0);

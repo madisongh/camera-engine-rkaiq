@@ -200,6 +200,7 @@ CamCalibDbProj_t *RkAiqCalibDbV2::json2calibproj(const char *jsfile) {
 
     base_json = cJSON_Parse(json_buff);
     if (!base_json) {
+      free(json_buff);
       return nullptr;
     }
 
@@ -210,6 +211,7 @@ CamCalibDbProj_t *RkAiqCalibDbV2::json2calibproj(const char *jsfile) {
     if (!RkAiqSceneManager::mergeMultiSceneIQ(base_json)) {
       cJSON_Delete(base_json);
       j2s_deinit(&ctx);
+      free(json_buff);
       return nullptr;
     }
 
@@ -221,6 +223,7 @@ CamCalibDbProj_t *RkAiqCalibDbV2::json2calibproj(const char *jsfile) {
 
     if (ret) {
         CamCalibDbProjFree(calibproj);
+        free(json_buff);
         return nullptr;
     }
 
@@ -228,6 +231,7 @@ CamCalibDbProj_t *RkAiqCalibDbV2::json2calibproj(const char *jsfile) {
     calibproj2json("/tmp/iq_dump.json", calibproj);
 #endif
 
+    free(json_buff);
     return calibproj;
 }
 
@@ -1711,8 +1715,6 @@ int RkAiqCalibDbV2::CamCalibDbFreeAfV2xCtx(CalibDbV2_AF_t* af)
     if (zoomfocus_tbl->ZoomInfoDir)
         calib_free(zoomfocus_tbl->ZoomInfoDir);
 
-    if (TuningPara->contrast_af.FullRangeTbl)
-        calib_free(TuningPara->contrast_af.FullRangeTbl);
     if (TuningPara->contrast_af.AdaptRangeTbl)
         calib_free(TuningPara->contrast_af.AdaptRangeTbl);
     if (TuningPara->contrast_af.TrigThers)
@@ -1733,8 +1735,6 @@ int RkAiqCalibDbV2::CamCalibDbFreeAfV2xCtx(CalibDbV2_AF_t* af)
     if (TuningPara->contrast_af.ZoomCfg.StopStep)
         calib_free(TuningPara->contrast_af.ZoomCfg.StopStep);
 
-    if (TuningPara->video_contrast_af.FullRangeTbl)
-        calib_free(TuningPara->video_contrast_af.FullRangeTbl);
     if (TuningPara->video_contrast_af.AdaptRangeTbl)
         calib_free(TuningPara->video_contrast_af.AdaptRangeTbl);
     if (TuningPara->video_contrast_af.TrigThers)
@@ -1787,8 +1787,6 @@ int RkAiqCalibDbV2::CamCalibDbFreeAfV30Ctx(CalibDbV2_AFV30_t* af)
     if (zoomfocus_tbl->ZoomInfoDir)
         calib_free(zoomfocus_tbl->ZoomInfoDir);
 
-    if (TuningPara->contrast_af.FullRangeTbl)
-        calib_free(TuningPara->contrast_af.FullRangeTbl);
     if (TuningPara->contrast_af.AdaptRangeTbl)
         calib_free(TuningPara->contrast_af.AdaptRangeTbl);
     if (TuningPara->contrast_af.TrigThers)
@@ -1809,8 +1807,6 @@ int RkAiqCalibDbV2::CamCalibDbFreeAfV30Ctx(CalibDbV2_AFV30_t* af)
     if (TuningPara->contrast_af.ZoomCfg.StopStep)
         calib_free(TuningPara->contrast_af.ZoomCfg.StopStep);
 
-    if (TuningPara->video_contrast_af.FullRangeTbl)
-        calib_free(TuningPara->video_contrast_af.FullRangeTbl);
     if (TuningPara->video_contrast_af.AdaptRangeTbl)
         calib_free(TuningPara->video_contrast_af.AdaptRangeTbl);
     if (TuningPara->video_contrast_af.TrigThers)
@@ -1837,8 +1833,10 @@ int RkAiqCalibDbV2::CamCalibDbFreeAfV30Ctx(CalibDbV2_AFV30_t* af)
         calib_free(TuningPara->meascfg_tbl);
 
     if (TuningPara->pdaf.pdIsoPara) {
-        if (TuningPara->pdaf.pdIsoPara->fineSearchTbl)
-            calib_free(TuningPara->pdaf.pdIsoPara->fineSearchTbl);
+        for (int i = 0; i < TuningPara->pdaf.pdIsoPara_len; i++) {
+            if (TuningPara->pdaf.pdIsoPara[i].fineSearchTbl)
+                calib_free(TuningPara->pdaf.pdIsoPara[i].fineSearchTbl);
+        }
         calib_free(TuningPara->pdaf.pdIsoPara);
     }
 

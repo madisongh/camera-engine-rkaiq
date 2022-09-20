@@ -28,6 +28,7 @@
 #include "algos_camgroup/again/rk_aiq_algo_camgroup_again_itf.h"
 #include "algos_camgroup/asharp/rk_aiq_algo_camgroup_asharp_itf.h"
 #include "smart_buffer_priv.h"
+#include <thread>
 
 namespace RkCam {
 
@@ -119,6 +120,8 @@ RkAiqCamGroupManager::RkAiqCamGroupManager()
     mClearedResultId = 0;
     mGroupCtx = NULL;
     needReprepare = false;
+
+    _sync_sof_running = false;
 
     EXIT_CAMGROUP_FUNCTION();
 }
@@ -573,14 +576,18 @@ RkAiqCamGroupManager::sofSync(RkAiqManager* aiqManager, SmartPtr<VideoBuffer>& s
 
     if (mState != CAMGROUP_MANAGER_STARTED) {
         LOGE_CAMGROUP("wrong state %d, ignore sofSync event \n", mState);
+        _sync_sof_running = false;
         return XCAM_RETURN_NO_ERROR;
     }
+
+    _sync_sof_running = true;
 
     LOGD_CAMGROUP("sofSync event camId: %d, frameId: %u ...\n", camId, frameId);
 
     rk_aiq_groupcam_sofsync_t* camGroupSofsync = getGroupCamSofsync(frameId);
     if (!camGroupSofsync) {
         LOGE_CAMGROUP("camgroup: get sofSync failed for camId: %d, frame: %u, igore", camId, frameId);
+        _sync_sof_running = false;
         return XCAM_RETURN_NO_ERROR;
     }
     camGroupSofsync->_singleCamSofEvt[camId] = sof_evt;
@@ -603,6 +610,8 @@ RkAiqCamGroupManager::sofSync(RkAiqManager* aiqManager, SmartPtr<VideoBuffer>& s
         clearGroupCamSofsync(frameId);
     } else
         putGroupCamSofsync(camGroupSofsync);
+
+    _sync_sof_running = false;
 
     LOGD_CAMGROUP("sofSync event camId: %d, frameId: %u done\n", camId, frameId);
 
@@ -746,6 +755,10 @@ RkAiqCamGroupManager::deInit()
     mDefAlgoHandleMap.clear();
     mAlgoHandleMaps.clear();
 
+    /* clear the aysnc results after stop */
+    clearGroupCamResult(-1);
+    clearGroupCamSofsync(-1);
+
     mState = CAMGROUP_MANAGER_INVALID;
     EXIT_CAMGROUP_FUNCTION();
     return XCAM_RETURN_NO_ERROR;
@@ -777,6 +790,14 @@ RkAiqCamGroupManager::stop()
         return XCAM_RETURN_ERROR_FAILED;
     }
 
+    if (mState == CAMGROUP_MANAGER_STARTED) {
+        mState = CAMGROUP_MANAGER_PREPARED;
+    }
+
+    while (_sync_sof_running == true) {
+        std::this_thread::yield();
+    }
+
     mCamGroupReprocTh->triger_stop();
     mCamGroupReprocTh->stop();
     clearGroupCamResult(-1);
@@ -785,9 +806,6 @@ RkAiqCamGroupManager::stop()
     mClearedSofId = 0;
     mClearedResultId = 0;
 
-    if (mState == CAMGROUP_MANAGER_STARTED) {
-        mState = CAMGROUP_MANAGER_PREPARED;
-    }
     EXIT_CAMGROUP_FUNCTION();
     return XCAM_RETURN_NO_ERROR;
 }
@@ -862,7 +880,9 @@ RkAiqCamGroupManager::prepare()
     LOGD_CAMGROUP("camgroup: clear init params ...");
     // delete the processed result
     putGroupCamResult(camGroupRes);
-    clearGroupCamResult(0);
+    /* clear the aysnc results after stop */
+    clearGroupCamResult(-1);
+    clearGroupCamSofsync(-1);
 
     LOGD_CAMGROUP("camgroup: prepare done");
 

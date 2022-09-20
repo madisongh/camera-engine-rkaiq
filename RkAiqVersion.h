@@ -435,10 +435,29 @@
  * - tuning: support for group camera.
  * - Amerge/drc/dehaze: support iso as ctrldata
  * - HWI: support the funciton of setting isp dgain
+ * v3.0x9.1
+ * - hwi: convert -1 to an unsigned type for comparison
+ * - algo: alsc: adjust the position of crop for lsc otp
+ * - merge rk3588 with rk356x base on release v3.0x8.8
+ * - force using FakeCamera0.json at offline mode
+ * - awb otp : apply otp in awb stat
+ * - awb: translator awb stat based on pre_wbgain_inv_r and bls1
+ * - AF: skip the same motor position in ipc search
+ * - AF: update calulation of shift value
+ * - iqfiles: isp21: change default af value
+ * - fix memleak for some modules
+ * - IspParamsAssembler: protect from "no free xxx buf" of core
+ * - v4l2_device: fix wrong dequeued flag of params buf
+ * - xcore: set buffer QUEUED flag when get buffer.
+ * - Update the lost isp params by driver again
+ * - iqfiles: af: change for fullsweep and pdaf
+ * - update 356x json files to 3.9.1
+ * - PDAF: update to v0.1.5
+ * - AF: support max logical position
  */
 
-#define RK_AIQ_VERSION_REAL_V "v3.0x9.1-rc0"
-#define RK_AIQ_RELEASE_DATE "2022-08-18"
+#define RK_AIQ_VERSION_REAL_V "v3.0x9.1"
+#define RK_AIQ_RELEASE_DATE "2022-09-20"
 
 /******* DO NOT EDIT THE FOLLOWINGS ***********/
 

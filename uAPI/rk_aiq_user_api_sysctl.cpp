@@ -347,7 +347,7 @@ rk_aiq_uapi_sysctl_init(const char* sns_ent_name,
         }
 
         // use auto selected iq file
-        if (is_ent_name && !user_spec_iq) {
+        if (is_ent_name && !user_spec_iq && !ctx->_use_fakecam) {
             char iq_file[128] = {'\0'};
             CamHwIsp20::selectIqFile(sns_ent_name, iq_file);
 
@@ -379,6 +379,11 @@ rk_aiq_uapi_sysctl_init(const char* sns_ent_name,
                 strcat(config_file, ".json");
             }
             LOGI("use iq file %s", config_file);
+        } else {
+            if (config_file_dir && (strlen(config_file_dir) > 0))
+                sprintf(config_file, "%s/%s", config_file_dir, "FakeCamera0.json");
+            else
+                sprintf(config_file, "%s/%s", RKAIQ_DEFAULT_IQ_PATH, "FakeCamera0.json");
         }
     }
 #endif
@@ -499,6 +504,9 @@ rk_aiq_uapi_sysctl_deinit_locked(rk_aiq_sys_ctx_t* ctx)
 
     if (ctx->_sensor_entity_name)
         xcam_free((void*)(ctx->_sensor_entity_name));
+
+    rk_aiq_deinit_lib();
+    g_rk_aiq_init_lib = false;
 }
 
 void
