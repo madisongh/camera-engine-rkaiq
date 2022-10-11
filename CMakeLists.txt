@@ -541,6 +541,10 @@ if (LIBDRM_FOUND)
         )
 endif()
 
+if (RKAIQ_TOOL_SERVER)
+add_subdirectory(rkaiq_tool_server)
+endif()
+
 #build static librkaiq.a
 
 foreach(STATIC_LIB_AR ${RK_AIQ_STATIC_LIB_ARS})
