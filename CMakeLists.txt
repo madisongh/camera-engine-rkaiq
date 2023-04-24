@@ -293,38 +293,9 @@ if (RKAIQ_ENABLE_CAMGROUP)
 endif()
 
 if(OPENCV_SUPPORT)
-    set(OPENCV_LIBS
-        opencv_calib3d
-        opencv_core
-        opencv_dnn
-        opencv_features2d
-        opencv_flann
-        opencv_gapi
-        opencv_highgui
-        opencv_imgcodecs
-        opencv_imgproc
-        opencv_ml
-        opencv_objdetect
-        opencv_photo
-        opencv_stitching
-        opencv_video
-        opencv_videoio
-        )
-    set(OPENCV_3RDPARTY_LIBS
-        dl
-        ade
-        IlmImf
-        ippicv
-        ippiw
-        ittnotify
-        libprotobuf
-        libwebp
-        quirc
-        )
-    set(OPENCV_LIBS_DIR
-        ${PROJECT_SOURCE_DIR}/common/opencv2/lib
-        ${PROJECT_SOURCE_DIR}/common/opencv2/lib/3rdparty
-        )
+    find_package(PkgConfig)
+    pkg_check_modules(OPENCV REQUIRED IMPORTED_TARGET)
+    set(OPENCV_LIBS PkgConfig::OPENCV)
     add_compile_options(-DOPENCV_SUPPORT)
 endif()
 
@@ -390,7 +361,7 @@ add_subdirectory(tests/rkisp_demo)
 
 cmake_policy(SET CMP0015 NEW)
 
-link_directories("${LIBRARY_OUTPUT_PATH}" "${OPENCV_LIBS_DIR}" "${GENMESH_LIBS_DIR}")
+link_directories("${LIBRARY_OUTPUT_PATH}" "${GENMESH_LIBS_DIR}")
 
 add_library(rkaiq_tmp STATIC ${RK_AIQ_SRC})
 set_target_properties(rkaiq_tmp PROPERTIES FOLDER "rk_aiq")
@@ -458,7 +429,6 @@ target_link_libraries(rkaiq
     rkaiq_again_v2
     rkaiq_acac
     ${OPENCV_LIBS}
-    ${OPENCV_3RDPARTY_LIBS}
     ${GENMESH_LIBS}
     ${MOTION_DETECT_LIBS}
     ${PDAF_LIBS}
