@@ -156,7 +156,7 @@ else()
         )
 endif()
 
-pkg_check_modules(MEDIACTL REQUIRED IMPORTED_TARGET libmediactl)
+pkg_check_modules(MEDIACTL REQUIRED libmediactl)
 
 if(RKAIQ_ENABLE_SIMULATOR)
     set(HWI_SRC
@@ -356,7 +356,7 @@ set_target_properties(rkaiq PROPERTIES FOLDER "rk_aiq")
 set_target_properties(rkaiq PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 set_target_properties(rkaiq PROPERTIES C_VISIBILITY_PRESET default)
 set_target_properties(rkaiq PROPERTIES CXX_VISIBILITY_PRESET default)
-set_target_properties(rkaiq PROPERTIES LINK_FLAGS -Wl,--version-script,${CMAKE_CURRENT_LIST_DIR}/export.map)
+set_target_properties(rkaiq PROPERTIES LINK_FLAGS "-Wl,--version-script,${CMAKE_CURRENT_LIST_DIR}/export.map -Wl,--no-undefined")
 add_dependencies(rkaiq j2s_parser)
 
 target_link_libraries(rkaiq
@@ -410,7 +410,6 @@ target_link_libraries(rkaiq
     ${GENMESH_LIBS}
     ${MOTION_DETECT_LIBS}
     ${PDAF_LIBS}
-    PkgConfig::MEDIACTL
     pthread)
 
 if (RKAIQ_ENABLE_CAMGROUP)
@@ -421,6 +420,8 @@ target_link_libraries(rkaiq
     rkaiq_camgroup_misc
     )
 endif()
+
+target_link_libraries(rkaiq ${MEDIACTL_LIBRARIES})
 
 if (LIBDL_FOUND)
     target_link_libraries(rkaiq

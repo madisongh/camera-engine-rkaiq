@@ -11,7 +11,9 @@
 
 #include <linux/videodev2.h>
 #include "rk_aiq_user_api2_sysctl.h"
-#include "common/mediactl/mediactl.h"
+extern "C" {
+#include <mediactl/mediactl.h>
+}
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 #define DBG(...) do { if(!silent) printf("DBG: " __VA_ARGS__);} while(0)
@@ -76,7 +78,7 @@ static int rkaiq_get_devname(struct media_device *device, const char *name, char
     const char *devname;
     struct media_entity *entity =  NULL;
 
-    entity = media_get_entity_by_name(device, name, strlen(name));
+    entity = media_get_entity_by_name(device, name);
     if (!entity)
         return -1;
 
