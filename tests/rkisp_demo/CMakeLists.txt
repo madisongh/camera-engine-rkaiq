@@ -134,8 +134,5 @@ if(BUILDROOT_BUILD_PROJECT)
 	)
 
 else()
-	install(TARGETS rkisp_demo
-	RUNTIME DESTINATION "usr/bin"
-	LIBRARY DESTINATION "usr/lib"
-)
+	install(TARGETS rkisp_demo RUNTIME)
 endif()
