@@ -19,8 +19,10 @@
 #include "Isp20Evts.h"
 #include "rk_isp20_hw.h"
 #include "Isp20_module_dbg.h"
-#include "mediactl/mediactl-priv.h"
+extern "C" {
+#include <mediactl/mediactl.h>
 #include <linux/v4l2-subdev.h>
+}
 #include <sys/mman.h>
 #ifdef ANDROID_OS
 #include <cutils/properties.h>
@@ -291,11 +293,14 @@ static rk_aiq_ispp_t*
 get_ispp_subdevs(struct media_device *device, const char *devpath, rk_aiq_ispp_t* ispp_info)
 {
     media_entity *entity = NULL;
+    const media_device_info *devinfo = NULL;
     const char *entity_name = NULL;
     int index = 0;
 
     if(!device || !ispp_info || !devpath)
         return NULL;
+
+    devinfo = media_get_info(device);
 
     for(index = 0; index < MAX_CAM_NUM; index++) {
         if (0 == strlen(ispp_info[index].media_dev_path))
@@ -311,10 +316,10 @@ get_ispp_subdevs(struct media_device *device, const char *devpath, rk_aiq_ispp_t
 #if defined(ISP_HW_V30)
     // parse driver pattern: soc:rkisp0-vir0
     int model_idx = -1;
-    char* rkispp = strstr(device->info.driver, "rkispp");
+    const char* rkispp = strstr(devinfo->driver, "rkispp");
     if (rkispp) {
         int ispp_idx = atoi(rkispp + strlen("rkispp"));
-        char* vir = strstr(device->info.driver, "vir");
+        const char* vir = strstr(devinfo->driver, "vir");
         if (vir) {
             int vir_idx = atoi(vir + strlen("vir"));
             model_idx = ispp_idx * 4 + vir_idx;
@@ -322,98 +327,98 @@ get_ispp_subdevs(struct media_device *device, const char *devpath, rk_aiq_ispp_t
     }
 
     if (model_idx == -1) {
-        LOGE_CAMHW_SUBM(ISP20HW_SUBM, "wrong ispp media driver info: %s", device->info.driver);
+        LOGE_CAMHW_SUBM(ISP20HW_SUBM, "wrong ispp media driver info: %s", devinfo->driver);
         return NULL;
     }
 
     ispp_info[index].model_idx = model_idx;
 #else
 
-    if (strcmp(device->info.model, "rkispp0") == 0 ||
-            strcmp(device->info.model, "rkispp") == 0)
+    if (strcmp(devinfo->model, "rkispp0") == 0 ||
+            strcmp(devinfo->model, "rkispp") == 0)
         ispp_info[index].model_idx = 0;
-    else if (strcmp(device->info.model, "rkispp1") == 0)
+    else if (strcmp(devinfo->model, "rkispp1") == 0)
         ispp_info[index].model_idx = 1;
-    else if (strcmp(device->info.model, "rkispp2") == 0)
+    else if (strcmp(devinfo->model, "rkispp2") == 0)
         ispp_info[index].model_idx = 2;
-    else if (strcmp(device->info.model, "rkispp3") == 0)
+    else if (strcmp(devinfo->model, "rkispp3") == 0)
         ispp_info[index].model_idx = 3;
     else
         ispp_info[index].model_idx = -1;
 #endif
     strncpy(ispp_info[index].media_dev_path, devpath, sizeof(ispp_info[index].media_dev_path));
 
-    entity = media_get_entity_by_name(device, "rkispp_input_image", strlen("rkispp_input_image"));
+    entity = media_get_entity_by_name(device, "rkispp_input_image");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_input_image_path, entity_name, sizeof(ispp_info[index].pp_input_image_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_m_bypass", strlen("rkispp_m_bypass"));
+    entity = media_get_entity_by_name(device, "rkispp_m_bypass");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_m_bypass_path, entity_name, sizeof(ispp_info[index].pp_m_bypass_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_scale0", strlen("rkispp_scale0"));
+    entity = media_get_entity_by_name(device, "rkispp_scale0");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_scale0_path, entity_name, sizeof(ispp_info[index].pp_scale0_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_scale1", strlen("rkispp_scale1"));
+    entity = media_get_entity_by_name(device, "rkispp_scale1");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_scale1_path, entity_name, sizeof(ispp_info[index].pp_scale1_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_scale2", strlen("rkispp_scale2"));
+    entity = media_get_entity_by_name(device, "rkispp_scale2");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_scale2_path, entity_name, sizeof(ispp_info[index].pp_scale2_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_tnr_params", strlen("rkispp_tnr_params"));
+    entity = media_get_entity_by_name(device, "rkispp_tnr_params");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_tnr_params_path, entity_name, sizeof(ispp_info[index].pp_tnr_params_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_tnr_stats", strlen("rkispp_tnr_stats"));
+    entity = media_get_entity_by_name(device, "rkispp_tnr_stats");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_tnr_stats_path, entity_name, sizeof(ispp_info[index].pp_tnr_stats_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_nr_params", strlen("rkispp_nr_params"));
+    entity = media_get_entity_by_name(device, "rkispp_nr_params");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_nr_params_path, entity_name, sizeof(ispp_info[index].pp_nr_params_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_nr_stats", strlen("rkispp_nr_stats"));
+    entity = media_get_entity_by_name(device, "rkispp_nr_stats");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_nr_stats_path, entity_name, sizeof(ispp_info[index].pp_nr_stats_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp_fec_params", strlen("rkispp_fec_params"));
+    entity = media_get_entity_by_name(device, "rkispp_fec_params");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(ispp_info[index].pp_fec_params_path, entity_name, sizeof(ispp_info[index].pp_fec_params_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkispp-subdev", strlen("rkispp-subdev"));
+    entity = media_get_entity_by_name(device, "rkispp-subdev");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -422,7 +427,7 @@ get_ispp_subdevs(struct media_device *device, const char *devpath, rk_aiq_ispp_t
     }
 
     LOGI_CAMHW_SUBM(ISP20HW_SUBM, "model(%s): ispp_info(%d): ispp-subdev entity name: %s\n",
-                    device->info.model, index,
+                    devinfo->model, index,
                     ispp_info[index].pp_dev_path);
 
     return &ispp_info[index];
@@ -432,10 +437,13 @@ static rk_aiq_isp_t*
 get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* isp_info)
 {
     media_entity *entity = NULL;
+    const media_device_info *devinfo = NULL;
     const char *entity_name = NULL;
     int index = 0;
     if(!device || !isp_info || !devpath)
         return NULL;
+
+    devinfo = media_get_info(device);
 
     for(index = 0; index < MAX_CAM_NUM; index++) {
         if (0 == strlen(isp_info[index].media_dev_path)) {
@@ -453,15 +461,15 @@ get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* 
 #if defined(ISP_HW_V30)
     // parse driver pattern: soc:rkisp0-vir0
     int model_idx = -1;
-    char* rkisp = strstr(device->info.driver, "rkisp");
+    const char* rkisp = strstr(devinfo->driver, "rkisp");
     if (rkisp) {
-        char* str_unite = NULL;
-        str_unite = strstr(device->info.driver, "unite");
+        const char* str_unite = NULL;
+        str_unite = strstr(devinfo->driver, "unite");
         if (str_unite) {
             model_idx = 0;
         } else {
             int isp_idx = atoi(rkisp + strlen("rkisp"));
-            char* vir = strstr(device->info.driver, "vir");
+            const char* vir = strstr(devinfo->driver, "vir");
             if (vir) {
                 int vir_idx = atoi(vir + strlen("vir"));
                 model_idx = isp_idx * 4 + vir_idx;
@@ -471,20 +479,20 @@ get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* 
     }
 
     if (model_idx == -1) {
-        LOGE_CAMHW_SUBM(ISP20HW_SUBM, "wrong isp media driver info: %s", device->info.driver);
+        LOGE_CAMHW_SUBM(ISP20HW_SUBM, "wrong isp media driver info: %s", devinfo->driver);
         return NULL;
     }
 
     isp_info[index].model_idx = model_idx;
 #else
-    if (strcmp(device->info.model, "rkisp0") == 0 ||
-            strcmp(device->info.model, "rkisp") == 0)
+    if (strcmp(devinfo->model, "rkisp0") == 0 ||
+            strcmp(devinfo->model, "rkisp") == 0)
         isp_info[index].model_idx = 0;
-    else if (strcmp(device->info.model, "rkisp1") == 0)
+    else if (strcmp(devinfo->model, "rkisp1") == 0)
         isp_info[index].model_idx = 1;
-    else if (strcmp(device->info.model, "rkisp2") == 0)
+    else if (strcmp(devinfo->model, "rkisp2") == 0)
         isp_info[index].model_idx = 2;
-    else if (strcmp(device->info.model, "rkisp3") == 0)
+    else if (strcmp(devinfo->model, "rkisp3") == 0)
         isp_info[index].model_idx = 3;
     else
         isp_info[index].model_idx = -1;
@@ -492,7 +500,7 @@ get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* 
 
     strncpy(isp_info[index].media_dev_path, devpath, sizeof(isp_info[index].media_dev_path));
 
-    entity = media_get_entity_by_name(device, "rkisp-isp-subdev", strlen("rkisp-isp-subdev"));
+    entity = media_get_entity_by_name(device, "rkisp-isp-subdev");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -500,119 +508,119 @@ get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* 
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkisp-csi-subdev", strlen("rkisp-csi-subdev"));
+    entity = media_get_entity_by_name(device, "rkisp-csi-subdev");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].csi_dev_path, entity_name, sizeof(isp_info[index].csi_dev_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp-mpfbc-subdev", strlen("rkisp-mpfbc-subdev"));
+    entity = media_get_entity_by_name(device, "rkisp-mpfbc-subdev");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].mpfbc_dev_path, entity_name, sizeof(isp_info[index].mpfbc_dev_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_mainpath", strlen("rkisp_mainpath"));
+    entity = media_get_entity_by_name(device, "rkisp_mainpath");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].main_path, entity_name, sizeof(isp_info[index].main_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_selfpath", strlen("rkisp_selfpath"));
+    entity = media_get_entity_by_name(device, "rkisp_selfpath");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].self_path, entity_name, sizeof(isp_info[index].self_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_rawwr0", strlen("rkisp_rawwr0"));
+    entity = media_get_entity_by_name(device, "rkisp_rawwr0");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].rawwr0_path, entity_name, sizeof(isp_info[index].rawwr0_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_rawwr1", strlen("rkisp_rawwr1"));
+    entity = media_get_entity_by_name(device, "rkisp_rawwr1");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].rawwr1_path, entity_name, sizeof(isp_info[index].rawwr1_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_rawwr2", strlen("rkisp_rawwr2"));
+    entity = media_get_entity_by_name(device, "rkisp_rawwr2");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].rawwr2_path, entity_name, sizeof(isp_info[index].rawwr2_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_rawwr3", strlen("rkisp_rawwr3"));
+    entity = media_get_entity_by_name(device, "rkisp_rawwr3");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].rawwr3_path, entity_name, sizeof(isp_info[index].rawwr3_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_dmapath", strlen("rkisp_dmapath"));
+    entity = media_get_entity_by_name(device, "rkisp_dmapath");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].dma_path, entity_name, sizeof(isp_info[index].dma_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_rawrd0_m", strlen("rkisp_rawrd0_m"));
+    entity = media_get_entity_by_name(device, "rkisp_rawrd0_m");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].rawrd0_m_path, entity_name, sizeof(isp_info[index].rawrd0_m_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_rawrd1_l", strlen("rkisp_rawrd1_l"));
+    entity = media_get_entity_by_name(device, "rkisp_rawrd1_l");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].rawrd1_l_path, entity_name, sizeof(isp_info[index].rawrd1_l_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp_rawrd2_s", strlen("rkisp_rawrd2_s"));
+    entity = media_get_entity_by_name(device, "rkisp_rawrd2_s");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].rawrd2_s_path, entity_name, sizeof(isp_info[index].rawrd2_s_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp-statistics", strlen("rkisp-statistics"));
+    entity = media_get_entity_by_name(device, "rkisp-statistics");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].stats_path, entity_name, sizeof(isp_info[index].stats_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp-input-params", strlen("rkisp-input-params"));
+    entity = media_get_entity_by_name(device, "rkisp-input-params");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].input_params_path, entity_name, sizeof(isp_info[index].input_params_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rkisp-mipi-luma", strlen("rkisp-mipi-luma"));
+    entity = media_get_entity_by_name(device, "rkisp-mipi-luma");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].mipi_luma_path, entity_name, sizeof(isp_info[index].mipi_luma_path));
         }
     }
-    entity = media_get_entity_by_name(device, "rockchip-mipi-dphy-rx", strlen("rockchip-mipi-dphy-rx"));
+    entity = media_get_entity_by_name(device, "rockchip-mipi-dphy-rx");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(isp_info[index].mipi_dphy_rx_path, entity_name, sizeof(isp_info[index].mipi_dphy_rx_path));
         }
     } else {
-        entity = media_get_entity_by_name(device, "rockchip-csi2-dphy0", strlen("rockchip-csi2-dphy0"));
+        entity = media_get_entity_by_name(device, "rockchip-csi2-dphy0");
         if(entity) {
             entity_name = media_entity_get_devname (entity);
             if(entity_name) {
@@ -621,7 +629,7 @@ get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* 
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif_dvp", strlen("rkcif_dvp"));
+    entity = media_get_entity_by_name(device, "rkcif_dvp");
     if(entity)
         isp_info[index].linked_dvp = true;
     else
@@ -647,9 +655,10 @@ get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* 
 
     int vicap_idx = 0;
     for (int i = 0; linked_entity_name_strs[i] != NULL; i++) {
-        entity = media_get_entity_by_name(device, linked_entity_name_strs[i], strlen(linked_entity_name_strs[i]));
+        entity = media_get_entity_by_name(device, linked_entity_name_strs[i]);
         if (entity) {
-            strncpy(isp_info[index].linked_vicap[vicap_idx], entity->info.name, sizeof(isp_info[index].linked_vicap[vicap_idx]));
+            const media_entity_desc *entity_info = media_entity_get_info(entity);
+            strncpy(isp_info[index].linked_vicap[vicap_idx], entity_info->name, sizeof(isp_info[index].linked_vicap[vicap_idx]));
             isp_info[index].linked_sensor = true;
             if (vicap_idx++ >= MAX_ISP_LINKED_VICAP_CNT) {
                 break;
@@ -658,7 +667,7 @@ get_isp_subdevs(struct media_device *device, const char *devpath, rk_aiq_isp_t* 
     }
 
     LOGI_CAMHW_SUBM(ISP20HW_SUBM, "model(%s): isp_info(%d): ispp-subdev entity name: %s\n",
-                    device->info.model, index,
+                    devinfo->model, index,
                     isp_info[index].isp_dev_path);
 
     return &isp_info[index];
@@ -688,7 +697,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
 
     strncpy(cif_info[index].media_dev_path, devpath, sizeof(cif_info[index].media_dev_path) - 1);
 
-    entity = media_get_entity_by_name(device, "stream_cif_mipi_id0", strlen("stream_cif_mipi_id0"));
+    entity = media_get_entity_by_name(device, "stream_cif_mipi_id0");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -696,7 +705,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_mipi_id1", strlen("stream_cif_mipi_id1"));
+    entity = media_get_entity_by_name(device, "stream_cif_mipi_id1");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -704,7 +713,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_mipi_id2", strlen("stream_cif_mipi_id2"));
+    entity = media_get_entity_by_name(device, "stream_cif_mipi_id2");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -712,7 +721,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_mipi_id3", strlen("stream_cif_mipi_id3"));
+    entity = media_get_entity_by_name(device, "stream_cif_mipi_id3");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -720,7 +729,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif_scale_ch0", strlen("rkcif_scale_ch0"));
+    entity = media_get_entity_by_name(device, "rkcif_scale_ch0");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -728,7 +737,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif_scale_ch1", strlen("rkcif_scale_ch1"));
+    entity = media_get_entity_by_name(device, "rkcif_scale_ch1");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -736,7 +745,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif_scale_ch2", strlen("rkcif_scale_ch2"));
+    entity = media_get_entity_by_name(device, "rkcif_scale_ch2");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -744,7 +753,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif_scale_ch3", strlen("rkcif_scale_ch3"));
+    entity = media_get_entity_by_name(device, "rkcif_scale_ch3");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -752,7 +761,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_dvp_id0", strlen("stream_cif_dvp_id0"));
+    entity = media_get_entity_by_name(device, "stream_cif_dvp_id0");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -760,7 +769,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_dvp_id1", strlen("stream_cif_dvp_id1"));
+    entity = media_get_entity_by_name(device, "stream_cif_dvp_id1");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -768,7 +777,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_dvp_id2", strlen("stream_cif_dvp_id2"));
+    entity = media_get_entity_by_name(device, "stream_cif_dvp_id2");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -776,7 +785,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_dvp_id3", strlen("stream_cif_dvp_id3"));
+    entity = media_get_entity_by_name(device, "stream_cif_dvp_id3");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -784,7 +793,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif-mipi-luma", strlen("rkisp-mipi-luma"));
+    entity = media_get_entity_by_name(device, "rkcif-mipi-luma");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -792,7 +801,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rockchip-mipi-csi2", strlen("rockchip-mipi-csi2"));
+    entity = media_get_entity_by_name(device, "rockchip-mipi-csi2");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -800,7 +809,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif-lvds-subdev", strlen("rkcif-lvds-subdev"));
+    entity = media_get_entity_by_name(device, "rkcif-lvds-subdev");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -808,7 +817,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif-lite-lvds-subdev", strlen("rkcif-lite-lvds-subdev"));
+    entity = media_get_entity_by_name(device, "rkcif-lite-lvds-subdev");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -816,14 +825,14 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rockchip-mipi-dphy-rx", strlen("rockchip-mipi-dphy-rx"));
+    entity = media_get_entity_by_name(device, "rockchip-mipi-dphy-rx");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
             strncpy(cif_info[index].mipi_dphy_rx_path, entity_name, sizeof(cif_info[index].mipi_dphy_rx_path) - 1);
         }
     } else {
-        entity = media_get_entity_by_name(device, "rockchip-csi2-dphy0", strlen("rockchip-csi2-dphy0"));
+        entity = media_get_entity_by_name(device, "rockchip-csi2-dphy0");
         if(entity) {
             entity_name = media_entity_get_devname (entity);
             if(entity_name) {
@@ -832,7 +841,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif", strlen("stream_cif"));
+    entity = media_get_entity_by_name(device, "stream_cif");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -840,7 +849,7 @@ get_cif_subdevs(struct media_device *device, const char *devpath, rk_aiq_cif_inf
         }
     }
 
-    entity = media_get_entity_by_name(device, "rkcif-dvp-sof", strlen("rkcif-dvp-sof"));
+    entity = media_get_entity_by_name(device, "rkcif-dvp-sof");
     if(entity) {
         entity_name = media_entity_get_devname (entity);
         if(entity_name) {
@@ -1020,6 +1029,7 @@ CamHwIsp20::initCamHwInfos()
     char sys_path[64], devpath[32];
     FILE *fp = NULL;
     struct media_device *device = NULL;
+    const struct media_device_info *devinfo = NULL;
     int nents, j = 0, i = 0, node_index = 0;
     const struct media_entity_desc *entity_info = NULL;
     struct media_entity *entity = NULL;
@@ -1041,28 +1051,29 @@ CamHwIsp20::initCamHwInfos()
 
         /* Enumerate entities, pads and links. */
         media_device_enumerate (device);
+        devinfo = media_get_info(device);
 
         rk_aiq_isp_t* isp_info = NULL;
         rk_aiq_cif_info_t* cif_info = NULL;
         bool dvp_itf = false;
-        if (strcmp(device->info.model, "rkispp0") == 0 ||
-                strcmp(device->info.model, "rkispp1") == 0 ||
-                strcmp(device->info.model, "rkispp2") == 0 ||
-                strcmp(device->info.model, "rkispp3") == 0 ||
-                strcmp(device->info.model, "rkispp") == 0) {
+        if (strcmp(devinfo->model, "rkispp0") == 0 ||
+                strcmp(devinfo->model, "rkispp1") == 0 ||
+                strcmp(devinfo->model, "rkispp2") == 0 ||
+                strcmp(devinfo->model, "rkispp3") == 0 ||
+                strcmp(devinfo->model, "rkispp") == 0) {
 #if defined(ISP_HW_V20)
             rk_aiq_ispp_t* ispp_info = get_ispp_subdevs(device, sys_path, CamHwIsp20::mIspHwInfos.ispp_info);
             if (ispp_info)
                 ispp_info->valid = true;
 #endif
             goto media_unref;
-        } else if (strcmp(device->info.model, "rkisp0") == 0 ||
-                   strcmp(device->info.model, "rkisp1") == 0 ||
-                   strcmp(device->info.model, "rkisp2") == 0 ||
-                   strcmp(device->info.model, "rkisp3") == 0 ||
-                   strcmp(device->info.model, "rkisp") == 0) {
+        } else if (strcmp(devinfo->model, "rkisp0") == 0 ||
+                   strcmp(devinfo->model, "rkisp1") == 0 ||
+                   strcmp(devinfo->model, "rkisp2") == 0 ||
+                   strcmp(devinfo->model, "rkisp3") == 0 ||
+                   strcmp(devinfo->model, "rkisp") == 0) {
             isp_info = get_isp_subdevs(device, sys_path, CamHwIsp20::mIspHwInfos.isp_info);
-            if (strstr(device->info.driver, "rkisp-unite")) {
+            if (strcmp(devinfo->driver, "rkisp-unite") == 0) {
                 isp_info->is_multi_isp_mode = true;
                 mIsMultiIspMode = true;
                 mMultiIspExtendedPixel = RKMOUDLE_UNITE_EXTEND_PIXEL;
@@ -1072,15 +1083,15 @@ CamHwIsp20::initCamHwInfos()
                 mMultiIspExtendedPixel = 0;
             }
             isp_info->valid = true;
-        } else if (strcmp(device->info.model, "rkcif") == 0 ||
-                   strcmp(device->info.model, "rkcif_dvp") == 0 ||
-                   strstr(device->info.model, "rkcif_mipi_lvds") ||
-                   strstr(device->info.model, "rkcif-mipi-lvds") ||
-                   strcmp(device->info.model, "rkcif_lite_mipi_lvds") == 0) {
+        } else if (strcmp(devinfo->model, "rkcif") == 0 ||
+                   strcmp(devinfo->model, "rkcif_dvp") == 0 ||
+                   strstr(devinfo->model, "rkcif_mipi_lvds") ||
+                   strstr(devinfo->model, "rkcif-mipi-lvds") ||
+                   strcmp(devinfo->model, "rkcif_lite_mipi_lvds") == 0) {
             cif_info = get_cif_subdevs(device, sys_path, CamHwIsp20::mCifHwInfos.cif_info);
-            strncpy(cif_info->model_str, device->info.model, sizeof(cif_info->model_str));
+            strncpy(cif_info->model_str, devinfo->model, sizeof(cif_info->model_str));
 
-            if (strcmp(device->info.model, "rkcif_dvp") == 0)
+            if (strcmp(devinfo->model, "rkcif_dvp") == 0)
                 dvp_itf = true;
         } else {
             goto media_unref;
@@ -1359,11 +1370,10 @@ CamHwIsp20::getBindedSnsEntNmByVd(const char* vd)
                 /* Enumerate entities, pads and links. */
                 media_device_enumerate (device);
                 entity = media_get_entity_by_name(device,
-                                                  s_full_info->sensor_name.c_str(),
-                                                  s_full_info->sensor_name.size());
+                                                  s_full_info->sensor_name.c_str());
                 entity_info = media_entity_get_info(entity);
-                if (entity && entity->num_links > 0) {
-                    if (entity->links[0].flags == MEDIA_LNK_FL_ENABLED) {
+                if (entity && media_entity_get_links_count(entity) > 0) {
+                    if (media_entity_get_link(entity, 0)->flags == MEDIA_LNK_FL_ENABLED) {
                         media_device_unref (device);
                         return  s_full_info->sensor_name.c_str();
                     }
@@ -2033,7 +2043,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
 
     /* Enumerate entities, pads and links. */
     media_device_enumerate (device);
-    entity = media_get_entity_by_name(device, "rockchip-mipi-csi2", strlen("rockchip-mipi-csi2"));
+    entity = media_get_entity_by_name(device, "rockchip-mipi-csi2");
     if(entity) {
         src_pad_s = (media_pad *)media_entity_get_pad(entity, 1);
         if (!src_pad_s) {
@@ -2041,7 +2051,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
             goto FAIL;
         }
     } else {
-        entity = media_get_entity_by_name(device, "rkcif-lvds-subdev", strlen("rkcif-lvds-subdev"));
+        entity = media_get_entity_by_name(device, "rkcif-lvds-subdev");
         if(entity) {
             src_pad_s = (media_pad *)media_entity_get_pad(entity, 1);
             if (!src_pad_s) {
@@ -2049,7 +2059,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
                 goto FAIL;
             }
         } else {
-            entity = media_get_entity_by_name(device, "rkcif-lite-lvds-subdev", strlen("rkcif-lite-lvds-subdev"));
+            entity = media_get_entity_by_name(device, "rkcif-lite-lvds-subdev");
             if(entity) {
                 src_pad_s = (media_pad *)media_entity_get_pad(entity, 1);
                 if (!src_pad_s) {
@@ -2060,7 +2070,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_mipi_id0", strlen("stream_cif_mipi_id0"));
+    entity = media_get_entity_by_name(device, "stream_cif_mipi_id0");
     if(entity) {
         sink_pad = (media_pad *)media_entity_get_pad(entity, 0);
         if (!sink_pad) {
@@ -2073,7 +2083,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
     else
         media_setup_link(device, src_pad_s, sink_pad, 0);
 
-    entity = media_get_entity_by_name(device, "rockchip-mipi-csi2", strlen("rockchip-mipi-csi2"));
+    entity = media_get_entity_by_name(device, "rockchip-mipi-csi2");
     if(entity) {
         src_pad_m = (media_pad *)media_entity_get_pad(entity, 2);
         if (!src_pad_m) {
@@ -2081,7 +2091,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
             goto FAIL;
         }
     } else {
-        entity = media_get_entity_by_name(device, "rkcif-lvds-subdev", strlen("rkcif-lvds-subdev"));
+        entity = media_get_entity_by_name(device, "rkcif-lvds-subdev");
         if(entity) {
             src_pad_m = (media_pad *)media_entity_get_pad(entity, 2);
             if (!src_pad_m) {
@@ -2089,7 +2099,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
                 goto FAIL;
             }
         } else {
-            entity = media_get_entity_by_name(device, "rkcif-lite-lvds-subdev", strlen("rkcif-lite-lvds-subdev"));
+            entity = media_get_entity_by_name(device, "rkcif-lite-lvds-subdev");
             if(entity) {
                 src_pad_m = (media_pad *)media_entity_get_pad(entity, 2);
                 if (!src_pad_m) {
@@ -2100,7 +2110,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_mipi_id1", strlen("stream_cif_mipi_id1"));
+    entity = media_get_entity_by_name(device, "stream_cif_mipi_id1");
     if(entity) {
         sink_pad = (media_pad *)media_entity_get_pad(entity, 0);
         if (!sink_pad) {
@@ -2114,7 +2124,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
         media_setup_link(device, src_pad_m, sink_pad, 0);
 
 #if 0
-    entity = media_get_entity_by_name(device, "rockchip-mipi-csi2", strlen("rockchip-mipi-csi2"));
+    entity = media_get_entity_by_name(device, "rockchip-mipi-csi2");
     if(entity) {
         src_pad_l = (media_pad *)media_entity_get_pad(entity, 3);
         if (!src_pad_l) {
@@ -2123,7 +2133,7 @@ CamHwIsp20::setupHdrLink_vidcap(int hdr_mode, int cif_index, bool enable)
         }
     }
 
-    entity = media_get_entity_by_name(device, "stream_cif_mipi_id2", strlen("stream_cif_mipi_id2"));
+    entity = media_get_entity_by_name(device, "stream_cif_mipi_id2");
     if(entity) {
         sink_pad = (media_pad *)media_entity_get_pad(entity, 0);
         if (!sink_pad) {
@@ -2160,7 +2170,7 @@ CamHwIsp20::setupHdrLink(int hdr_mode, int isp_index, bool enable)
 
     /* Enumerate entities, pads and links. */
     media_device_enumerate (device);
-    entity = media_get_entity_by_name(device, "rkisp-isp-subdev", strlen("rkisp-isp-subdev"));
+    entity = media_get_entity_by_name(device, "rkisp-isp-subdev");
     if(entity) {
         sink_pad = (media_pad *)media_entity_get_pad(entity, 0);
         if (!sink_pad) {
@@ -2183,7 +2193,7 @@ CamHwIsp20::setupHdrLink(int hdr_mode, int isp_index, bool enable)
         }
     }
 #endif
-    entity = media_get_entity_by_name(device, "rkisp_rawrd2_s", strlen("rkisp_rawrd2_s"));
+    entity = media_get_entity_by_name(device, "rkisp_rawrd2_s");
     if(entity) {
         src_pad_s = (media_pad *)media_entity_get_pad(entity, 0);
         if (!src_pad_s) {
@@ -2198,7 +2208,7 @@ CamHwIsp20::setupHdrLink(int hdr_mode, int isp_index, bool enable)
             media_setup_link(device, src_pad_s, sink_pad, 0);
     }
 
-    entity = media_get_entity_by_name(device, "rkisp_rawrd0_m", strlen("rkisp_rawrd0_m"));
+    entity = media_get_entity_by_name(device, "rkisp_rawrd0_m");
     if(entity) {
         src_pad_m = (media_pad *)media_entity_get_pad(entity, 0);
         if (!src_pad_m) {
@@ -2214,7 +2224,7 @@ CamHwIsp20::setupHdrLink(int hdr_mode, int isp_index, bool enable)
             media_setup_link(device, src_pad_m, sink_pad, 0);
     }
 
-    entity = media_get_entity_by_name(device, "rkisp_rawrd1_l", strlen("rkisp_rawrd1_l"));
+    entity = media_get_entity_by_name(device, "rkisp_rawrd1_l");
     if(entity) {
         src_pad_l = (media_pad *)media_entity_get_pad(entity, 0);
         if (!src_pad_l) {
