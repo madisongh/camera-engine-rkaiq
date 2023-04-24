@@ -14,6 +14,8 @@ PROJECT(rk_aiq)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+find_package(PkgConfig)
+
 include(BuildOptions)
 include(CompileOptions)
 include(GNUInstallDirs)
@@ -66,7 +68,6 @@ include_directories(
     ./common/
     include
     include/common
-    include/common/mediactl
     include/iq_parser
     include/iq_parser_v2
     include/uAPI
@@ -145,7 +146,6 @@ set(ALGO_COMMON_SRC
 
 if(GENMESH_ONLINE)
     set(COMMON_SRC
-        common/mediactl/mediactl.c
         common/gen_mesh/genMesh.cpp
         common/code_to_pixel_format.cpp
         common/media_buffer/media_buffer.c
@@ -153,9 +153,10 @@ if(GENMESH_ONLINE)
         )
 else()
     set(COMMON_SRC
-        common/mediactl/mediactl.c
         )
 endif()
+
+pkg_check_modules(MEDIACTL REQUIRED IMPORTED_TARGET libmediactl)
 
 if(RKAIQ_ENABLE_SIMULATOR)
     set(HWI_SRC
@@ -288,8 +289,7 @@ if (RKAIQ_ENABLE_CAMGROUP)
 endif()
 
 if(OPENCV_SUPPORT)
-    find_package(PkgConfig)
-    pkg_check_modules(OPENCV REQUIRED IMPORTED_TARGET)
+    pkg_check_modules(OPENCV REQUIRED IMPORTED_TARGET opencv4)
     set(OPENCV_LIBS PkgConfig::OPENCV)
     add_compile_options(-DOPENCV_SUPPORT)
 endif()
@@ -410,6 +410,7 @@ target_link_libraries(rkaiq
     ${GENMESH_LIBS}
     ${MOTION_DETECT_LIBS}
     ${PDAF_LIBS}
+    PkgConfig::MEDIACTL
     pthread)
 
 if (RKAIQ_ENABLE_CAMGROUP)
