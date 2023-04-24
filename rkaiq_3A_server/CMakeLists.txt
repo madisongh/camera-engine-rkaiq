@@ -94,7 +94,7 @@ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 link_directories("${RK_AIQ_LIB_DIR}" "${GENMESH_LIBS_DIR}")
 ADD_EXECUTABLE(rkaiq_3A_server rkaiq_3A_server.cpp)
 
-target_link_libraries(rkaiq_3A_server ${RK_AIQ_LIB} pthread dl)
+target_link_libraries(rkaiq_3A_server ${RK_AIQ_LIB} mediactl pthread dl)
 
 #FIXME: buildroot and ipc sdk shall use the same setting
 if(BUILDROOT_BUILD_PROJECT)
