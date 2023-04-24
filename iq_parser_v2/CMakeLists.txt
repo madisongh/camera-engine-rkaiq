@@ -14,6 +14,7 @@ add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/output.h
     COMMAND ${CMAKE_C_COMPILER}
     ${CMAKE_SOURCE_DIR}/include/iq_parser_v2/RkAiqCalibDbTypesV2.h -E -C -o .temp.h ${ISP_HW_VERSION}
+    ${IQ_PARSER_V2_EXTRA_CFLAGS}
     -I${CMAKE_SOURCE_DIR}/
     -I${CMAKE_SOURCE_DIR}/include
     -I${CMAKE_SOURCE_DIR}/include/common
